@@ -5,6 +5,10 @@ was added to generate nodes and links for the Quads racks based on rack1000.txt.
 
 ## mods for racks
 
+Using make_data.js to generate all the data.  The current thought is to generate nodes and links for everything I can thin of then experiment with how to change colors and visibility to better show ideas.
+
+Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added to VIDEMO.
+
 
 ## TODO:
 - [ ] dump stats: node count, link count, counts for types of node/link
@@ -26,6 +30,9 @@ was added to generate nodes and links for the Quads racks based on rack1000.txt.
 
 - [ ] experiment with colors of nodes/links
 - [ ] experiment with colors on links/nodes for errors
+- [ ] controls to hide levels
+- [ ] controls to highlight levels
+- [ ] controls to colapse levels? hide empty slots?
 
 
 
