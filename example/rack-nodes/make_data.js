@@ -19,7 +19,8 @@ const NODE_TYPE_MODULE              = 4;  // physical module inserted in slot, m
 const NODE_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software client
 const NODE_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
-//const NODE_TYPE_NETWORKCARD         = 8; // each client PC will have at least 1 network card
+// NOTE: skipping nodes for network cards, might need for DII
+//const NODE_TYPE_NETWORKCARD       = 8; // each client PC will have at least 1 network card
 
 //const LINK_TYPE_ROOT              = 0;  // root, or set of racks
 const LINK_TYPE_RACK                = 1;  // physical rack
@@ -28,15 +29,12 @@ const LINK_TYPE_SLOT                = 3;  // physical slot within a chassis (1 i
 const LINK_TYPE_MODULE              = 4;  // physical module inserted in slot, may take more than 1 slot
 const LINK_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software client
 const LINK_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
-
 const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
-const LINK_TYPE_NETWORKCARD         = 8;  // each client PC will have at least 1 network card
+const LINK_TYPE_PCIEBACKPLANE       = 8;  // PCIE bus within the chassis
 
+const LINK_TYPE_PCIECABLE           = 9;  // cable from PCIE_CONNECTOR to system controller MODULE
+const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
 
-const LINK_TYPE_PCIEBACKPLANE       = 9;  // PCIE bus within the chassis
-
-const LINK_TYPE_PCIECABLE           = 10; // cable from PCIE_CONNECTOR to system controller MODULE
-const LINK_TYPE_HVICABLE            = 11; // cable between M9032A/ M9033A modules (HVI bus)
 const LINK_TYPE_NETWORKCABLE        = 12; // TODO: is this how to show network?
 
 
@@ -170,6 +168,22 @@ function make_chassis_internal_links(chassis_id) {
     }
 }
 
+function make_pcie_cables(pc_id) { // TODO
+    // for each pc with LINK_TYPE_PCIECABLE
+    //   pciecard1 -> chassis1_slot1_module1 (system controller for chassis)
+    //   pciecard1 -> chassis2_slot1_module1 (system controller for chassis)
+    //   pciecard2 -> chassis1_slot1_module1 (system controller for chassis)
+    //   pciecard2 -> chassis2_slot1_module1 (system controller for chassis)
+    //   pciecard3 -> chassis1_slot1_module1 (system controller for chassis)
+    //   pciecard3 -> chassis2_slot1_module1 (system controller for chassis)
+}
+
+function make_hvi_cables(chassis_id) { // TODO
+    // hook up slot 10 modules per map
+    // verify slot 10 modules
+}
+
+
 function show_stats() {
     console.log("total nodes: " + data.nodes.length);
     console.log("total links: " + data.links.length);
@@ -246,7 +260,7 @@ function make_data() {
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
-            data.links.push({"source": pchost_id, "target": pc_id, "value": LINK_TYPE_WINDOWSPC_HOST});
+            data.links.push({"source": pchost_id, "target": pc_id, "value": LINK_TYPE_NETWORKCABLE});
         }
     }
 
