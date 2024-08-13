@@ -137,12 +137,24 @@ function make_chassisset6(chassis_id) {
     make_module(chassis_id, 18, "M5200A");
 }
 
-function make_chassis_interal_links(chassis_id) {
+function make_chassis_internal_links(chassis_id) {
     var system_controller_id;
-    var
+    var module_id;
     // search nodes for chassis_id + "_Slot_1" + "Module_1" as system_controller_id
     // search nodes for chassis_id + "_Slot_x" + "Module_x" as module_id
     // created link system_controller_id to module_id as PCIELINK
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.endsWith("_Module_1")) {
+            console.log(node.id + ": " + node.subname);
+        }
+    }
+
+}
+
+function show_stats() {
+    console.log("total nodes: " + data.nodes.length);
+    console.log("total links: " + data.links.length);
 }
 
 function make_data() {
@@ -237,11 +249,14 @@ function make_data() {
                 case 5: make_chassisset5(chassis_id); break;
                 case 6: make_chassisset6(chassis_id); break;
             }
+            make_chassis_internal_links(chassis_id);
         }
     }
 
     // console.log("data:");
     // console.log(JSON.stringify(data, null, 2));
+
+    show_stats();
 }
 
 make_data();
