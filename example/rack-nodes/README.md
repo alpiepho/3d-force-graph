@@ -18,17 +18,18 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [-] add PCIECARD_CONNECTOR 
 - [x] add PCIECABLE from connector to system controller of each 
 - [x] add NETWORKCONNECT
-- [ ] clean up data vs racks.json
-- [ ] use const for id strings
-- [ ] add 16x6 configuration
-- [ ] add internal chassis PCIELINK from system controller to modules
-chassis
+- [x] add 16x6 configuration
+- [x] add internal chassis PCIELINK from system controller to modules
+- [ ] exapnd for IOLS 
 - [ ] get sample HVI config
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
-
 - [ ] exapnd for TSE 
 - [ ] exapnd for KDI 
+
+- [ ] clean up data vs racks.json
+- [ ] use const for id strings
+
 
 - [ ] experiment with colors of nodes/links
 - [ ] experiment with colors on links/nodes for errors
