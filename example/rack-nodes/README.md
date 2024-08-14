@@ -12,21 +12,22 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 
 ## TODO:
 - [x] dump stats: node count, link count
-- [ ] dump stats: counts for types of node/link
-- [ ] clean up data vs racks.json
-- [ ] add 16x6 configuration
-- [ ] add internal chassis PCIELINK from system controller to modules
+- [x] dump stats: counts for types of node/link
 - [x] add WINDOWSPC based on rack configuration
 - [x] add PCIECARD based on rack configuration
 - [-] add PCIECARD_CONNECTOR 
-- [ ] add PCIECABLE from connector to system controller of each chassis
-- [-] or option for PCIEBUS??
+- [x] add PCIECABLE from connector to system controller of each 
+- [x] add NETWORKCONNECT
+- [ ] clean up data vs racks.json
+- [ ] use const for id strings
+- [ ] add 16x6 configuration
+- [ ] add internal chassis PCIELINK from system controller to modules
+chassis
 - [ ] get sample HVI config
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
 
-- [-] add NETWORKCARD 
-- [x] add NETWORKCONNECT
+- [ ] exapnd for TSE 
 - [ ] exapnd for KDI 
 
 - [ ] experiment with colors of nodes/links

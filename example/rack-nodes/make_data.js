@@ -3,13 +3,15 @@ var data = {};
 const RACKS_TYPE = "1000";
 // const RACKS_TYPE = "16x6";
 
-// const TOTAL_RACKS = 10;
-// const TOTAL_CHASSIS = 6;
-// const TOTAL_SLOTS = 18;
-
-const TOTAL_RACKS = 2;
-const TOTAL_CHASSIS = 1;
+const TOTAL_RACKS = 10;
+const TOTAL_CHASSIS = 6;
 const TOTAL_SLOTS = 18;
+const TOTAL_PCIECARDS = 3;
+
+// const TOTAL_RACKS = 2;
+// const TOTAL_CHASSIS = 2;
+// const TOTAL_SLOTS = 18;
+// const TOTAL_PCIECARDS = 3;
 
 const NODE_TYPE_ROOT                = 0;  // root, or set of racks
 const NODE_TYPE_RACK                = 1;  // physical rack
@@ -20,9 +22,18 @@ const NODE_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software cli
 const NODE_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
 // NOTE: skipping nodes for network cards, might need for DII
-//const NODE_TYPE_NETWORKCARD       = 8; // each client PC will have at least 1 network card
+// const NODE_TYPE_NETWORKCARD       = 8; // each client PC will have at least 1 network card
 
-//const LINK_TYPE_ROOT              = 0;  // root, or set of racks
+// const NODE_TYPE_IOLS
+// const NODE_TYPE_CONNECTION_EXPERT
+// const NODE_TYPE_TSE_CLIENT
+// const NODE_TYPE_TSE_HOST
+// const NODE_TYPE_KDI_CLIENT
+// const NODE_TYPE_KDI_SERVICE
+// const NODE_TYPE_KDI_ROOT
+
+// NOTE: no need for this
+// const LINK_TYPE_ROOT              = 0;  // root, or set of racks
 const LINK_TYPE_RACK                = 1;  // physical rack
 const LINK_TYPE_CHASSIS             = 2;  // physical chassis within a rack
 const LINK_TYPE_SLOT                = 3;  // physical slot within a chassis (1 is special, 19 is special)
@@ -31,12 +42,15 @@ const LINK_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software cli
 const LINK_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
 const LINK_TYPE_PCIEBACKPLANE       = 8;  // PCIE bus within the chassis
-
 const LINK_TYPE_PCIECABLE           = 9;  // cable from PCIE_CONNECTOR to system controller MODULE
-const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
-
 const LINK_TYPE_NETWORKCABLE        = 12; // TODO: is this how to show network?
 
+// const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
+// const LINK_TYPE_IOLS
+// const LINK_TYPE_KDI
+// const const LINK_TYPE_PCIEADDR
+// const LINK_TYPE_HVIADDR
+// const LINK_TYPE_NETWORKADDR
 
 function get_chassis_type(chassis_i) {
     var name = "M9046A";
@@ -168,14 +182,55 @@ function make_chassis_internal_links(chassis_id) {
     }
 }
 
-function make_pcie_cables(pc_id) { // TODO
-    // for each pc with LINK_TYPE_PCIECABLE
-    //   pciecard1 -> chassis1_slot1_module1 (system controller for chassis)
-    //   pciecard1 -> chassis2_slot1_module1 (system controller for chassis)
-    //   pciecard2 -> chassis1_slot1_module1 (system controller for chassis)
-    //   pciecard2 -> chassis2_slot1_module1 (system controller for chassis)
-    //   pciecard3 -> chassis1_slot1_module1 (system controller for chassis)
-    //   pciecard3 -> chassis2_slot1_module1 (system controller for chassis)
+function make_pcie_cables(pc_id) {
+    let parts = pc_id.split("_PC");
+    let rack_id = parts[0];
+    var pciecard_id;
+    var module_id;
+    var chassis_count = 0;
+ 
+    // pciecard1 -> all_rackX_chassis1_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 1;
+    module_id = rack_id + "_Chassis1_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
+    // pciecard1 -> all_rackX_chassis2_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 1;
+    module_id = rack_id + "_Chassis2_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
+    // pciecard2 -> all_rackX_chassis3_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 2;
+    module_id = rack_id + "_Chassis3_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
+    // pciecard2 -> all_rackX_chassis4_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 2;
+    module_id = rack_id + "_Chassis4_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
+    // pciecard3 -> all_rackX_chassis5_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 3;
+    module_id = rack_id + "_Chassis5_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
+    // pciecard3 -> all_rackX_chassis6_slot1_module1 (system controller for chassis)
+    pciecard_id = pc_id + "_PCIECard" + 3;
+    module_id = rack_id + "_Chassis6_Slot1_Module1";
+    if (chassis_count < TOTAL_CHASSIS) {
+        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        chassis_count++;
+    }
 }
 
 function make_hvi_cables(chassis_id) { // TODO
@@ -183,10 +238,65 @@ function make_hvi_cables(chassis_id) { // TODO
     // verify slot 10 modules
 }
 
+function validate_links() {
+    var i, src_found, tgt_found;
+    let links = data.links;
+    let nodes = data.nodes;
+    for (let j=0; j<links.length; j++) {
+        let src_id = links[j].source;
+        let tgt_id = links[j].target;
+        src_found = 0;
+        for (i=nodes.length-1; i>=0 && !src_found; i--) {
+            let node = nodes[i];
+            if (src_id == node.id) {
+                src_found = 1;
+            }
+        }
+        tgt_found = 0;
+        for (i=nodes.length-1; i>=0 && !tgt_found; i--) {
+            if (tgt_id == nodes[i].id) {
+                tgt_found = 1;
+            }
+        }
+        if (!src_found) {
+            console.log("link.source not found in nodes: " + src_id);
+            delete data.links[i];
+        } else if (!tgt_found) {
+            console.log("link.target not found in nodes: " + tgt_id);
+        }
+    }
+}
+
+function count_node_stat(tag) {
+    let ex = tag + "[0-9]+$"
+    var count = 0;
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function count_link_stat(tag) {
+    let ex = tag + "[0-9]+$"
+    var count = 0;
+    for (let i=0; i<data.links.length; i++) {
+        var link = data.link[i];
+        if (link.id.match(ex)) {
+            count++;
+        }
+    }
+    return count;
+}
 
 function show_stats() {
     console.log("total nodes: " + data.nodes.length);
     console.log("total links: " + data.links.length);
+    console.log("total nodes - Racks:   " + count_node_stat("_Rack"));
+    console.log("total nodes - Chassis: " + count_node_stat("_Chassis"));
+    console.log("total nodes - Modules: " + count_node_stat("_Module"));
 }
 
 function make_data() {
@@ -241,7 +351,7 @@ function make_data() {
     for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i;
         let pc_id = rack_id + "_PC" + 1;
-        for (let j=1; j<=3; j++) {
+        for (let j=1; j<=TOTAL_PCIECARDS; j++) {
             let pciecard_id = pc_id + "_PCIECard" + j;
             data.links.push({"source": pc_id, "target": pciecard_id, "value": LINK_TYPE_PCIECARD});
         }
@@ -264,7 +374,6 @@ function make_data() {
         }
     }
 
-
     // CHASSIS
     // add chassis nodes for each rack
     for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -276,8 +385,6 @@ function make_data() {
             data.nodes.push({"id": chassis_id, "name": chassis_name, "subname": chassis_subname, "group": NODE_TYPE_CHASSIS});
         }
     }
-
-
      // add chassis links for each rack
      for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i;
@@ -314,22 +421,32 @@ function make_data() {
         }
     }
        
-    // modules
+    // MODULES
     for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j
              switch (j) {
                 case 1: make_chassisset1(chassis_id); break;
-                // case 2: make_chassisset2(chassis_id); break;
-                // case 3: make_chassisset3(chassis_id); break;
-                // case 4: make_chassisset4(chassis_id); break;
-                // case 5: make_chassisset5(chassis_id); break;
-                // case 6: make_chassisset6(chassis_id); break;
+                case 2: make_chassisset2(chassis_id); break;
+                case 3: make_chassisset3(chassis_id); break;
+                case 4: make_chassisset4(chassis_id); break;
+                case 5: make_chassisset5(chassis_id); break;
+                case 6: make_chassisset6(chassis_id); break;
             }
             make_chassis_internal_links(chassis_id);
         }
     }
+
+    // PCIECABLE
+    for (let i=1; i<=TOTAL_RACKS; i++) {
+        let rack_id = "All_Rack" + i;
+        let pc_id = rack_id + "_PC" + 1;
+        make_pcie_cables(pc_id)
+    }
+
+
+    validate_links();
 
     // console.log("data:");
     console.log(JSON.stringify(data, null, 2));
