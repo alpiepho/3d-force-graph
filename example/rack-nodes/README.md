@@ -20,12 +20,12 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] add NETWORKCONNECT
 - [x] add 16x6 configuration
 - [x] add internal chassis PCIELINK from system controller to modules
-- [ ] exapnd for IOLS 
-- [ ] get sample HVI config
+- [-] get sample HVI config (stuck with screenshot for now)
+- [x] exapnd for IOLS 
+- [ ] exapnd for KDI 
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
 - [ ] exapnd for TSE 
-- [ ] exapnd for KDI 
 
 - [ ] clean up data vs racks.json
 - [ ] use const for id strings
@@ -35,9 +35,49 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [ ] experiment with colors on links/nodes for errors
 - [ ] controls to hide levels
 - [ ] controls to highlight levels
-- [ ] controls to colapse levels? hide empty slots?
+- [ ] controls to collapse levels? hide empty slots?
 
+## Sample KDI node list
 
+From https://confluence.it.keysight.com/display/ICCD/3.6+node_list+-+KDIC+Service+API
+```
+{
+    "request": "node_list",
+    "request_id": "kdia-example-dc756833-9341-4ac2-8f8a-1b8b69a0f9f5",
+    "fabric_id": "6d9dd2fd-72f7-483c-a078-317168f69fcc",
+    "message_version": 1,
+    "error": "",
+    "response": {
+        "error": "",
+        "node_list": {
+            "node_list": [
+                {
+                    "id": "AFUVLCINL4A",
+                    "fabric_id": "6d9dd2fd-72f7-483c-a078-317168f69fcc",
+                    "name": "TS2TEST3.ggn.is.keysight.com",
+                    "online": true,
+                    "version": "3.5.0",
+                    "ip": "10.15.98.77",
+                    "http_port": "9090",
+                    "client_type": "root",
+                    "macaddr": "6c:02:e0:61:bb:4d"
+                },
+                {
+                    "id": "U6STE441OLH",
+                    "fabric_id": "6d9dd2fd-72f7-483c-a078-317168f69fcc",
+                    "name": "SICTESTING1.ggn.is.keysight.com",
+                    "online": true,
+                    "version": "3.5.0",
+                    "ip": "10.15.97.22",
+                    "http_port": "9090",
+                    "client_type": "leaf",
+                    "macaddr": "c0:18:03:b8:04:2a"
+                }
+            ]
+        }
+    }
+}
+```
 
 ## REFERENCES
 - https://github.com/vasturiano/3d-force-graph

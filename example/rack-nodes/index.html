@@ -32,6 +32,7 @@
       // .jsonUrl('../datasets/racks.json')
       .graphData(data)
       .nodeAutoColorBy('group')
+      .linkAutoColorBy('value')
       .nodeThreeObject(node => {
         const nodeEl = document.createElement('div');
         nodeEl.textContent = node.id;

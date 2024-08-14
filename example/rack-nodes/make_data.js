@@ -33,9 +33,8 @@ const NODE_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
 // NOTE: skipping nodes for network cards, might need for DII
 // const NODE_TYPE_NETWORKCARD       = 8; // each client PC will have at least 1 network card
-
-// const NODE_TYPE_IOLS
-// const NODE_TYPE_CONNECTION_EXPERT
+const NODE_TYPE_IOLS                = 9;  // instance of IOLS libraries per client PC
+const NODE_TYPE_CONNECTION_EXPERT   = 10; // instance of Connection Expert per client PC
 // const NODE_TYPE_TSE_CLIENT
 // const NODE_TYPE_TSE_HOST
 // const NODE_TYPE_KDI_CLIENT
@@ -53,8 +52,8 @@ const LINK_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
 const LINK_TYPE_PCIEBACKPLANE       = 8;  // PCIE bus within the chassis
 const LINK_TYPE_PCIECABLE           = 9;  // cable from PCIE_CONNECTOR to system controller MODULE
-const LINK_TYPE_NETWORKCABLE        = 12; // TODO: is this how to show network?
-
+const LINK_TYPE_NETWORKCABLE        = 10; // TODO: is this how to show network?
+const NODE_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
 // const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
 // const LINK_TYPE_KDI
@@ -313,76 +312,11 @@ function make_hvi_cables(chassis_id) { // TODO
     //     - 2: tse-tcp:://10.10.10.103/PXI0::2::BACKPLANE
 }
 
-function validate_links() {
-    var i, src_found, tgt_found;
-    let links = data.links;
-    let nodes = data.nodes;
-    for (let j=0; j<links.length; j++) {
-        let src_id = links[j].source;
-        let tgt_id = links[j].target;
-        src_found = 0;
-        for (i=nodes.length-1; i>=0 && !src_found; i--) {
-            let node = nodes[i];
-            if (src_id == node.id) {
-                src_found = 1;
-            }
-        }
-        tgt_found = 0;
-        for (i=nodes.length-1; i>=0 && !tgt_found; i--) {
-            if (tgt_id == nodes[i].id) {
-                tgt_found = 1;
-            }
-        }
-        if (!src_found) {
-            console.log("link.source not found in nodes: " + src_id);
-            delete data.links[i];
-        } else if (!tgt_found) {
-            console.log("link.target not found in nodes: " + tgt_id);
-        }
-    }
-}
-
-function count_node_stat(tag) {
-    let ex = tag + "[0-9]+$"
-    var count = 0;
-    for (let i=0; i<data.nodes.length; i++) {
-        var node = data.nodes[i];
-        if (node.id.match(ex)) {
-            count++;
-        }
-    }
-    return count;
-}
-
-function count_link_stat(tag) {
-    let ex = tag + "[0-9]+$"
-    var count = 0;
-    for (let i=0; i<data.links.length; i++) {
-        var link = data.link[i];
-        if (link.id.match(ex)) {
-            count++;
-        }
-    }
-    return count;
-}
-
-function show_stats() {
-    console.log("total nodes: " + data.nodes.length);
-    console.log("total links: " + data.links.length);
-    console.log("total nodes - Racks:   " + count_node_stat("_Rack"));
-    console.log("total nodes - Chassis: " + count_node_stat("_Chassis"));
-    console.log("total nodes - Modules: " + count_node_stat("_Module"));
-}
-
-function make_data() {
-
-    data["nodes"] = [];
-    data["links"] = [];
- 
-    // ROOT
+function make_root() {
     data.nodes.push({"id": "All", "name": "All Racks", "group": NODE_TYPE_ROOT});
-  
-    // RACKS
+}
+
+function make_racks() {
     // add rack nodes
     for (let i=1; i<=TOTAL_RACKS; i++) { // rack
         let rack_id = "All_Rack" + i;
@@ -394,8 +328,9 @@ function make_data() {
         let rack_id = "All_Rack" + i;
         data.links.push({"source": "All", "target": rack_id, "value": LINK_TYPE_RACK});
     }
+}
 
-    // WINDOWS PC CLIENT
+function make_client_pcs() {
     if (RACKS_TYPE == RACKS_TYPE_1000) {
         // add pc client nodes (1 pc per rack)
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -481,8 +416,9 @@ function make_data() {
             }
         }
     }
+}
 
-    // WINDOWS PC HOST
+function make_host_pcs() {
     if (RACKS_TYPE == RACKS_TYPE_1000) {
         // add pc host nodes
         let all_id = "All";
@@ -498,28 +434,30 @@ function make_data() {
             data.links.push({"source": pchost_id, "target": pc_id, "value": LINK_TYPE_NETWORKCABLE});
         }
     }
+}
 
-    // CHASSIS
+function make_chassis() {
     // add chassis nodes for each rack
     for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i;
-         for (let j=1; j<=TOTAL_CHASSIS; j++) {
+        for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j;
             let chassis_name = "Chassis " + j;
             let chassis_subname = get_chassis_typeA(j);
             data.nodes.push({"id": chassis_id, "name": chassis_name, "subname": chassis_subname, "group": NODE_TYPE_CHASSIS});
         }
     }
-     // add chassis links for each rack
-     for (let i=1; i<=TOTAL_RACKS; i++) {
+    // add chassis links for each rack
+    for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i;
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j;
             data.links.push({"source": rack_id, "target": chassis_id, "value": LINK_TYPE_CHASSIS});
         }
     }
+}
 
-    // SLOTS
+function make_slots() {
     // add slot nodes for each chassis
     for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i
@@ -532,8 +470,8 @@ function make_data() {
             }
         }
     }
-     // add slot links for each rack
-     for (let i=1; i<=TOTAL_RACKS; i++) {
+    // add slot links for each rack
+    for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j
@@ -545,13 +483,14 @@ function make_data() {
             }
         }
     }
-       
-    // MODULES
+}
+
+function make_modules() {
     for (let i=1; i<=TOTAL_RACKS; i++) {
         let rack_id = "All_Rack" + i
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j
-             switch (j) {
+            switch (j) {
                 case 1: make_chassisset1(chassis_id); break;
                 case 2: make_chassisset2(chassis_id); break;
                 case 3: make_chassisset3(chassis_id); break;
@@ -562,8 +501,9 @@ function make_data() {
             make_chassis_internal_links(chassis_id);
         }
     }
+}
 
-    // PCIECABLE
+function make_pcie_cables() {
     if (ENABLE_LINK_TYPE_PCIECABLE) {
         if (RACKS_TYPE == RACKS_TYPE_1000) {
             for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -583,8 +523,175 @@ function make_data() {
             }    
         }
     }
+}
 
+function make_iols_and_connection_expert() {
+    if (RACKS_TYPE == RACKS_TYPE_1000) {
+        // add iols to pc client nodes (1 pc per rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            let iols_id = pc_id + "_IOLS" + 1
+            let iols_name = "IOLS 1"
+            data.nodes.push({"id": iols_id, "name": iols_name, "group": NODE_TYPE_IOLS});
+        }
+        // add iols to pc links for each rack
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC" + 1;
+            let iols_id = pc_id + "_IOLS" + 1
+            data.links.push({"source": pc_id, "target": iols_id, "value": NODE_TYPE_SOFTWARE});
+        }
+        // add connection expert to pc client nodes (1 pc per rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            let iols_id = pc_id + "_IOLS" + 1
+            let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
+            let ce_name = "ConnectionExpert 1"
+            data.nodes.push({"id": ce_id, "name": ce_name, "group": NODE_TYPE_CONNECTION_EXPERT});
+        }
+        // add connection expert to pc links for each rack
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC" + 1;
+            let iols_id = pc_id + "_IOLS" + 1
+            let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
+            data.links.push({"source": iols_id, "target": ce_id, "value": NODE_TYPE_SOFTWARE});
+        }
+    }
+    if (RACKS_TYPE == RACKS_TYPE_16x6) {
+        // add iols to pc client nodes (1 pc per chassis, single rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let iols_id = pc_id + "_IOLS" + 1
+                let iols_name = "IOLS 1"
+                data.nodes.push({"id": iols_id, "name": iols_name, "group": NODE_TYPE_IOLS});
+            }
+        }
+        // add iols to pc links for each rack
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let iols_id = pc_id + "_IOLS" + 1
+                data.links.push({"source": pc_id, "target": iols_id, "value": NODE_TYPE_SOFTWARE});
+            }
+        }
+       // add connection expert to pc client nodes (1 pc per chassis, single rack)
+       for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let iols_id = pc_id + "_IOLS" + 1
+                let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
+                let ce_name = "ConnectionExpert 1"
+                data.nodes.push({"id": ce_id, "name": ce_name, "group": NODE_TYPE_CONNECTION_EXPERT});
+            }
+        }
+        // add connection expert to pc links for each rack
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let iols_id = pc_id + "_IOLS" + 1
+                let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
+                data.links.push({"source": iols_id, "target": ce_id, "value": NODE_TYPE_SOFTWARE});
+            }
+        }
+    } 
+}
 
+function validate_links() {
+    var i, src_found, tgt_found;
+    let links = data.links;
+    let nodes = data.nodes;
+    for (let j=0; j<links.length; j++) {
+        let src_id = links[j].source;
+        let tgt_id = links[j].target;
+        src_found = 0;
+        for (i=nodes.length-1; i>=0 && !src_found; i--) {
+            let node = nodes[i];
+            if (src_id == node.id) {
+                src_found = 1;
+            }
+        }
+        tgt_found = 0;
+        for (i=nodes.length-1; i>=0 && !tgt_found; i--) {
+            if (tgt_id == nodes[i].id) {
+                tgt_found = 1;
+            }
+        }
+        if (!src_found) {
+            console.log("link.source not found in nodes: " + src_id);
+            delete data.links[i];
+        } else if (!tgt_found) {
+            console.log("link.target not found in nodes: " + tgt_id);
+        }
+    }
+}
+
+function count_node_stat(tag) {
+    let ex = tag + "[0-9]+$"
+    var count = 0;
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function count_link_stat(tag) {
+    let ex = tag + "[0-9]+$"
+    var count = 0;
+    for (let i=0; i<data.links.length; i++) {
+        var link = data.link[i];
+        if (link.id.match(ex)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function show_stats() {
+    console.log("total nodes: " + data.nodes.length);
+    console.log("total links: " + data.links.length);
+    console.log("total nodes - Racks:   " + count_node_stat("_Rack"));
+    console.log("total nodes - Chassis: " + count_node_stat("_Chassis"));
+    console.log("total nodes - Modules: " + count_node_stat("_Module"));
+}
+
+function make_data() {
+
+    data["nodes"] = [];
+    data["links"] = [];
+ 
+    // HARDWARE
+    make_root();
+    make_racks();
+    make_client_pcs();
+    make_host_pcs();
+    make_chassis();
+    make_slots();
+    make_modules();
+    make_pcie_cables();
+    // make_hvi_cables();
+
+    // BUSSES
+    // make_pc_addrs();
+    // make_pcie_addrs();
+    // make_hvi_addrs();
+
+    // SOFTWARE
+    make_iols_and_connection_expert();
+    // make_kdi_clients();
+    // make_kdi_root();
+    // make_qcs_tse_clients();
+    // make_qcs_tse_host();
 
     // console.log("data:");
     console.log(JSON.stringify(data, null, 2));
