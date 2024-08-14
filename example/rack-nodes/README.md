@@ -22,6 +22,8 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] add internal chassis PCIELINK from system controller to modules
 - [-] get sample HVI config (stuck with screenshot for now)
 - [x] exapnd for IOLS 
+- [x] function add_data_node and add_data_link
+- [x] replace name/subname with names[]
 - [ ] exapnd for KDI 
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE

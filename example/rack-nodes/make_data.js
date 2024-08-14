@@ -63,6 +63,17 @@ const NODE_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per cli
 
 const ENABLE_LINK_TYPE_PCIECABLE = 1;
 
+function add_data_node(id, names, group) {
+    // TODO add filter here
+    data.nodes.push({"id": id, "names": names, "group": group});
+}
+
+function add_data_link(source, target, value) {
+    // TODO add filter here
+    data.links.push({"source": source, "target": target, "value": value});
+}
+
+
 function get_chassis_typeA(chassis_i) {
     var name = "M9046A";
     if (RACKS_TYPE == RACKS_TYPE_1000) {
@@ -97,9 +108,9 @@ function make_module(chassis_id, index, subname) {
     slot_id = chassis_id + "_Slot" + index;
     module_id = slot_id + "_Module" + index;
     module_name = "Module " + index;
-    module_subname = subname;       
-    data.nodes.push({"id": module_id, "name": module_name, "subname": module_subname, "group": NODE_TYPE_MODULE});
-    data.links.push({"source": slot_id, "target": module_id, "value": LINK_TYPE_MODULE});
+    module_subname = subname;     
+    add_data_node(module_id, [module_name, module_subname], NODE_TYPE_MODULE);
+    add_data_link(slot_id, module_id, LINK_TYPE_MODULE);
 }
 
 function make_chassisset1(chassis_id) {
@@ -202,7 +213,7 @@ function make_chassis_internal_links(chassis_id) {
         }
         else if (node.id.startsWith(chassis_id) && node.id.includes("_Module")) {
             module_id = node.id;
-            data.links.push({"source": system_controller_id, "target": module_id, "value": LINK_TYPE_PCIEBACKPLANE});
+            add_data_link(system_controller_id, module_id, LINK_TYPE_PCIEBACKPLANE);
         }
     }
 }
@@ -218,42 +229,42 @@ function make_pcie_cables1000(pc_id) {
     pciecard_id = pc_id + "_PCIECard" + 1;
     module_id = rack_id + "_Chassis1_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
     // pciecard1 -> all_rackX_chassis2_slot1_module1 (system controller for chassis)
     pciecard_id = pc_id + "_PCIECard" + 1;
     module_id = rack_id + "_Chassis2_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
     // pciecard2 -> all_rackX_chassis3_slot1_module1 (system controller for chassis)
     pciecard_id = pc_id + "_PCIECard" + 2;
     module_id = rack_id + "_Chassis3_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
     // pciecard2 -> all_rackX_chassis4_slot1_module1 (system controller for chassis)
     pciecard_id = pc_id + "_PCIECard" + 2;
     module_id = rack_id + "_Chassis4_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
     // pciecard3 -> all_rackX_chassis5_slot1_module1 (system controller for chassis)
     pciecard_id = pc_id + "_PCIECard" + 3;
     module_id = rack_id + "_Chassis5_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
     // pciecard3 -> all_rackX_chassis6_slot1_module1 (system controller for chassis)
     pciecard_id = pc_id + "_PCIECard" + 3;
     module_id = rack_id + "_Chassis6_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
 }
@@ -268,7 +279,7 @@ function make_pcie_cables16x6(pc_id, chassis_id) {
     pciecard_id = pc_id + "_PCIECard" + 1;
     module_id = chassis_id + "_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        data.links.push({"source": pciecard_id, "target": module_id, "value": LINK_TYPE_PCIECABLE});
+        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
         chassis_count++;
     }
 
@@ -313,7 +324,7 @@ function make_hvi_cables(chassis_id) { // TODO
 }
 
 function make_root() {
-    data.nodes.push({"id": "All", "name": "All Racks", "group": NODE_TYPE_ROOT});
+    add_data_node("All", ["All Racks"], NODE_TYPE_ROOT);
 }
 
 function make_racks() {
@@ -321,12 +332,12 @@ function make_racks() {
     for (let i=1; i<=TOTAL_RACKS; i++) { // rack
         let rack_id = "All_Rack" + i;
         let rack_name = "Rack " + i;
-        data.nodes.push({"id": rack_id, "name": rack_name, "group": NODE_TYPE_RACK});
+        add_data_node(rack_id, [rack_name], NODE_TYPE_RACK);
     }
     // add rack links
     for (let i=1; i<=TOTAL_RACKS; i++) { // rack
         let rack_id = "All_Rack" + i;
-        data.links.push({"source": "All", "target": rack_id, "value": LINK_TYPE_RACK});
+        add_data_link("All", rack_id, LINK_TYPE_RACK);
     }
 }
 
@@ -338,13 +349,13 @@ function make_client_pcs() {
             let pc_id = rack_id + "_PC1";
             let pc_name = "PC 1";
             let pc_subname = "HP ZCentral 4R";
-            data.nodes.push({"id": pc_id, "name": pc_name, "subname": pc_subname, "group": NODE_TYPE_WINDOWSPC_CLIENT});
+            add_data_node(pc_id, [pc_name, pc_subname], NODE_TYPE_WINDOWSPC_CLIENT);
         }
         // add pc links for each rack
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
-            data.links.push({"source": rack_id, "target": pc_id, "value": LINK_TYPE_WINDOWSPC_CLIENT});
+            add_data_link(rack_id, pc_id, LINK_TYPE_WINDOWSPC_CLIENT);
         }
 
         // WINDOWS PC CLIENT PCIECARD
@@ -355,7 +366,7 @@ function make_client_pcs() {
             for (let j=1; j<=TOTAL_PCIECARDS; j++) {
                 let pciecard_id = pc_id + "_PCIECard" + j;
                 let pciecard_name = "PCIECard " + j
-                data.nodes.push({"id": pciecard_id, "name": pciecard_name, "group": NODE_TYPE_PCIECARD});
+                add_data_node(pciecard_id, [pciecard_name], NODE_TYPE_PCIECARD);
             }
         }
         // add pciecard links for each pcard
@@ -364,7 +375,7 @@ function make_client_pcs() {
             let pc_id = rack_id + "_PC1";
             for (let j=1; j<=TOTAL_PCIECARDS; j++) {
                 let pciecard_id = pc_id + "_PCIECard" + j;
-                data.links.push({"source": pc_id, "target": pciecard_id, "value": LINK_TYPE_PCIECARD});
+                add_data_link(pc_id, pciecard_id, LINK_TYPE_PCIECARD);
             }
         }
     }
@@ -376,7 +387,7 @@ function make_client_pcs() {
                 let pc_id = rack_id + "_PC" + j;
                 let pc_name = "PC " + j;
                 let pc_subname = "HP ZCentral 4R";
-                data.nodes.push({"id": pc_id, "name": pc_name, "subname": pc_subname, "group": NODE_TYPE_WINDOWSPC_CLIENT});
+                add_data_node(pc_id, [pc_name, pc_subname], NODE_TYPE_WINDOWSPC_CLIENT);
             }
         }
         // add pc links for each rack
@@ -385,7 +396,7 @@ function make_client_pcs() {
             let rack_id = "All_Rack" + i;
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
-                data.links.push({"source": all_id, "target": pc_id, "value": LINK_TYPE_WINDOWSPC_CLIENT});
+                add_data_link(all_id, pc_id, LINK_TYPE_WINDOWSPC_CLIENT);
             }
         }
 
@@ -399,7 +410,7 @@ function make_client_pcs() {
                 for (let k=1; k<=TOTAL_PCIECARDS; k++) {
                     let pciecard_id = pc_id + "_PCIECard" + k;
                     let pciecard_name = "PCIECard " + k
-                    data.nodes.push({"id": pciecard_id, "name": pciecard_name, "group": NODE_TYPE_PCIECARD});
+                    add_data_node(pciecard_id, [pciecard_name], NODE_TYPE_PCIECARD);
                 }
             }
         }
@@ -411,7 +422,7 @@ function make_client_pcs() {
                 let pc_id = rack_id + "_PC" + j;
                 for (let k=1; k<=TOTAL_PCIECARDS; k++) {
                     let pciecard_id = pc_id + "_PCIECard" + k;
-                    data.links.push({"source": pc_id, "target": pciecard_id, "value": LINK_TYPE_PCIECARD});
+                    add_data_link(pc_id, pciecard_id, LINK_TYPE_PCIECARD);
                 }
             }
         }
@@ -425,13 +436,13 @@ function make_host_pcs() {
         let pchost_id = all_id + "_PCHost" + 1;
         let pchost_name = "PC Host" + 1;
         let pchost_subname = "HP Z8";
-        data.nodes.push({"id": pchost_id, "name": pchost_name, "subname": pchost_subname, "group": NODE_TYPE_WINDOWSPC_HOST});
-        data.links.push({"source": all_id, "target": pchost_id, "value": LINK_TYPE_WINDOWSPC_HOST});
+        add_data_node(pchost_id, [pchost_name, pchost_subname], NODE_TYPE_WINDOWSPC_HOST);
+        add_data_link(all_id, pchost_id, LINK_TYPE_WINDOWSPC_HOST);
         // add network links to each client pc
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
-            data.links.push({"source": pchost_id, "target": pc_id, "value": LINK_TYPE_NETWORKCABLE});
+            add_data_link(pchost_id, pc_id, LINK_TYPE_NETWORKCABLE);
         }
     }
 }
@@ -444,7 +455,7 @@ function make_chassis() {
             let chassis_id = rack_id + "_Chassis" + j;
             let chassis_name = "Chassis " + j;
             let chassis_subname = get_chassis_typeA(j);
-            data.nodes.push({"id": chassis_id, "name": chassis_name, "subname": chassis_subname, "group": NODE_TYPE_CHASSIS});
+            add_data_node(chassis_id, [chassis_name, chassis_subname], NODE_TYPE_CHASSIS);
         }
     }
     // add chassis links for each rack
@@ -452,7 +463,7 @@ function make_chassis() {
         let rack_id = "All_Rack" + i;
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j;
-            data.links.push({"source": rack_id, "target": chassis_id, "value": LINK_TYPE_CHASSIS});
+            add_data_link(rack_id, chassis_id, LINK_TYPE_CHASSIS);
         }
     }
 }
@@ -466,7 +477,7 @@ function make_slots() {
             for (let k=1; k<=TOTAL_SLOTS; k++) { // slot
                 let slot_id = chassis_id + "_Slot" + k
                 let slot_name = "Slot " + k
-                data.nodes.push({"id": slot_id, "name": slot_name, "group": NODE_TYPE_SLOT});
+                add_data_node(slot_id, [slot_name], NODE_TYPE_SLOT);
             }
         }
     }
@@ -479,7 +490,7 @@ function make_slots() {
             for (let k=1; k<=TOTAL_SLOTS; k++) { // slot
                 let slot_id = chassis_id + "_Slot" + k
                 let slot_name = "Slot " + k
-                data.links.push({"source": chassis_id, "target": slot_id, "value": LINK_TYPE_SLOT});
+                add_data_link(chassis_id, slot_id, LINK_TYPE_SLOT);
             }
         }
     }
@@ -533,14 +544,14 @@ function make_iols_and_connection_expert() {
             let pc_id = rack_id + "_PC1";
             let iols_id = pc_id + "_IOLS" + 1
             let iols_name = "IOLS 1"
-            data.nodes.push({"id": iols_id, "name": iols_name, "group": NODE_TYPE_IOLS});
+            add_data_node(iols_id, [iols_name], NODE_TYPE_IOLS);
         }
         // add iols to pc links for each rack
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
             let iols_id = pc_id + "_IOLS" + 1
-            data.links.push({"source": pc_id, "target": iols_id, "value": NODE_TYPE_SOFTWARE});
+            add_data_link(pc_id, iols_id, NODE_TYPE_SOFTWARE);
         }
         // add connection expert to pc client nodes (1 pc per rack)
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -549,7 +560,7 @@ function make_iols_and_connection_expert() {
             let iols_id = pc_id + "_IOLS" + 1
             let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
             let ce_name = "ConnectionExpert 1"
-            data.nodes.push({"id": ce_id, "name": ce_name, "group": NODE_TYPE_CONNECTION_EXPERT});
+            add_data_node(ce_id, [ce_name], NODE_TYPE_CONNECTION_EXPERT);
         }
         // add connection expert to pc links for each rack
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -557,7 +568,7 @@ function make_iols_and_connection_expert() {
             let pc_id = rack_id + "_PC" + 1;
             let iols_id = pc_id + "_IOLS" + 1
             let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-            data.links.push({"source": iols_id, "target": ce_id, "value": NODE_TYPE_SOFTWARE});
+            add_data_link(iols_id, ce_id, NODE_TYPE_SOFTWARE);
         }
     }
     if (RACKS_TYPE == RACKS_TYPE_16x6) {
@@ -568,7 +579,7 @@ function make_iols_and_connection_expert() {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
                 let iols_name = "IOLS 1"
-                data.nodes.push({"id": iols_id, "name": iols_name, "group": NODE_TYPE_IOLS});
+                add_data_node(iols_id, [iols_name], NODE_TYPE_IOLS);
             }
         }
         // add iols to pc links for each rack
@@ -577,7 +588,7 @@ function make_iols_and_connection_expert() {
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
-                data.links.push({"source": pc_id, "target": iols_id, "value": NODE_TYPE_SOFTWARE});
+                add_data_link(pc_id, iols_id, NODE_TYPE_SOFTWARE);
             }
         }
        // add connection expert to pc client nodes (1 pc per chassis, single rack)
@@ -588,7 +599,7 @@ function make_iols_and_connection_expert() {
                 let iols_id = pc_id + "_IOLS" + 1
                 let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
                 let ce_name = "ConnectionExpert 1"
-                data.nodes.push({"id": ce_id, "name": ce_name, "group": NODE_TYPE_CONNECTION_EXPERT});
+                add_data_node(ce_id, [ce_name], NODE_TYPE_CONNECTION_EXPERT);
             }
         }
         // add connection expert to pc links for each rack
@@ -598,7 +609,7 @@ function make_iols_and_connection_expert() {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
                 let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-                data.links.push({"source": iols_id, "target": ce_id, "value": NODE_TYPE_SOFTWARE});
+                add_data_link(iols_id, ce_id, NODE_TYPE_SOFTWARE);
             }
         }
     } 
