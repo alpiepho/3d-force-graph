@@ -1,0 +1,59 @@
+digraph Topology {
+   // Define global attributes
+    fontsize="20";
+    fontname="Comic Sans MS";
+    bgcolor="lightyellow";
+    
+    node [shape=record, style=filled, fontname="Comic Sans MS"];
+    edge [color=blue, arrowhead="open", fontname="Comic Sans MS", labeldistance=2.0, labelangle=-30, labeljust="c"];
+     
+    
+    // Cluster for 1
+    subgraph cluster_1 {
+        label="rack1";
+        node[fillcolor=lightblue];
+        
+        R1C1 [label="Chassis: 1   | <p1> Port 1"];
+        R1C2 [label="Chassis : 2  | <p1> Port 1"];
+        R1C3 [label="Chassis : 3  | <p1> Port 1"];
+        R1C4 [label="Chassis : 4  | <p1> Port 1"];
+        R1C5 [label="Chassis : 5  | <p1> Port 1"];
+        R1C6 [label="Chassis : 6  | <p1> Port 1"];
+    }
+    // Cluster for 2
+    subgraph cluster_2 {
+        label="rack2";
+         node[fillcolor=yellow]
+        R2C1 [label="Chassis : 1  | <p1> Port 1"];
+        R2C2 [label="Chassis : 2  | <p1> Port 1"];
+        R2C3 [label="Chassis : 3  | <p1> Port 1"];
+        R2C4 [label="Chassis : 4  | <p1> Port 1"];
+        R2C5 [label="Chassis : 5  | <p1> Port 1"];
+        R2C6 [label="Chassis : 6  | <p1> Port 1"];
+    }
+
+    // Cluster for 3
+    subgraph cluster_3 {
+       label="rack3";
+        node[fillcolor=red]
+        R3C1 [label="Chassis : 1  | <p1> Port 1"];
+        R3C2 [label="Chassis : 2  | <p1> Port 1"];
+        R3C3 [label="Chassis : 3  | <p1> Port 1"];
+        R3C4 [label="Chassis : 4  | <p1> Port 1"];
+    }
+    
+       
+   
+
+   
+   
+    start -> R1C1:p1  [label="Input"]
+    R1C1 -> R1C3:p1 ;
+    R1C1 -> R2C1:p1;
+    R1C1 -> R3C1:p1;
+    R2C1 -> R2C2:p1;
+    R2C1 -> R2C3:p1;
+    R1C3 -> R1C2:p1
+    R3C1 -> R3C2:p1
+    R3C1 -> R3C3:p1
+  }

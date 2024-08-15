@@ -1,0 +1,86 @@
+# ***************************************************************************
+# System definition configuration template
+#
+# See TSE documentation (System Setup Guide and User Manual) for details on
+# how to edit this configuration file
+#
+# Usage:
+# Lines with '##' or '###' are documentation.
+# Lines with '#' are examples, uncomment and modify as needed for you system.
+# ***************************************************************************
+
+
+### Define system topology which consists of a list of all chassis with its downstream connections.
+### Except for single-chassis systems, do not list chassis without downstream connections.
+### All chassis/downstream connection together must result in a fully connected chassis topology
+### To identify the chassis can use TSE or TSE-TCP Resource IDs, and for local chassis can also use VISA Resource ID
+topology:
+  - chassis: tse-tcp://localhost:8674/PXI0::1::BACKPLANE
+    downstream:
+      - 2: tse-tcp://5cg2145s3x.internal:8674/PXI0::1::BACKPLANE
+  - chassis: tse-tcp://localhost:8674/PXI0::3::BACKPLANE
+    downstream:
+      - 1: tse-tcp://localhost:8674/PXI0::2::BACKPLANE
+  - chassis: tse-tcp://5cg2145s3x.internal:8674/PXI0::1::BACKPLANE
+    downstream:
+      - 1: tse-tcp://5cg2145s3x.internal:8674/PXI0::2::BACKPLANE
+      - 2: tse-tcp://5cg2145s3x.internal:8674/PXI0::3::BACKPLANE
+
+
+### [OPTIONAL] When enabled, it allows the client applications to use a subset of the system topology. By default, it is true.
+support_client_subtopologies: true
+
+# Configure clocking
+
+# If this section is not included TSE will assume Cellini-Internal for multi-chassis and
+clocking:
+  reference:  hpc # Allowed values are: ssm|chassis|hpc. Default is: ssm.
+                # We can assume the chassis and ssm to be the leader defined in the connections earlier
+  mode: internal # Allowed values are:  internal|external. Default is: internal.
+  # frequency: 10e6 # Allowed only with mode == external
+
+ 
+   # [OPTIONAL]
+  external_analog_clocks:
+      - 2.4e9
+      - 4.8e9 
+ 
+    # [OPTIONAL]
+  clock_outputs:
+    - chassis: tse-tcp://localhost/PXI0::1::BACKPLANE
+      output: FPRef1Out
+      enabled: True
+      #frequency: 100e6
+    - chassis: tse-tcp://localhost/PXI0::1::BACKPLANE
+      output: FP2.4GHzOut
+      enabled: true  
+ 
+    # [OPTIONAL]
+  non_hvi_core_clocks:
+    - 15e6
+  
+    # [OPTIONAL]
+  non_hvi_system_clocks:
+    - 1e9
+  
+sync_resources:
+  - PXI_TRIGGER_0
+  - PXI_TRIGGER_3
+  - PXI_TRIGGER_4
+ 
+initialization_warmup_time_seconds: 1    #Time to wait between first initialization without Calibration and final initialization with Calibration.
+ 
+# The Alignment Mode flags to apply during system initialization
+initialize_alignment_modes:
+  - Full
+  - ResetCalibration
+# - PreCalibration
+# - IgnoreCalibrationErrors
+# - DisableClockMonitoring
+# - ForceClockMonitoring
+ 
+instruments:  #These instruments are added to the Leader SystemDefinition to be initialized.
+  - inherit_from_tse_config # includes all instruments found for the Topology specified above and defined in the tse_config.yml files of each host
+# User can specify as well or instead specific instruments using the KDI resource ID
+  - kdi://localhost/PXI::CHASSIS1::SLOT3: Option1=1,     # include explicitly by instrument address and options.
+  - kdi://testNode2/PXI::CHASSIS2::SLOT12: Option1=1,    # include explicitly by instrument address and options.
