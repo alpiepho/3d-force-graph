@@ -1,27 +1,12 @@
 var data = {};
 
-const RACKS_TYPE_1000 = "1000"
-const RACKS_TYPE_16x6 = "16x6"
-var RACKS_TYPE = RACKS_TYPE_1000;
-// DEBUG - select rack type
-// RACKS_TYPE = RACKS_TYPE_16x6;
-
-var TOTAL_RACKS = 10;
-var TOTAL_CHASSIS = 6;
-var TOTAL_SLOTS = 18;
-var TOTAL_PCIECARDS = 3;
-if (RACKS_TYPE == RACKS_TYPE_16x6) {
-    TOTAL_RACKS = 1;
-    TOTAL_CHASSIS = 6;
-    TOTAL_SLOTS = 18;
-    TOTAL_PCIECARDS = 1;
-}
-
-// DEBUG - limit racks and chassis
-TOTAL_RACKS = 2;
-TOTAL_CHASSIS = 2;
-TOTAL_SLOTS = 18;
-TOTAL_PCIECARDS = 3;
+const RACKS_TYPE_1000   = "1000"
+const RACKS_TYPE_16x6   = "16x6"
+var RACKS_TYPE          = RACKS_TYPE_1000;
+var TOTAL_RACKS         = 10;
+var TOTAL_CHASSIS       = 6;
+var TOTAL_SLOTS         = 18;
+var TOTAL_PCIECARDS     = 3;
 
 const NODE_TYPE_ROOT                = 0;  // root, or set of racks
 const NODE_TYPE_RACK                = 1;  // physical rack
@@ -99,24 +84,48 @@ var ENABLE_NODE_TYPE_SOFTWARE            = 1;
 // var ENABLE_LINK_TYPE_HVIADDR             = 1;
 // var ENABLE_LINK_TYPE_NETWORKADDR         = 1;
 
-// DEBUG - Software only
-// ENABLE_NODE_TYPE_ROOT                = 1;
-// ENABLE_NODE_TYPE_RACK                = 1;
-// ENABLE_NODE_TYPE_CHASSIS             = 0;
-// ENABLE_NODE_TYPE_SLOT                = 0;
-// ENABLE_NODE_TYPE_MODULE              = 0;
-// ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
-// ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-// ENABLE_NODE_TYPE_PCIECARD            = 0;
-// // NOTE: skipping nodes for network cards, might need for DII
-// // ENABLE_NODE_TYPE_NETWORKCARD       = 1;
-// ENABLE_NODE_TYPE_IOLS                = 1;
-// ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-// // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
-// // ENABLE_NODE_TYPE_TSE_HOST            = 1;
-// // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-// // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
-// // ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+function select_racks_1000() {
+    RACKS_TYPE = RACKS_TYPE_1000;
+    TOTAL_RACKS = 10;
+    TOTAL_CHASSIS = 6;
+    TOTAL_SLOTS = 18;
+    TOTAL_PCIECARDS = 3;
+}
+
+function select_racks_16x6() {
+    RACKS_TYPE = RACKS_TYPE_16x6;
+    TOTAL_RACKS = 1;
+    TOTAL_CHASSIS = 6;
+    TOTAL_SLOTS = 18;
+    TOTAL_PCIECARDS = 1;
+}
+
+function enable_limited_system() {
+    TOTAL_RACKS = 2;
+    TOTAL_CHASSIS = 2;
+    TOTAL_SLOTS = 18;
+    TOTAL_PCIECARDS = 3;
+}
+
+function enable_software_only() {
+    ENABLE_NODE_TYPE_ROOT                = 1;
+    ENABLE_NODE_TYPE_RACK                = 1;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    ENABLE_NODE_TYPE_MODULE              = 0;
+    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+    ENABLE_NODE_TYPE_PCIECARD            = 0;
+    // NOTE: skipping nodes for network cards, might need for DII
+    // ENABLE_NODE_TYPE_NETWORKCARD       = 1;
+    ENABLE_NODE_TYPE_IOLS                = 1;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+    // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
+    // ENABLE_NODE_TYPE_TSE_HOST            = 1;
+    // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+    // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
+    // ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+}
 
 function add_data_node(id, names, group) {
     // filter here
@@ -776,6 +785,12 @@ function make_data() {
     data["nodes"] = [];
     data["links"] = [];
  
+    select_racks_1000();
+    select_racks_16x6();
+
+    // enable_limited_system();
+    // enable_software_only();
+
     // HARDWARE
     make_root();
     make_racks();
