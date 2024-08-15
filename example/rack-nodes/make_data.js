@@ -127,6 +127,7 @@ function enable_software_only() {
     // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
     // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
     // ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+    RACKS_MODIFIED = 2;
 }
 
 function add_data_node(id, names, group) {
@@ -442,8 +443,11 @@ function make_root() {
         names.push("1 pc per chassis");
         names.push("no pc host");
     }
-    if (RACKS_MODIFIED) {
+    if (RACKS_MODIFIED == 1) {
         names.push("DEBUG - modified");
+    }
+    if (RACKS_MODIFIED == 2) {
+        names.push("SOFTWARE ONLY");
     }
     add_data_node("All", names, NODE_TYPE_ROOT);
 }
@@ -809,8 +813,9 @@ function make_data() {
     select_racks_1000();
     select_racks_16x6();
 
+    // uses RACKS_MODIFIED
     // enable_limited_system();
-    // enable_software_only();
+    enable_software_only();
 
     // HARDWARE
     make_root();
