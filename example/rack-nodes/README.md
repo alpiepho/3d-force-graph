@@ -25,7 +25,7 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] function add_data_node and add_data_link
 - [x] replace name/subname with names[]
 - [-] use const for id strings
-- [ ] add enables and filters for nodes and links (code is a bit ugly)
+- [x] add enables and filters for nodes and links (code is a bit ugly)
 - [ ] exapnd for KDI 
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
@@ -80,6 +80,19 @@ From https://confluence.it.keysight.com/display/ICCD/3.6+node_list+-+KDIC+Servic
     }
 }
 ```
+
+## Future Ideas
+
+There are number of "configuration" files that we could use as input for generating the node/links here instead of hardcoding
+the generation.
+
+Some possible inputs:
+- IOLS physical connections (from data files or possibly GatherIOLogs)
+- ChassisNumberInfo.xml from IOLS (possibly GatherIOLogs)
+- system-definition.yml from QCS/TSE for ISM/HVI connections
+- KDI node lists from crawling a fabric
+
+
 
 ## REFERENCES
 - https://github.com/vasturiano/3d-force-graph
