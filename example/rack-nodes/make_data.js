@@ -3,8 +3,8 @@ var data = {};
 const RACKS_TYPE_1000 = "1000"
 const RACKS_TYPE_16x6 = "16x6"
 var RACKS_TYPE = RACKS_TYPE_1000;
+// DEBUG - select rack type
 // RACKS_TYPE = RACKS_TYPE_16x6;
-
 
 var TOTAL_RACKS = 10;
 var TOTAL_CHASSIS = 6;
@@ -17,7 +17,7 @@ if (RACKS_TYPE == RACKS_TYPE_16x6) {
     TOTAL_PCIECARDS = 1;
 }
 
-//DEBUG
+// DEBUG - limit racks and chassis
 TOTAL_RACKS = 2;
 TOTAL_CHASSIS = 2;
 TOTAL_SLOTS = 18;
@@ -61,15 +61,106 @@ const NODE_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per cli
 // const LINK_TYPE_HVIADDR
 // const LINK_TYPE_NETWORKADDR
 
-const ENABLE_LINK_TYPE_PCIECABLE = 1;
+var ENABLE_NODE_TYPE_ROOT                = 1;
+var ENABLE_NODE_TYPE_RACK                = 1;
+var ENABLE_NODE_TYPE_CHASSIS             = 1;
+var ENABLE_NODE_TYPE_SLOT                = 1;
+var ENABLE_NODE_TYPE_MODULE              = 1;
+var ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+var ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+var ENABLE_NODE_TYPE_PCIECARD            = 1;
+// NOTE: skipping nodes for network cards, might need for DII
+// var ENABLE_NODE_TYPE_NETWORKCARD       = 1;
+var ENABLE_NODE_TYPE_IOLS                = 1;
+var ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+// var ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
+// var ENABLE_NODE_TYPE_TSE_HOST            = 1;
+// var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+// var ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
+// var ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+
+// NOTE: no need for this
+// var ENABLE_LINK_TYPE_ROOT                = 1;
+var ENABLE_LINK_TYPE_RACK                = 1;
+var ENABLE_LINK_TYPE_CHASSIS             = 1;
+var ENABLE_LINK_TYPE_SLOT                = 1;
+var ENABLE_LINK_TYPE_MODULE              = 1;
+var ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 1;
+var ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 1;
+var ENABLE_LINK_TYPE_PCIECARD            = 1;
+var ENABLE_LINK_TYPE_PCIEBACKPLANE       = 1;
+var ENABLE_LINK_TYPE_PCIECABLE           = 1;
+var ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
+var ENABLE_NODE_TYPE_SOFTWARE            = 1;
+// var ENABLE_LINK_TYPE_HVICABLE            = 1;
+// var ENABLE_LINK_TYPE_IOLS                = 1;
+// var ENABLE_LINK_TYPE_KDI                 = 1;
+// var ENABLE_LINK_TYPE_PCIEADDR            = 1;
+// var ENABLE_LINK_TYPE_HVIADDR             = 1;
+// var ENABLE_LINK_TYPE_NETWORKADDR         = 1;
+
+// DEBUG - Software only
+// ENABLE_NODE_TYPE_ROOT                = 1;
+// ENABLE_NODE_TYPE_RACK                = 1;
+// ENABLE_NODE_TYPE_CHASSIS             = 0;
+// ENABLE_NODE_TYPE_SLOT                = 0;
+// ENABLE_NODE_TYPE_MODULE              = 0;
+// ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+// ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+// ENABLE_NODE_TYPE_PCIECARD            = 0;
+// // NOTE: skipping nodes for network cards, might need for DII
+// // ENABLE_NODE_TYPE_NETWORKCARD       = 1;
+// ENABLE_NODE_TYPE_IOLS                = 1;
+// ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+// // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
+// // ENABLE_NODE_TYPE_TSE_HOST            = 1;
+// // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+// // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
+// // ENABLE_NODE_TYPE_KDI_ROOT            = 1;
 
 function add_data_node(id, names, group) {
-    // TODO add filter here
+    // filter here
+    if (group == NODE_TYPE_ROOT                 && ENABLE_NODE_TYPE_ROOT                == 0) return;
+    if (group == NODE_TYPE_RACK                 && ENABLE_NODE_TYPE_RACK                == 0) return;
+    if (group == NODE_TYPE_CHASSIS              && ENABLE_NODE_TYPE_CHASSIS             == 0) return;
+    if (group == NODE_TYPE_SLOT                 && ENABLE_NODE_TYPE_SLOT                == 0) return;
+    if (group == NODE_TYPE_MODULE               && ENABLE_NODE_TYPE_MODULE              == 0) return;
+    if (group == NODE_TYPE_WINDOWSPC_CLIENT     && ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    == 0) return;
+    if (group == NODE_TYPE_WINDOWSPC_HOST       && ENABLE_NODE_TYPE_WINDOWSPC_HOST      == 0) return;
+    if (group == NODE_TYPE_PCIECARD             && ENABLE_NODE_TYPE_PCIECARD            == 0) return;
+    // if (group == NODE_TYPE_NETWORKCARD       && ENABLE_NODE_TYPE_NETWORKCARD         == 0) return;
+    if (group == NODE_TYPE_IOLS                 && ENABLE_NODE_TYPE_IOLS                == 0) return;
+    if (group == NODE_TYPE_CONNECTION_EXPERT    && ENABLE_NODE_TYPE_CONNECTION_EXPERT   == 0) return;
+    // if (group == NODE_TYPE_TSE_CLIENT        && ENABLE_NODE_TYPE_TSE_CLIENT          == 0) return;
+    // if (group == NODE_TYPE_TSE_HOST          && ENABLE_NODE_TYPE_TSE_HOST            == 0) return;
+    // if (group == NODE_TYPE_KDI_CLIENT        && ENABLE_NODE_TYPE_KDI_CLIENT          == 0) return;
+    // if (group == NODE_TYPE_KDI_SERVICE       && ENABLE_NODE_TYPE_KDI_SERVICE         == 0) return;
+    // if (group == NODE_TYPE_KDI_ROOT          && ENABLE_NODE_TYPE_KDI_ROOT            == 0) return;
+
     data.nodes.push({"id": id, "names": names, "group": group});
 }
 
 function add_data_link(source, target, value) {
-    // TODO add filter here
+    // filter here
+    // if (value == LINK_TYPE_ROOT          && ENABLE_LINK_TYPE_ROOT                == 0) return;
+    if (value == LINK_TYPE_RACK             && ENABLE_LINK_TYPE_RACK                == 0) return;
+    if (value == LINK_TYPE_CHASSIS          && ENABLE_LINK_TYPE_CHASSIS             == 0) return;
+    if (value == LINK_TYPE_SLOT             && ENABLE_LINK_TYPE_SLOT                == 0) return;
+    if (value == LINK_TYPE_MODULE           && ENABLE_LINK_TYPE_MODULE              == 0) return;
+    if (value == LINK_TYPE_WINDOWSPC_CLIENT && ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    == 0) return;
+    if (value == LINK_TYPE_WINDOWSPC_HOST   && ENABLE_LINK_TYPE_WINDOWSPC_HOST      == 0) return;
+    if (value == LINK_TYPE_PCIECARD         && ENABLE_LINK_TYPE_PCIECARD            == 0) return;
+    if (value == LINK_TYPE_PCIEBACKPLANE    && ENABLE_LINK_TYPE_PCIEBACKPLANE       == 0) return;
+    if (value == LINK_TYPE_PCIECABLE        && ENABLE_LINK_TYPE_PCIECABLE           == 0) return;
+    if (value == LINK_TYPE_NETWORKCABLE     && ENABLE_LINK_TYPE_NETWORKCABLE        == 0) return;
+    if (value == NODE_TYPE_SOFTWARE         && ENABLE_NODE_TYPE_SOFTWARE            == 0) return;
+    // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
+    // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
+    // if (value == LINK_TYPE_KDI           && ENABLE_LINK_TYPE_KDI                 == 0) return;
+    // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
+    // if (value == LINK_TYPE_HVIADDR       && ENABLE_LINK_TYPE_HVIADDR             == 0) return;
+    // if (value == LINK_TYPE_NETWORKADDR   && ENABLE_LINK_TYPE_NETWORKADDR         == 0) return;
+
     data.links.push({"source": source, "target": target, "value": value});
 }
 
@@ -616,30 +707,34 @@ function make_iols_and_connection_expert() {
 }
 
 function validate_links() {
-    var i, src_found, tgt_found;
+    var src_found, tgt_found;
     let links = data.links;
     let nodes = data.nodes;
-    for (let j=0; j<links.length; j++) {
+    for (let j=links.length-1; j>=0; j--) {
         let src_id = links[j].source;
         let tgt_id = links[j].target;
         src_found = 0;
-        for (i=nodes.length-1; i>=0 && !src_found; i--) {
+        for (let i=0; i<nodes.length && !src_found; i++) {
             let node = nodes[i];
             if (src_id == node.id) {
                 src_found = 1;
             }
         }
         tgt_found = 0;
-        for (i=nodes.length-1; i>=0 && !tgt_found; i--) {
+        for (let i=0; i<nodes.length && !tgt_found; i++) {
             if (tgt_id == nodes[i].id) {
                 tgt_found = 1;
             }
         }
         if (!src_found) {
             console.log("link.source not found in nodes: " + src_id);
-            delete data.links[i];
-        } else if (!tgt_found) {
+            console.log(data.links[j])
+       } else if (!tgt_found) {
             console.log("link.target not found in nodes: " + tgt_id);
+            console.log(data.links[j])
+        }
+        if (!src_found || !tgt_found) {
+            data.links.splice(j, 1);
         }
     }
 }
@@ -704,10 +799,9 @@ function make_data() {
     // make_qcs_tse_clients();
     // make_qcs_tse_host();
 
-    // console.log("data:");
     console.log(JSON.stringify(data, null, 2));
+    show_stats();
     validate_links();
-
     show_stats();
 }
 

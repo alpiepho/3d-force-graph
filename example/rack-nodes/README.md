@@ -24,20 +24,20 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] exapnd for IOLS 
 - [x] function add_data_node and add_data_link
 - [x] replace name/subname with names[]
+- [-] use const for id strings
+- [ ] add enables and filters for nodes and links (code is a bit ugly)
 - [ ] exapnd for KDI 
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
 - [ ] exapnd for TSE 
 
 - [ ] clean up data vs racks.json
-- [ ] use const for id strings
-
-
 - [ ] experiment with colors of nodes/links
 - [ ] experiment with colors on links/nodes for errors
 - [ ] controls to hide levels
 - [ ] controls to highlight levels
-- [ ] controls to collapse levels? hide empty slots?
+- [ ] controls to hide empty slots?
+- [ ] controls to collapse levels?
 
 ## Sample KDI node list
 
