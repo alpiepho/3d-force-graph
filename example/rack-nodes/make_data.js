@@ -7,6 +7,7 @@ var TOTAL_RACKS         = 10;
 var TOTAL_CHASSIS       = 6;
 var TOTAL_SLOTS         = 18;
 var TOTAL_PCIECARDS     = 3;
+var RACKS_MODIFIED      = 0;
 
 const NODE_TYPE_ROOT                = 0;  // root, or set of racks
 const NODE_TYPE_RACK                = 1;  // physical rack
@@ -17,7 +18,7 @@ const NODE_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software cli
 const NODE_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
 // NOTE: skipping nodes for network cards, might need for DII
-// const NODE_TYPE_NETWORKCARD       = 8; // each client PC will have at least 1 network card
+const NODE_TYPE_NETWORKCARD         = 8; // each client PC will have at least 1 network card
 const NODE_TYPE_IOLS                = 9;  // instance of IOLS libraries per client PC
 const NODE_TYPE_CONNECTION_EXPERT   = 10; // instance of Connection Expert per client PC
 // const NODE_TYPE_TSE_CLIENT
@@ -27,7 +28,7 @@ const NODE_TYPE_CONNECTION_EXPERT   = 10; // instance of Connection Expert per c
 // const NODE_TYPE_KDI_ROOT
 
 // NOTE: no need for this
-// const LINK_TYPE_ROOT              = 0;  // root, or set of racks
+const LINK_TYPE_ROOT                = 0;  // root, or set of racks
 const LINK_TYPE_RACK                = 1;  // physical rack
 const LINK_TYPE_CHASSIS             = 2;  // physical chassis within a rack
 const LINK_TYPE_SLOT                = 3;  // physical slot within a chassis (1 is special, 19 is special)
@@ -35,9 +36,9 @@ const LINK_TYPE_MODULE              = 4;  // physical module inserted in slot, m
 const LINK_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software client
 const LINK_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
 const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
-const LINK_TYPE_PCIEBACKPLANE       = 8;  // PCIE bus within the chassis
-const LINK_TYPE_PCIECABLE           = 9;  // cable from PCIE_CONNECTOR to system controller MODULE
-const LINK_TYPE_NETWORKCABLE        = 10; // TODO: is this how to show network?
+const LINK_TYPE_PCIEBACKPLANE       = 108;  // PCIE bus within the chassis
+const LINK_TYPE_PCIECABLE           = 109;  // cable from PCIE_CONNECTOR to system controller MODULE
+const LINK_TYPE_NETWORKCABLE        = 110; // TODO: is this how to show network?
 const NODE_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
 // const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
@@ -105,6 +106,7 @@ function enable_limited_system() {
     TOTAL_CHASSIS = 2;
     TOTAL_SLOTS = 18;
     TOTAL_PCIECARDS = 3;
+    RACKS_MODIFIED = 1;
 }
 
 function enable_software_only() {
@@ -117,7 +119,7 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
     ENABLE_NODE_TYPE_PCIECARD            = 0;
     // NOTE: skipping nodes for network cards, might need for DII
-    // ENABLE_NODE_TYPE_NETWORKCARD       = 1;
+    ENABLE_NODE_TYPE_NETWORKCARD        = 1;
     ENABLE_NODE_TYPE_IOLS                = 1;
     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
     // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
@@ -137,7 +139,7 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_WINDOWSPC_CLIENT     && ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    == 0) return;
     if (group == NODE_TYPE_WINDOWSPC_HOST       && ENABLE_NODE_TYPE_WINDOWSPC_HOST      == 0) return;
     if (group == NODE_TYPE_PCIECARD             && ENABLE_NODE_TYPE_PCIECARD            == 0) return;
-    // if (group == NODE_TYPE_NETWORKCARD       && ENABLE_NODE_TYPE_NETWORKCARD         == 0) return;
+    if (group == NODE_TYPE_NETWORKCARD          && ENABLE_NODE_TYPE_NETWORKCARD         == 0) return;
     if (group == NODE_TYPE_IOLS                 && ENABLE_NODE_TYPE_IOLS                == 0) return;
     if (group == NODE_TYPE_CONNECTION_EXPERT    && ENABLE_NODE_TYPE_CONNECTION_EXPERT   == 0) return;
     // if (group == NODE_TYPE_TSE_CLIENT        && ENABLE_NODE_TYPE_TSE_CLIENT          == 0) return;
@@ -424,7 +426,26 @@ function make_hvi_cables(chassis_id) { // TODO
 }
 
 function make_root() {
-    add_data_node("All", ["All Racks"], NODE_TYPE_ROOT);
+    var names = [];
+    names.push("All Racks")
+    if (RACKS_TYPE == RACKS_TYPE_1000) {
+        names.push("type 1000");
+        names.push("10 racks");
+        names.push("6 chassis per rack");
+        names.push("1 pc per rack");
+        names.push("1 pc host");
+    }
+    if (RACKS_TYPE == RACKS_TYPE_16x6) {
+        names.push("type 16x6");
+        names.push("1 racks");
+        names.push("6 chassis per rack");
+        names.push("1 pc per chassis");
+        names.push("no pc host");
+    }
+    if (RACKS_MODIFIED) {
+        names.push("DEBUG - modified");
+    }
+    add_data_node("All", names, NODE_TYPE_ROOT);
 }
 
 function make_racks() {

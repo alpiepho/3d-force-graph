@@ -33,18 +33,20 @@
       .graphData(data)
       .nodeAutoColorBy('group')
       .linkAutoColorBy('value')
+      .linkWidth(4)
       .nodeThreeObject(node => {
         const nodeEl = document.createElement('div');
         nodeEl.textContent = node.id;
         nodeEl.style.color = node.color;
         nodeEl.className = 'node-label';
-        nodeEl.innerText = "";
+        var text = "";
         if (node.names) {
           for (let i=0; i<node.names.length; i++) {
-            if (i>0) nodeEl.innerText += "\n";
-            nodeEl.innerText += node.names[i];
+            if (i>0) text += "\n";
+            text += node.names[i];
           }
         }
+        nodeEl.innerText = text;
         return new CSS2DObject(nodeEl);
       })
       .nodeThreeObjectExtend(true)
