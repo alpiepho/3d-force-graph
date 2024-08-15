@@ -21,11 +21,12 @@ const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCI
 const NODE_TYPE_NETWORKCARD         = 8; // each client PC will have at least 1 network card
 const NODE_TYPE_IOLS                = 9;  // instance of IOLS libraries per client PC
 const NODE_TYPE_CONNECTION_EXPERT   = 10; // instance of Connection Expert per client PC
-// const NODE_TYPE_TSE_CLIENT
+const NODE_TYPE_KDI_ROOT            = 11; // root for KDI
+const NODE_TYPE_KDI_ROOT_SVC        = 12; // root service for KDI
+const NODE_TYPE_KDI_CLIENT          = 13;
+const NODE_TYPE_KDI_CLIENT_SVC      = 14;
 // const NODE_TYPE_TSE_HOST
-// const NODE_TYPE_KDI_CLIENT
-// const NODE_TYPE_KDI_SERVICE
-// const NODE_TYPE_KDI_ROOT
+// const NODE_TYPE_TSE_CLIENT
 
 // NOTE: no need for this
 const LINK_TYPE_ROOT                = 0;  // root, or set of racks
@@ -39,10 +40,9 @@ const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCI
 const LINK_TYPE_PCIEBACKPLANE       = 108;  // PCIE bus within the chassis
 const LINK_TYPE_PCIECABLE           = 109;  // cable from PCIE_CONNECTOR to system controller MODULE
 const LINK_TYPE_NETWORKCABLE        = 110; // TODO: is this how to show network?
-const NODE_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
-// const LINK_TYPE_HVICABLE            = 10; // cable between M9032A/ M9033A modules (HVI bus)
+const LINK_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
+// const LINK_TYPE_HVICABLE            = 12; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
-// const LINK_TYPE_KDI
 // const const LINK_TYPE_PCIEADDR
 // const LINK_TYPE_HVIADDR
 // const LINK_TYPE_NETWORKADDR
@@ -59,11 +59,12 @@ var ENABLE_NODE_TYPE_PCIECARD            = 1;
 // var ENABLE_NODE_TYPE_NETWORKCARD       = 1;
 var ENABLE_NODE_TYPE_IOLS                = 1;
 var ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-// var ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
+var ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+var ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
+var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+var ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
 // var ENABLE_NODE_TYPE_TSE_HOST            = 1;
-// var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-// var ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
-// var ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+// var ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
 
 // NOTE: no need for this
 // var ENABLE_LINK_TYPE_ROOT                = 1;
@@ -77,10 +78,9 @@ var ENABLE_LINK_TYPE_PCIECARD            = 1;
 var ENABLE_LINK_TYPE_PCIEBACKPLANE       = 1;
 var ENABLE_LINK_TYPE_PCIECABLE           = 1;
 var ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
-var ENABLE_NODE_TYPE_SOFTWARE            = 1;
+var ENABLE_LINK_TYPE_SOFTWARE            = 1;
 // var ENABLE_LINK_TYPE_HVICABLE            = 1;
 // var ENABLE_LINK_TYPE_IOLS                = 1;
-// var ENABLE_LINK_TYPE_KDI                 = 1;
 // var ENABLE_LINK_TYPE_PCIEADDR            = 1;
 // var ENABLE_LINK_TYPE_HVIADDR             = 1;
 // var ENABLE_LINK_TYPE_NETWORKADDR         = 1;
@@ -106,7 +106,7 @@ function enable_limited_system() {
     TOTAL_CHASSIS = 2;
     TOTAL_SLOTS = 18;
     TOTAL_PCIECARDS = 3;
-    RACKS_MODIFIED = 1;
+    RACKS_MODIFIED |= 1;
 }
 
 function enable_software_only() {
@@ -122,12 +122,15 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_NETWORKCARD        = 1;
     ENABLE_NODE_TYPE_IOLS                = 1;
     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
     // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
     // ENABLE_NODE_TYPE_TSE_HOST            = 1;
     // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
     // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
-    // ENABLE_NODE_TYPE_KDI_ROOT            = 1;
-    RACKS_MODIFIED = 2;
+    RACKS_MODIFIED |= 2;
 }
 
 function add_data_node(id, names, group) {
@@ -143,11 +146,12 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_NETWORKCARD          && ENABLE_NODE_TYPE_NETWORKCARD         == 0) return;
     if (group == NODE_TYPE_IOLS                 && ENABLE_NODE_TYPE_IOLS                == 0) return;
     if (group == NODE_TYPE_CONNECTION_EXPERT    && ENABLE_NODE_TYPE_CONNECTION_EXPERT   == 0) return;
-    // if (group == NODE_TYPE_TSE_CLIENT        && ENABLE_NODE_TYPE_TSE_CLIENT          == 0) return;
+    if (group == NODE_TYPE_KDI_ROOT             && ENABLE_NODE_TYPE_KDI_ROOT            == 0) return;
+    if (group == NODE_TYPE_KDI_ROOT_SVC         && ENABLE_NODE_TYPE_KDI_ROOT_SVC        == 0) return;
+    if (group == NODE_TYPE_KDI_CLIENT           && ENABLE_NODE_TYPE_KDI_CLIENT          == 0) return;
+    if (group == NODE_TYPE_KDI_CLIENT_SVC       && ENABLE_NODE_TYPE_KDI_CLIENT_SVC      == 0) return;
     // if (group == NODE_TYPE_TSE_HOST          && ENABLE_NODE_TYPE_TSE_HOST            == 0) return;
-    // if (group == NODE_TYPE_KDI_CLIENT        && ENABLE_NODE_TYPE_KDI_CLIENT          == 0) return;
-    // if (group == NODE_TYPE_KDI_SERVICE       && ENABLE_NODE_TYPE_KDI_SERVICE         == 0) return;
-    // if (group == NODE_TYPE_KDI_ROOT          && ENABLE_NODE_TYPE_KDI_ROOT            == 0) return;
+    // if (group == NODE_TYPE_TSE_CLIENT        && ENABLE_NODE_TYPE_TSE_CLIENT          == 0) return;
 
     data.nodes.push({"id": id, "names": names, "group": group});
 }
@@ -165,10 +169,9 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_PCIEBACKPLANE    && ENABLE_LINK_TYPE_PCIEBACKPLANE       == 0) return;
     if (value == LINK_TYPE_PCIECABLE        && ENABLE_LINK_TYPE_PCIECABLE           == 0) return;
     if (value == LINK_TYPE_NETWORKCABLE     && ENABLE_LINK_TYPE_NETWORKCABLE        == 0) return;
-    if (value == NODE_TYPE_SOFTWARE         && ENABLE_NODE_TYPE_SOFTWARE            == 0) return;
+    if (value == LINK_TYPE_SOFTWARE         && ENABLE_LINK_TYPE_SOFTWARE            == 0) return;
     // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
     // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
-    // if (value == LINK_TYPE_KDI           && ENABLE_LINK_TYPE_KDI                 == 0) return;
     // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
     // if (value == LINK_TYPE_HVIADDR       && ENABLE_LINK_TYPE_HVIADDR             == 0) return;
     // if (value == LINK_TYPE_NETWORKADDR   && ENABLE_LINK_TYPE_NETWORKADDR         == 0) return;
@@ -443,10 +446,10 @@ function make_root() {
         names.push("1 pc per chassis");
         names.push("no pc host");
     }
-    if (RACKS_MODIFIED == 1) {
+    if (RACKS_MODIFIED & 0x01) {
         names.push("DEBUG - modified");
     }
-    if (RACKS_MODIFIED == 2) {
+    if (RACKS_MODIFIED & 0x02) {
         names.push("SOFTWARE ONLY");
     }
     add_data_node("All", names, NODE_TYPE_ROOT);
@@ -676,7 +679,7 @@ function make_iols_and_connection_expert() {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
             let iols_id = pc_id + "_IOLS" + 1
-            add_data_link(pc_id, iols_id, NODE_TYPE_SOFTWARE);
+            add_data_link(pc_id, iols_id, LINK_TYPE_SOFTWARE);
         }
         // add connection expert to pc client nodes (1 pc per rack)
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -693,7 +696,7 @@ function make_iols_and_connection_expert() {
             let pc_id = rack_id + "_PC" + 1;
             let iols_id = pc_id + "_IOLS" + 1
             let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-            add_data_link(iols_id, ce_id, NODE_TYPE_SOFTWARE);
+            add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE);
         }
     }
     if (RACKS_TYPE == RACKS_TYPE_16x6) {
@@ -713,7 +716,7 @@ function make_iols_and_connection_expert() {
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
-                add_data_link(pc_id, iols_id, NODE_TYPE_SOFTWARE);
+                add_data_link(pc_id, iols_id, LINK_TYPE_SOFTWARE);
             }
         }
        // add connection expert to pc client nodes (1 pc per chassis, single rack)
@@ -734,10 +737,105 @@ function make_iols_and_connection_expert() {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
                 let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-                add_data_link(iols_id, ce_id, NODE_TYPE_SOFTWARE);
+                add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE);
             }
         }
     } 
+}
+
+function make_kdi_root() {
+    var names = [];
+    names.push("KDI Root");
+    // ex. from https://confluence.it.keysight.com/display/ICCD/3.6+node_list+-+KDIC+Service+API
+    // "id": "AFUVLCINL4A",
+    // "fabric_id": "6d9dd2fd-72f7-483c-a078-317168f69fcc",
+    // "name": "TS2TEST3.ggn.is.keysight.com",
+    // "online": true,
+    // "version": "3.5.0",
+    // "ip": "10.15.98.77",
+    // "http_port": "9090",
+    // "client_type": "root",
+    // "macaddr": "6c:02:e0:61:bb:4d"
+    names.push("id: AFUVLCINL4A");
+    names.push("fabric_id: 6d9dd2fd-72f7-483c-a078-317168f69fcc");
+    var kdi_root_id = "KDIRoot";
+    add_data_node(kdi_root_id, names, NODE_TYPE_ROOT);
+
+    names = [];
+    names.push("KDIS");
+    names.push("Hydra");
+    var kdi_root_kdis_id = kdi_root_id + "_KDIS";
+    add_data_node(kdi_root_kdis_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE);
+}
+
+function make_kdi_clients() {
+    if (RACKS_TYPE == RACKS_TYPE_1000) {
+        // add kdi client to pc client nodes (1 pc per rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            let kdiclient_id = pc_id + "_KDICLIENT" + 1
+            let kdiclient_name = "KDI Client"
+            add_data_node(kdiclient_id, [kdiclient_name], NODE_TYPE_KDI_CLIENT);
+        }
+        // add kdi client service to pc client nodes (1 pc per rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
+            let kdiclient_svc_name = "KDI Client SVC"
+            add_data_node(kdiclient_svc_id, [kdiclient_svc_name], NODE_TYPE_KDI_CLIENT_SVC);
+        }
+        // add kdi client service to pc links for each rack
+        var kdi_root_id = "KDIRoot";
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC" + 1;
+            let iols_id = pc_id + "_IOLS" + 1
+            let kdiclient_id = pc_id + "_KDICLIENT" + 1
+            let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
+            add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+            add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
+            add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE);
+        }
+    }
+    if (RACKS_TYPE == RACKS_TYPE_16x6) {
+        // add kdi client to pc client nodes (1 pc per chassis, single rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let kdiclient_id = pc_id + "_KDICLIENT" + 1
+                let kdiclient_name = "KDI Client"
+                add_data_node(kdiclient_id, [kdiclient_name], NODE_TYPE_KDI_CLIENT);
+            }
+        }
+        // add kdi client service to pc client nodes (1 pc per chassis, single rack)
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
+                let kdiclient_svc_name = "KDI Client SVC"
+                add_data_node(kdiclient_svc_id, [kdiclient_svc_name], NODE_TYPE_KDI_CLIENT_SVC);
+            }
+        }
+        // add kdi client service to pc links for each rack
+        var kdi_root_id = "KDIRoot";
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                let iols_id = pc_id + "_IOLS" + 1
+                let kdiclient_id = pc_id + "_KDICLIENT" + 1
+                let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
+                add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE);
+            }
+        }
+    }     
 }
 
 function validate_links() {
@@ -810,7 +908,7 @@ function make_data() {
     data["nodes"] = [];
     data["links"] = [];
  
-    select_racks_1000();
+    // select_racks_1000();
     select_racks_16x6();
 
     // uses RACKS_MODIFIED
@@ -835,11 +933,12 @@ function make_data() {
 
     // SOFTWARE
     make_iols_and_connection_expert();
-    // make_kdi_clients();
-    // make_kdi_root();
-    // make_qcs_tse_clients();
+    make_kdi_root();
+    make_kdi_clients();
+    // make_kdi_other();
     // make_qcs_tse_host();
-
+    // make_qcs_tse_clients();
+ 
     console.log(JSON.stringify(data, null, 2));
     show_stats();
     validate_links();
