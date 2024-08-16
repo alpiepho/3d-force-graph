@@ -1,0 +1,46 @@
+#  see system_definition0.png 
+
+# do these cross racks??
+# yes
+# tse-tcp://localhost -> tse-tcp://10.10.10.102:8674
+# tse-tcp://localhost -> tse-tcp://10.10.10.103:8674
+
+topology:
+    # pc1 rack chassis2
+    - chassis: tse-tcp://localhost/PXI0::3::BACKPLANE  # assume M9033A 5 port
+    downstream:
+        - 1: tse-tcp://localhost/PXI0::4::BACKPLANE
+        - 2: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE # to 
+        - 3: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE
+
+    # pc1 rack chassis3
+    - chassis: tse-tcp://localhost/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    downstream:
+        - 1: tse-tcp:://localhost/PXI0::1::BACKPLANE
+        - 2: tse-tcp:://localhost/PXI0::2::BACKPLANE
+        - 3: tse-tcp:://localhost/PXI0::5::BACKPLANE
+        - 4: tse-tcp:://localhost/PXI0::6::BACKPLANE
+
+    # pc2 rack chassis? (1,4,or 5)
+    - chassis: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE # assume M9032A 2 port
+    downstream:
+      - 1: tse-tcp:://10.10.10.102:8674/PXI0::4::BACKPLANE
+
+    # pc2 rack chassis? (2 or 3)
+    - chassis: tse-tcp://10.10.10.102:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    downstream:
+        - 1: tse-tcp:://10.10.10.102/PXI0::1::BACKPLANE
+        - 2: tse-tcp:://10.10.10.102/PXI0::2::BACKPLANE
+        - 3: tse-tcp:://10.10.10.102/PXI0::5::BACKPLANE
+        - 4: tse-tcp:://10.10.10.102/PXI0::6::BACKPLANE
+
+    # pc3 rack chassis? (1,4,or 5)
+    - chassis: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE # assume M9032A 2 port
+    downstream:
+      - 1: tse-tcp:://10.10.10.103:8674/PXI0::4::BACKPLANE
+
+    # pc3 rack  chassis? (2 or 3)
+    - chassis: tse-tcp://10.10.10.103:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    downstream:
+        - 1: tse-tcp:://10.10.10.103/PXI0::1::BACKPLANE
+        - 2: tse-tcp:://10.10.10.103/PXI0::2::BACKPLANE

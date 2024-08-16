@@ -32,6 +32,7 @@ const NODE_TYPE_KDI_CLIENT          = 13;
 const NODE_TYPE_KDI_CLIENT_SVC      = 14;
 const NODE_TYPE_QCS_HOST            = 15;
 const NODE_TYPE_QCS_CLIENT          = 16;
+const NODE_TYPE_SSYNC_PORT          = 17;
 
 // NOTE: no need for this
 const LINK_TYPE_ROOT                = 0;  // root, or set of racks
@@ -51,6 +52,7 @@ const LINK_TYPE_SOFTWARE_KDIROOT    = 13;
 const LINK_TYPE_SOFTWARE_KDIPEER    = 14;
 const LINK_TYPE_SOFTWARE_QCS_EXT    = 15;
 const LINK_TYPE_SOFTWARE_QCS_INT    = 16;
+const LINK_TYPE_SSYNC_PORT          = 17;
 // const LINK_TYPE_HVICABLE            = x; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
 // const const LINK_TYPE_PCIEADDR
@@ -75,6 +77,7 @@ var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
 var ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
 var ENABLE_NODE_TYPE_QCS_HOST            = 1;
 var ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+var ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
 
 // NOTE: no need for this
 // var ENABLE_LINK_TYPE_ROOT                = 1;
@@ -94,6 +97,7 @@ var ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
+var ENABLE_LINK_TYPE_SSYNC_PORT          = 1;
 // var ENABLE_LINK_TYPE_HVICABLE            = 1;
 // var ENABLE_LINK_TYPE_IOLS                = 1;
 // var ENABLE_LINK_TYPE_PCIEADDR            = 1;
@@ -141,8 +145,9 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
     ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
     ENABLE_NODE_TYPE_QCS_HOST            = 1;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
     RACKS_MODIFIED |= 2;
 }
 
@@ -152,8 +157,9 @@ function enable_kdi_only() {
     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
 
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
     ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
 
     RACKS_MODIFIED |= 4;
 }
@@ -194,9 +200,10 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_KDI_CLIENT_SVC       && ENABLE_NODE_TYPE_KDI_CLIENT_SVC      == 0) return;
     if (group == NODE_TYPE_QCS_HOST             && ENABLE_NODE_TYPE_QCS_HOST            == 0) return;
     if (group == NODE_TYPE_QCS_CLIENT           && ENABLE_NODE_TYPE_QCS_CLIENT          == 0) return;
-
+    if (group == NODE_TYPE_SSYNC_PORT           && ENABLE_NODE_TYPE_SSYNC_PORT          == 0) return;
+    
     // DEBUG
-    //names.unshift(id);
+    //names.push(id);
 
     data.nodes.push({"id": id, "names": names, "group": group});
 }
@@ -220,6 +227,7 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_SOFTWARE_KDIPEER && ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    == 0) return;
     if (value == LINK_TYPE_SOFTWARE_QCS_EXT && ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    == 0) return;
     if (value == LINK_TYPE_SOFTWARE_QCS_INT && ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    == 0) return;
+    if (value == LINK_TYPE_SSYNC_PORT       && ENABLE_LINK_TYPE_SSYNC_PORT          == 0) return;
     // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
     // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
     // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
@@ -271,13 +279,13 @@ function make_module(chassis_id, index, subname) {
 
 function make_chassisset1(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9032A");
-    make_module(chassis_id, 11, "M5300A");
-    make_module(chassis_id, 13, "M5300A");
+    make_module(chassis_id, 2, "M5300A");   // 1 port
+    make_module(chassis_id, 4, "M5300A");   // 1 port
+    make_module(chassis_id, 6, "M5300A");   // 1 port
+    make_module(chassis_id, 8, "M5300A");   // 1 port
+    make_module(chassis_id, 10, "M9032A");  // 2 port
+    make_module(chassis_id, 11, "M5300A");  // 1 port
+    make_module(chassis_id, 13, "M5300A");  // 1 port
     make_module(chassis_id, 15, "M5201A");
     make_module(chassis_id, 16, "M5200A");
     make_module(chassis_id, 17, "Y1731A");
@@ -286,67 +294,67 @@ function make_chassisset1(chassis_id) {
 
 function make_chassisset2(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9033A");
-    make_module(chassis_id, 12, "M5300A");
-    make_module(chassis_id, 14, "M5300A");
+    make_module(chassis_id, 2, "M5300A");   // 1 port
+    make_module(chassis_id, 4, "M5300A");   // 1 port
+    make_module(chassis_id, 6, "M5300A");   // 1 port
+    make_module(chassis_id, 8, "M5300A");   // 1 port
+    make_module(chassis_id, 10, "M9033A");  // 5 port
+    make_module(chassis_id, 12, "M5300A");  // 1 port
+    make_module(chassis_id, 14, "M5300A");  // 1 port
     make_module(chassis_id, 17, "M5201A");
     make_module(chassis_id, 18, "M5200A");
 }
 
 function make_chassisset3(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9033A");
-    make_module(chassis_id, 12, "M5300A");
-    make_module(chassis_id, 14, "M5300A");
+    make_module(chassis_id, 2, "M5300A");   // 1 port
+    make_module(chassis_id, 4, "M5300A");   // 1 port
+    make_module(chassis_id, 6, "M5300A");   // 1 port
+    make_module(chassis_id, 8, "M5300A");   // 1 port
+    make_module(chassis_id, 10, "M9033A");  // 5 port
+    make_module(chassis_id, 12, "M5300A");  // 1 port
+    make_module(chassis_id, 14, "M5300A");  // 1 port
     make_module(chassis_id, 17, "M5201A");
     make_module(chassis_id, 18, "M5200A");
 }
 
 function make_chassisset4(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9032A");
-    make_module(chassis_id, 11, "M5300A");
-    make_module(chassis_id, 13, "M5300A");
-    make_module(chassis_id, 15, "M5300A");
+    make_module(chassis_id, 2, "M5300A");   // 1 port
+    make_module(chassis_id, 4, "M5300A");   // 1 port
+    make_module(chassis_id, 6, "M5300A");   // 1 port
+    make_module(chassis_id, 8, "M5300A");   // 1 port
+    make_module(chassis_id, 10, "M9032A");  // 2 port
+    make_module(chassis_id, 11, "M5300A");  // 1 port
+    make_module(chassis_id, 13, "M5300A");  // 1 port
+    make_module(chassis_id, 15, "M5300A");  // 1 port
     make_module(chassis_id, 17, "M5201A");
     make_module(chassis_id, 18, "M5200A");
 }
 
 function make_chassisset5(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9032A");
-    make_module(chassis_id, 11, "M5300A");
-    make_module(chassis_id, 13, "M5300A");
-    make_module(chassis_id, 15, "M5300A");
+    make_module(chassis_id, 2, "M5300A"); // 1 port
+    make_module(chassis_id, 4, "M5300A"); // 1 port
+    make_module(chassis_id, 6, "M5300A"); // 1 port
+    make_module(chassis_id, 8, "M5300A"); // 1 port
+    make_module(chassis_id, 10, "M9032A"); // 2 port
+    make_module(chassis_id, 11, "M5300A"); // 1 port
+    make_module(chassis_id, 13, "M5300A"); // 1 port
+    make_module(chassis_id, 15, "M5300A"); // 1 port
     make_module(chassis_id, 17, "M5201A");
     make_module(chassis_id, 18, "M5200A");
 }
 
 function make_chassisset6(chassis_id) {
     make_module(chassis_id, 1, "M9023A");
-    make_module(chassis_id, 2, "M5300A");
-    make_module(chassis_id, 4, "M5300A");
-    make_module(chassis_id, 6, "M5300A");
-    make_module(chassis_id, 8, "M5300A");
-    make_module(chassis_id, 10, "M9032A");
-    make_module(chassis_id, 11, "M5300A");
-    make_module(chassis_id, 13, "M5300A");
+    make_module(chassis_id, 2, "M5300A"); // 1 port
+    make_module(chassis_id, 4, "M5300A"); // 1 port
+    make_module(chassis_id, 6, "M5300A"); // 1 port
+    make_module(chassis_id, 8, "M5300A"); // 1 port
+    make_module(chassis_id, 10, "M9032A"); // 2 port
+    make_module(chassis_id, 11, "M5300A"); // 1 port
+    make_module(chassis_id, 13, "M5300A"); // 1 port
     make_module(chassis_id, 15, "M5201A");
     make_module(chassis_id, 16, "M5200A");
     if (RACKS_TYPE == RACKS_TYPE_1000) {
@@ -711,6 +719,27 @@ function make_pcie_cables() {
                     make_pcie_cables16x6(pc_id, chassis_id)
                 }
             }    
+        }
+    }
+}
+
+var system_sync_modules = [];
+function make_system_sync_ports() {
+    // cycle thru all modules and add ports to hvi specific modules
+    let ex = "_Module[0-9]+$"
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            var count = 0;
+            if (node.names[1] == "M9033A") count = 5;
+            if (node.names[1] == "M9032A") count = 2;
+            if (node.names[1] == "M5300A") count = 1;
+            for (let j=1; j<=count; j++) {
+                var ssync_port_id = node.id + "_SSyncPort" + j;
+                var ssync_port_name = "SSyncPort" + j;
+                add_data_node(ssync_port_id, [ssync_port_name], NODE_TYPE_SSYNC_PORT);
+                add_data_link(node.id, ssync_port_id, LINK_TYPE_SSYNC_PORT);
+            }
         }
     }
 }
@@ -1098,6 +1127,7 @@ function make_data() {
     make_slots();
     make_modules();
     make_pcie_cables();
+    make_system_sync_ports();
     // make_hvi_cables();
 
     // BUSSES

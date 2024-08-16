@@ -29,9 +29,11 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] exapnd for KDI 
 - [x] spilt LINK_TYPE_SOFTWARE for better control?
 - [x] expand for QCS 
+- [x] add HVICONNECTORS (SSYnc ports)
 - [ ] update comments on types
-- [ ] add HVICONNECTORS
+- [ ] lock down node/link colors instead of auto
 - [ ] add HVICABLE
+- [ ] add PCIE bus
 
 - [ ] clean up data vs racks.json
 - [ ] experiment with colors of nodes/links
