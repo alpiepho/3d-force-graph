@@ -9,6 +9,11 @@ var TOTAL_SLOTS         = 18;
 var TOTAL_PCIECARDS     = 3;
 var RACKS_MODIFIED      = 0;
 
+var TOTAL_OTHER_KDI_CLIENTS = 5;
+var TOTAL_OTHER_KDI_CLIENTS_SVC = 2;
+//var TOTAL_OTHER_KDI_CLIENTS_SVC = 10; // better for random
+var TOTAL_OTHER_KDI_RANDOMIZE = 0;
+
 const NODE_TYPE_ROOT                = 0;  // root, or set of racks
 const NODE_TYPE_RACK                = 1;  // physical rack
 const NODE_TYPE_CHASSIS             = 2;  // physical chassis within a rack
@@ -131,6 +136,14 @@ function enable_software_only() {
     // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
     // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
     RACKS_MODIFIED |= 2;
+}
+
+function enable_kdi_only() {
+    enable_software_only();
+    ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+    RACKS_MODIFIED |= 4;
 }
 
 function add_data_node(id, names, group) {
@@ -452,6 +465,9 @@ function make_root() {
     if (RACKS_MODIFIED & 0x02) {
         names.push("SOFTWARE ONLY");
     }
+    if (RACKS_MODIFIED & 0x04) {
+        names.push("KDI ONLY");
+    }
     add_data_node("All", names, NODE_TYPE_ROOT);
 }
 
@@ -671,7 +687,7 @@ function make_iols_and_connection_expert() {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC1";
             let iols_id = pc_id + "_IOLS" + 1
-            let iols_name = "IOLS 1"
+            let iols_name = "IOLS"
             add_data_node(iols_id, [iols_name], NODE_TYPE_IOLS);
         }
         // add iols to pc links for each rack
@@ -706,7 +722,7 @@ function make_iols_and_connection_expert() {
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
-                let iols_name = "IOLS 1"
+                let iols_name = "IOLS"
                 add_data_node(iols_id, [iols_name], NODE_TYPE_IOLS);
             }
         }
@@ -742,6 +758,13 @@ function make_iols_and_connection_expert() {
         }
     } 
 }
+function trunc_name(full) {
+    var result = full;
+    if (result.length > 16) {
+        result = full.slice(0,16) + "...";
+    }
+    return result;
+}
 
 function make_kdi_root() {
     var names = [];
@@ -757,7 +780,7 @@ function make_kdi_root() {
     // "client_type": "root",
     // "macaddr": "6c:02:e0:61:bb:4d"
     names.push("id: AFUVLCINL4A");
-    names.push("fabric_id: 6d9dd2fd-72f7-483c-a078-317168f69fcc");
+    names.push(trunc_name("fabric_id: 6d9dd2fd-72f7-483c-a078-317168f69fcc"));
     var kdi_root_id = "KDIRoot";
     add_data_node(kdi_root_id, names, NODE_TYPE_ROOT);
 
@@ -769,6 +792,25 @@ function make_kdi_root() {
     add_data_link(kdi_root_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE);
 }
 
+var client_names_count = 1;
+function make_kdi_client_names(name) {
+    // "id": "U6STE441OLH",
+    // "fabric_id": "6d9dd2fd-72f7-483c-a078-317168f69fcc",
+    // "name": "SICTESTING1.ggn.is.keysight.com",
+    // "online": true,
+    // "version": "3.5.0",
+    // "ip": "10.15.97.22",
+    // "http_port": "9090",
+    // "client_type": "leaf",
+    // "macaddr": "c0:18:03:b8:04:2a"
+    var names = [];
+    names.push(name + " " + client_names_count);
+    names.push("id: U6STE441OLH" + client_names_count); // HACK
+    client_names_count++;
+    names.push(trunc_name("fabric_id: 6d9dd2fd-72f7-483c-a078-317168f69fcc"));
+    return names;
+}
+
 function make_kdi_clients() {
     if (RACKS_TYPE == RACKS_TYPE_1000) {
         // add kdi client to pc client nodes (1 pc per rack)
@@ -777,7 +819,8 @@ function make_kdi_clients() {
             let pc_id = rack_id + "_PC1";
             let kdiclient_id = pc_id + "_KDICLIENT" + 1
             let kdiclient_name = "KDI Client"
-            add_data_node(kdiclient_id, [kdiclient_name], NODE_TYPE_KDI_CLIENT);
+            let names = make_kdi_client_names(kdiclient_name);
+            add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
         }
         // add kdi client service to pc client nodes (1 pc per rack)
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -808,7 +851,8 @@ function make_kdi_clients() {
                 let pc_id = rack_id + "_PC" + j;
                 let kdiclient_id = pc_id + "_KDICLIENT" + 1
                 let kdiclient_name = "KDI Client"
-                add_data_node(kdiclient_id, [kdiclient_name], NODE_TYPE_KDI_CLIENT);
+                let names = make_kdi_client_names(kdiclient_name);
+                add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
             }
         }
         // add kdi client service to pc client nodes (1 pc per chassis, single rack)
@@ -836,6 +880,33 @@ function make_kdi_clients() {
             }
         }
     }     
+}
+
+function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function make_kdi_other() {
+    var kdi_other_id = "KDIOther";
+    var kdi_root_id = "KDIRoot";
+    for (let i=1; i<=TOTAL_OTHER_KDI_CLIENTS; i++) {
+        let kdiclient_id = kdi_other_id + "_KDICLIENT" + i
+        let kdiclient_name = "KDI Client"
+        let names = make_kdi_client_names(kdiclient_name);
+        add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
+        add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+
+        var total = TOTAL_OTHER_KDI_CLIENTS_SVC;
+        if (TOTAL_OTHER_KDI_RANDOMIZE) {
+            total = randomIntFromInterval(1, TOTAL_OTHER_KDI_CLIENTS_SVC);
+        }
+        for (let j=1; j<=total; j++) {
+            let kdiclient_svc_id = kdiclient_id + "_KDICLIENT_SVC" + j;
+            let kdiclient_svc_name = "KDI Client SVC " + j;
+            add_data_node(kdiclient_svc_id, [kdiclient_svc_name], NODE_TYPE_KDI_CLIENT_SVC);
+            add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
+        }
+    }
 }
 
 function validate_links() {
@@ -914,6 +985,7 @@ function make_data() {
     // uses RACKS_MODIFIED
     // enable_limited_system();
     enable_software_only();
+    enable_kdi_only();
 
     // HARDWARE
     make_root();
@@ -935,7 +1007,7 @@ function make_data() {
     make_iols_and_connection_expert();
     make_kdi_root();
     make_kdi_clients();
-    // make_kdi_other();
+    make_kdi_other();
     // make_qcs_tse_host();
     // make_qcs_tse_clients();
  

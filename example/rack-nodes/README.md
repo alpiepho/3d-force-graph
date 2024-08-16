@@ -26,7 +26,8 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] replace name/subname with names[]
 - [-] use const for id strings
 - [x] add enables and filters for nodes and links (code is a bit ugly)
-- [ ] exapnd for KDI 
+- [x] exapnd for KDI 
+- [ ] spilt LINK_TYPE_SOFTWARE for better control?
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
 - [ ] exapnd for TSE 
