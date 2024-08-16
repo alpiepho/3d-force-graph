@@ -28,7 +28,7 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] add enables and filters for nodes and links (code is a bit ugly)
 - [x] exapnd for KDI 
 - [x] spilt LINK_TYPE_SOFTWARE for better control?
-- [ ] expand for QSC 
+- [x] expand for QCS 
 - [ ] update comments on types
 - [ ] add HVICONNECTORS
 - [ ] add HVICABLE
