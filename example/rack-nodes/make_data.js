@@ -30,8 +30,8 @@ const NODE_TYPE_KDI_ROOT            = 11; // root for KDI
 const NODE_TYPE_KDI_ROOT_SVC        = 12; // root service for KDI
 const NODE_TYPE_KDI_CLIENT          = 13;
 const NODE_TYPE_KDI_CLIENT_SVC      = 14;
-// const NODE_TYPE_TSE_HOST
-// const NODE_TYPE_TSE_CLIENT
+const NODE_TYPE_QCS_HOST            = 15;
+const NODE_TYPE_QCS_CLIENT          = 16;
 
 // NOTE: no need for this
 const LINK_TYPE_ROOT                = 0;  // root, or set of racks
@@ -46,7 +46,12 @@ const LINK_TYPE_PCIEBACKPLANE       = 108;  // PCIE bus within the chassis
 const LINK_TYPE_PCIECABLE           = 109;  // cable from PCIE_CONNECTOR to system controller MODULE
 const LINK_TYPE_NETWORKCABLE        = 110; // TODO: is this how to show network?
 const LINK_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
-// const LINK_TYPE_HVICABLE            = 12; // cable between M9032A/ M9033A modules (HVI bus)
+const LINK_TYPE_SOFTWARE_IOLS       = 12;
+const LINK_TYPE_SOFTWARE_KDIROOT    = 13;
+const LINK_TYPE_SOFTWARE_KDIPEER    = 14;
+const LINK_TYPE_SOFTWARE_QCS_EXT    = 15;
+const LINK_TYPE_SOFTWARE_QCS_INT    = 16;
+// const LINK_TYPE_HVICABLE            = x; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
 // const const LINK_TYPE_PCIEADDR
 // const LINK_TYPE_HVIADDR
@@ -68,8 +73,8 @@ var ENABLE_NODE_TYPE_KDI_ROOT            = 1;
 var ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
 var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
 var ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-// var ENABLE_NODE_TYPE_TSE_HOST            = 1;
-// var ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
+var ENABLE_NODE_TYPE_QCS_HOST            = 1;
+var ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
 
 // NOTE: no need for this
 // var ENABLE_LINK_TYPE_ROOT                = 1;
@@ -84,6 +89,11 @@ var ENABLE_LINK_TYPE_PCIEBACKPLANE       = 1;
 var ENABLE_LINK_TYPE_PCIECABLE           = 1;
 var ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
 var ENABLE_LINK_TYPE_SOFTWARE            = 1;
+var ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 1;
+var ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
+var ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
+var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
+var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
 // var ENABLE_LINK_TYPE_HVICABLE            = 1;
 // var ENABLE_LINK_TYPE_IOLS                = 1;
 // var ENABLE_LINK_TYPE_PCIEADDR            = 1;
@@ -131,10 +141,8 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
     ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-    // ENABLE_NODE_TYPE_TSE_CLIENT          = 1;
-    // ENABLE_NODE_TYPE_TSE_HOST            = 1;
-    // ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-    // ENABLE_NODE_TYPE_KDI_SERVICE         = 1;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+    ENABLE_NODE_TYPE_QCS_HOST            = 1;
     RACKS_MODIFIED |= 2;
 }
 
@@ -143,7 +151,25 @@ function enable_kdi_only() {
     ENABLE_NODE_TYPE_RACK                = 0;
     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+
     RACKS_MODIFIED |= 4;
+}
+
+function enable_qcs_only() {
+    enable_software_only();
+    ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+
+    RACKS_MODIFIED |= 8;
 }
 
 function add_data_node(id, names, group) {
@@ -163,8 +189,8 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_KDI_ROOT_SVC         && ENABLE_NODE_TYPE_KDI_ROOT_SVC        == 0) return;
     if (group == NODE_TYPE_KDI_CLIENT           && ENABLE_NODE_TYPE_KDI_CLIENT          == 0) return;
     if (group == NODE_TYPE_KDI_CLIENT_SVC       && ENABLE_NODE_TYPE_KDI_CLIENT_SVC      == 0) return;
-    // if (group == NODE_TYPE_TSE_HOST          && ENABLE_NODE_TYPE_TSE_HOST            == 0) return;
-    // if (group == NODE_TYPE_TSE_CLIENT        && ENABLE_NODE_TYPE_TSE_CLIENT          == 0) return;
+    if (group == NODE_TYPE_QCS_HOST             && ENABLE_NODE_TYPE_QCS_HOST            == 0) return;
+    if (group == NODE_TYPE_QCS_CLIENT           && ENABLE_NODE_TYPE_QCS_CLIENT          == 0) return;
 
     data.nodes.push({"id": id, "names": names, "group": group});
 }
@@ -183,6 +209,11 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_PCIECABLE        && ENABLE_LINK_TYPE_PCIECABLE           == 0) return;
     if (value == LINK_TYPE_NETWORKCABLE     && ENABLE_LINK_TYPE_NETWORKCABLE        == 0) return;
     if (value == LINK_TYPE_SOFTWARE         && ENABLE_LINK_TYPE_SOFTWARE            == 0) return;
+    if (value == LINK_TYPE_SOFTWARE_IOLS    && ENABLE_LINK_TYPE_SOFTWARE_IOLS       == 0) return;
+    if (value == LINK_TYPE_SOFTWARE_KDIROOT && ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    == 0) return;
+    if (value == LINK_TYPE_SOFTWARE_KDIPEER && ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    == 0) return;
+    if (value == LINK_TYPE_SOFTWARE_QCS_EXT && ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    == 0) return;
+    if (value == LINK_TYPE_SOFTWARE_QCS_INT && ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    == 0) return;
     // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
     // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
     // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
@@ -712,7 +743,7 @@ function make_iols_and_connection_expert() {
             let pc_id = rack_id + "_PC" + 1;
             let iols_id = pc_id + "_IOLS" + 1
             let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-            add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE);
+            add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE_IOLS);
         }
     }
     if (RACKS_TYPE == RACKS_TYPE_16x6) {
@@ -753,7 +784,7 @@ function make_iols_and_connection_expert() {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
                 let ce_id = iols_id + "_CONNECTIONEXPERT" + 1
-                add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE);
+                add_data_link(iols_id, ce_id, LINK_TYPE_SOFTWARE_IOLS);
             }
         }
     } 
@@ -789,7 +820,7 @@ function make_kdi_root() {
     names.push("Hydra");
     var kdi_root_kdis_id = kdi_root_id + "_KDIS";
     add_data_node(kdi_root_kdis_id, names, NODE_TYPE_KDI_ROOT_SVC);
-    add_data_link(kdi_root_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE);
+    add_data_link(kdi_root_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE_KDIROOT);
 }
 
 var client_names_count = 1;
@@ -838,9 +869,9 @@ function make_kdi_clients() {
             let iols_id = pc_id + "_IOLS" + 1
             let kdiclient_id = pc_id + "_KDICLIENT" + 1
             let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
-            add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+            add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE_KDIROOT);
             add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
-            add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE);
+            add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE_IOLS);
         }
     }
     if (RACKS_TYPE == RACKS_TYPE_16x6) {
@@ -874,9 +905,9 @@ function make_kdi_clients() {
                 let iols_id = pc_id + "_IOLS" + 1
                 let kdiclient_id = pc_id + "_KDICLIENT" + 1
                 let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
-                add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE_KDIROOT);
                 add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
-                add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE_IOLS);
             }
         }
     }     
@@ -894,7 +925,7 @@ function make_kdi_other() {
         let kdiclient_name = "KDI Client"
         let names = make_kdi_client_names(kdiclient_name);
         add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
-        add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE);
+        add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE_KDIROOT);
 
         var total = TOTAL_OTHER_KDI_CLIENTS_SVC;
         if (TOTAL_OTHER_KDI_RANDOMIZE) {
@@ -907,6 +938,15 @@ function make_kdi_other() {
             add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
         }
     }
+}
+
+function make_qcs_host() {
+    // consol -> hcl -> ??
+}
+
+function make_qcs_clients() {
+    // ism leader - rack1
+    // ism follower - racks2-n
 }
 
 function validate_links() {
@@ -1008,8 +1048,8 @@ function make_data() {
     make_kdi_root();
     make_kdi_clients();
     make_kdi_other();
-    // make_qcs_tse_host();
-    // make_qcs_tse_clients();
+    make_qcs_host();
+    make_qcs_clients();
  
     console.log(JSON.stringify(data, null, 2));
     show_stats();
