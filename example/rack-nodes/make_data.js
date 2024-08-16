@@ -195,6 +195,9 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_QCS_HOST             && ENABLE_NODE_TYPE_QCS_HOST            == 0) return;
     if (group == NODE_TYPE_QCS_CLIENT           && ENABLE_NODE_TYPE_QCS_CLIENT          == 0) return;
 
+    // DEBUG
+    //names.unshift(id);
+
     data.nodes.push({"id": id, "names": names, "group": group});
 }
 
@@ -525,7 +528,7 @@ function make_client_pcs() {
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC1";
-            let pc_name = "PC 1";
+            let pc_name = "PC " + i;
             let pc_subname = "HP ZCentral 4R";
             add_data_node(pc_id, [pc_name, pc_subname], NODE_TYPE_WINDOWSPC_CLIENT);
         }
@@ -612,7 +615,7 @@ function make_host_pcs() {
         // add pc host nodes
         let all_id = "All";
         let pchost_id = all_id + "_PCHost" + 1;
-        let pchost_name = "PC Host" + 1;
+        let pchost_name = "PC 0 (Host)";
         let pchost_subname = "HP Z8";
         add_data_node(pchost_id, [pchost_name, pchost_subname], NODE_TYPE_WINDOWSPC_HOST);
         add_data_link(all_id, pchost_id, LINK_TYPE_WINDOWSPC_HOST);
@@ -664,10 +667,8 @@ function make_slots() {
         let rack_id = "All_Rack" + i
         for (let j=1; j<=TOTAL_CHASSIS; j++) {
             let chassis_id = rack_id + "_Chassis" + j
-            let chassis_name = "Chassis " + j
             for (let k=1; k<=TOTAL_SLOTS; k++) { // slot
                 let slot_id = chassis_id + "_Slot" + k
-                let slot_name = "Slot " + k
                 add_data_link(chassis_id, slot_id, LINK_TYPE_SLOT);
             }
         }
@@ -949,8 +950,6 @@ function make_qcs_host() {
         // add qsc consul to pc host nodes
         let all_id = "All";
         let pchost_id = all_id + "_PCHost" + 1;
-        let pchost_name = "PC Host" + 1;
-        let pchost_subname = "HP Z8";
         let consul_id = pchost_id + "_Consul" + 1;
         let consul_name = "Consul";
         add_data_node(consul_id, [consul_name], NODE_TYPE_QCS_HOST);
@@ -966,10 +965,12 @@ function make_qcs_host() {
         add_data_node(cli_id, [cli_name], NODE_TYPE_QCS_HOST);
         add_data_link(pchost_id, cli_id, LINK_TYPE_SOFTWARE);
         // add qsc hcl config service to pc host nodes
-        let hclconfig_id = consul_id + "_HCLConfigSvc" + 1;
+        let hclconfig_id = consul_id + "_HCLConfigSvc" + 0;
         let hclconfig_name = "HCL Config Svc 0";
         add_data_node(hclconfig_id, [hclconfig_name], NODE_TYPE_QCS_HOST);
+        console.log(hclconfig_id + " ---> " + hcl_id);
         add_data_link(hclconfig_id, hcl_id, LINK_TYPE_SOFTWARE_QCS_INT);
+        console.log(cli_id + " ---> " + hclconfig_id);
         add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
     }
 }
@@ -981,9 +982,7 @@ function make_qcs_clients() {
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC1";
-            let pc_name = "PC 1";
-            let pc_subname = "HP ZCentral 4R";
-            let ism_id = pc_id + "_ISM" + i;
+             let ism_id = pc_id + "_ISM" + i;
             let ism_name = "ISM Leader";
             if (i > 1) {
                 ism_name = "ISM Follower";
@@ -994,6 +993,7 @@ function make_qcs_clients() {
             let all_id = "All";
             let pchost_id = all_id + "_PCHost" + 1;
             let consul_id = pchost_id + "_Consul" + 1;
+            let cli_id = consul_id + "_CLI" + 1;
             add_data_link(ism_id, consul_id, LINK_TYPE_SOFTWARE_QCS_EXT);
             // add qsc hcl to pc client nodes
             let hcl_id = ism_id + "_HCL" + 1;
@@ -1005,30 +1005,8 @@ function make_qcs_clients() {
             let hclconfig_name = "HCL Config Svc" + i;
             add_data_node(hclconfig_id, [hclconfig_name], NODE_TYPE_QCS_HOST);
             add_data_link(hcl_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
-            // add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
+            add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
         }
-
-
-
-        // // add qsc consul to pc host nodes
-        // let all_id = "All";
-        // let pchost_id = all_id + "_PCHost" + 1;
-        // let pchost_name = "PC Host" + 1;
-        // let pchost_subname = "HP Z8";
-        // let consul_id = pchost_id + "_Consul" + 1;
-        // let consul_name = "Consul";
-        // add_data_node(consul_id, [consul_name], NODE_TYPE_QCS_HOST);
-        // add_data_link(pchost_id, consul_id, LINK_TYPE_SOFTWARE);
-        // // add qsc hclAAA to pc host nodes
-        // let hclaaa_id = consul_id + "_HdlAAA" + 1;
-        // let hclaaa_name = "Hcl AAA";
-        // add_data_node(hclaaa_id, [hclaaa_name], NODE_TYPE_QCS_HOST);
-        // add_data_link(consul_id, hclaaa_id, LINK_TYPE_SOFTWARE);
-        // // add qsc hclBBB to pc host nodes
-        // let hclbbb_id = consul_id + "_HdlBBB" + 1;
-        // let hclbbb_name = "Hcl BBB";
-        // add_data_node(hclbbb_id, [hclbbb_name], NODE_TYPE_QCS_HOST);
-        // add_data_link(hclaaa_id, hclbbb_id, LINK_TYPE_SOFTWARE);
     }
 }
 
@@ -1109,7 +1087,7 @@ function make_data() {
     enable_limited_system();
     // enable_software_only();
     // enable_kdi_only();
-    enable_qcs_only();
+    // enable_qcs_only();
 
     // HARDWARE
     make_root();
@@ -1135,10 +1113,10 @@ function make_data() {
     make_qcs_host();
     make_qcs_clients();
  
-    console.log(JSON.stringify(data, null, 2));
+    //console.log(JSON.stringify(data, null, 2));
     show_stats();
     validate_links();
-    console.log(JSON.stringify(data, null, 2));
+    //console.log(JSON.stringify(data, null, 2));
     show_stats();
 }
 
