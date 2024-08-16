@@ -52,7 +52,8 @@ const LINK_TYPE_SOFTWARE_KDIROOT    = 13;
 const LINK_TYPE_SOFTWARE_KDIPEER    = 14;
 const LINK_TYPE_SOFTWARE_QCS_EXT    = 15;
 const LINK_TYPE_SOFTWARE_QCS_INT    = 16;
-const LINK_TYPE_SSYNC_PORT          = 17;
+const LINK_TYPE_SSYNC_PORT_IN       = 17;
+const LINK_TYPE_SSYNC_PORT_OUT      = 18;
 // const LINK_TYPE_HVICABLE            = x; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
 // const const LINK_TYPE_PCIEADDR
@@ -97,7 +98,8 @@ var ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
-var ENABLE_LINK_TYPE_SSYNC_PORT          = 1;
+var ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
+var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
 // var ENABLE_LINK_TYPE_HVICABLE            = 1;
 // var ENABLE_LINK_TYPE_IOLS                = 1;
 // var ENABLE_LINK_TYPE_PCIEADDR            = 1;
@@ -227,7 +229,8 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_SOFTWARE_KDIPEER && ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    == 0) return;
     if (value == LINK_TYPE_SOFTWARE_QCS_EXT && ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    == 0) return;
     if (value == LINK_TYPE_SOFTWARE_QCS_INT && ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    == 0) return;
-    if (value == LINK_TYPE_SSYNC_PORT       && ENABLE_LINK_TYPE_SSYNC_PORT          == 0) return;
+    if (value == LINK_TYPE_SSYNC_PORT_IN    && ENABLE_LINK_TYPE_SSYNC_PORT_IN       == 0) return;
+    if (value == LINK_TYPE_SSYNC_PORT_OUT   && ENABLE_LINK_TYPE_SSYNC_PORT_OUT      == 0) return;
     // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
     // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
     // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
@@ -734,11 +737,16 @@ function make_system_sync_ports() {
             if (node.names[1] == "M9033A") count = 5;
             if (node.names[1] == "M9032A") count = 2;
             if (node.names[1] == "M5300A") count = 1;
+            
             for (let j=1; j<=count; j++) {
                 var ssync_port_id = node.id + "_SSyncPort" + j;
                 var ssync_port_name = "SSyncPort" + j;
+                system_sync_modules.push(ssync_port_id); // use later for cables
                 add_data_node(ssync_port_id, [ssync_port_name], NODE_TYPE_SSYNC_PORT);
-                add_data_link(node.id, ssync_port_id, LINK_TYPE_SSYNC_PORT);
+                if (j == 1)
+                add_data_link(ssync_port_id, node.id, LINK_TYPE_SSYNC_PORT_IN);
+                else
+                add_data_link(node.id, ssync_port_id, LINK_TYPE_SSYNC_PORT_OUT);
             }
         }
     }
