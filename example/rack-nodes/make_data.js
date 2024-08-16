@@ -163,7 +163,10 @@ function enable_qcs_only() {
     ENABLE_NODE_TYPE_RACK                = 0;
     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
 
+    ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
     ENABLE_NODE_TYPE_KDI_ROOT            = 0;
     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
     ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
@@ -813,7 +816,7 @@ function make_kdi_root() {
     names.push("id: AFUVLCINL4A");
     names.push(trunc_name("fabric_id: 6d9dd2fd-72f7-483c-a078-317168f69fcc"));
     var kdi_root_id = "KDIRoot";
-    add_data_node(kdi_root_id, names, NODE_TYPE_ROOT);
+    add_data_node(kdi_root_id, names, NODE_TYPE_KDI_ROOT);
 
     names = [];
     names.push("KDIS");
@@ -942,11 +945,91 @@ function make_kdi_other() {
 
 function make_qcs_host() {
     // consol -> hcl -> ??
+    if (RACKS_TYPE == RACKS_TYPE_1000) {
+        // add qsc consul to pc host nodes
+        let all_id = "All";
+        let pchost_id = all_id + "_PCHost" + 1;
+        let pchost_name = "PC Host" + 1;
+        let pchost_subname = "HP Z8";
+        let consul_id = pchost_id + "_Consul" + 1;
+        let consul_name = "Consul";
+        add_data_node(consul_id, [consul_name], NODE_TYPE_QCS_HOST);
+        add_data_link(pchost_id, consul_id, LINK_TYPE_SOFTWARE);
+        // add qsc hcl to pc host nodes
+        let hcl_id = consul_id + "_HCL" + 1;
+        let hcl_name = "HCL";
+        add_data_node(hcl_id, [hcl_name], NODE_TYPE_QCS_HOST);
+        add_data_link(consul_id, hcl_id, LINK_TYPE_SOFTWARE_QCS_INT);
+        // add qsc cli to pc host nodes
+        let cli_id = consul_id + "_CLI" + 1;
+        let cli_name = "QCS CLI";
+        add_data_node(cli_id, [cli_name], NODE_TYPE_QCS_HOST);
+        add_data_link(pchost_id, cli_id, LINK_TYPE_SOFTWARE);
+        // add qsc hcl config service to pc host nodes
+        let hclconfig_id = consul_id + "_HCLConfigSvc" + 1;
+        let hclconfig_name = "HCL Config Svc 0";
+        add_data_node(hclconfig_id, [hclconfig_name], NODE_TYPE_QCS_HOST);
+        add_data_link(hclconfig_id, hcl_id, LINK_TYPE_SOFTWARE_QCS_INT);
+        add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
+    }
 }
 
 function make_qcs_clients() {
     // ism leader - rack1
     // ism follower - racks2-n
+    if (RACKS_TYPE == RACKS_TYPE_1000) {
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            let pc_name = "PC 1";
+            let pc_subname = "HP ZCentral 4R";
+            let ism_id = pc_id + "_ISM" + i;
+            let ism_name = "ISM Leader";
+            if (i > 1) {
+                ism_name = "ISM Follower";
+            }
+            // add qsc ism to pc client nodes
+            add_data_node(ism_id, [ism_name], NODE_TYPE_QCS_CLIENT);
+            add_data_link(pc_id, ism_id, LINK_TYPE_SOFTWARE);
+            let all_id = "All";
+            let pchost_id = all_id + "_PCHost" + 1;
+            let consul_id = pchost_id + "_Consul" + 1;
+            add_data_link(ism_id, consul_id, LINK_TYPE_SOFTWARE_QCS_EXT);
+            // add qsc hcl to pc client nodes
+            let hcl_id = ism_id + "_HCL" + 1;
+            let hcl_name = "HCL";
+            add_data_node(hcl_id, [hcl_name], NODE_TYPE_QCS_HOST);
+            add_data_link(ism_id, hcl_id, LINK_TYPE_SOFTWARE_QCS_INT);
+            // add qsc hcl config service to pc client nodes
+            let hclconfig_id = consul_id + "_HCLConfigSvc" + i;
+            let hclconfig_name = "HCL Config Svc" + i;
+            add_data_node(hclconfig_id, [hclconfig_name], NODE_TYPE_QCS_HOST);
+            add_data_link(hcl_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
+            // add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
+        }
+
+
+
+        // // add qsc consul to pc host nodes
+        // let all_id = "All";
+        // let pchost_id = all_id + "_PCHost" + 1;
+        // let pchost_name = "PC Host" + 1;
+        // let pchost_subname = "HP Z8";
+        // let consul_id = pchost_id + "_Consul" + 1;
+        // let consul_name = "Consul";
+        // add_data_node(consul_id, [consul_name], NODE_TYPE_QCS_HOST);
+        // add_data_link(pchost_id, consul_id, LINK_TYPE_SOFTWARE);
+        // // add qsc hclAAA to pc host nodes
+        // let hclaaa_id = consul_id + "_HdlAAA" + 1;
+        // let hclaaa_name = "Hcl AAA";
+        // add_data_node(hclaaa_id, [hclaaa_name], NODE_TYPE_QCS_HOST);
+        // add_data_link(consul_id, hclaaa_id, LINK_TYPE_SOFTWARE);
+        // // add qsc hclBBB to pc host nodes
+        // let hclbbb_id = consul_id + "_HdlBBB" + 1;
+        // let hclbbb_name = "Hcl BBB";
+        // add_data_node(hclbbb_id, [hclbbb_name], NODE_TYPE_QCS_HOST);
+        // add_data_link(hclaaa_id, hclbbb_id, LINK_TYPE_SOFTWARE);
+    }
 }
 
 function validate_links() {
@@ -1019,13 +1102,14 @@ function make_data() {
     data["nodes"] = [];
     data["links"] = [];
  
-    // select_racks_1000();
-    select_racks_16x6();
+    select_racks_1000();
+    // select_racks_16x6();
 
     // uses RACKS_MODIFIED
-    // enable_limited_system();
-    enable_software_only();
-    enable_kdi_only();
+    enable_limited_system();
+    // enable_software_only();
+    // enable_kdi_only();
+    enable_qcs_only();
 
     // HARDWARE
     make_root();
@@ -1054,6 +1138,7 @@ function make_data() {
     console.log(JSON.stringify(data, null, 2));
     show_stats();
     validate_links();
+    console.log(JSON.stringify(data, null, 2));
     show_stats();
 }
 
