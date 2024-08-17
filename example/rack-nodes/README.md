@@ -32,7 +32,7 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] add HVICONNECTORS (SSYnc ports)
 - [ ] update comments on types
 - [ ] lock down node/link colors instead of auto
-- [ ] add HVICABLE
+- [x] add HVICABLE
 - [ ] add PCIE bus
 
 - [ ] clean up data vs racks.json

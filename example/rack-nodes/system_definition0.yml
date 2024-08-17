@@ -27,7 +27,7 @@ topology:
       - 1: tse-tcp:://10.10.10.102:8674/PXI0::4::BACKPLANE
 
     # pc2 rack chassis? (2 or 3)
-    - chassis: tse-tcp://10.10.10.102:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    - chassis: tse-tcp:://10.10.10.102:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
     downstream:
         - 1: tse-tcp:://10.10.10.102/PXI0::1::BACKPLANE
         - 2: tse-tcp:://10.10.10.102/PXI0::2::BACKPLANE

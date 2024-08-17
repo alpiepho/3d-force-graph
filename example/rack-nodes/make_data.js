@@ -54,7 +54,7 @@ const LINK_TYPE_SOFTWARE_QCS_EXT    = 15;
 const LINK_TYPE_SOFTWARE_QCS_INT    = 16;
 const LINK_TYPE_SSYNC_PORT_IN       = 17;
 const LINK_TYPE_SSYNC_PORT_OUT      = 18;
-// const LINK_TYPE_HVICABLE            = x; // cable between M9032A/ M9033A modules (HVI bus)
+const LINK_TYPE_HVICABLE            = 19; // cable between M9032A/ M9033A modules (HVI bus)
 // const LINK_TYPE_IOLS
 // const const LINK_TYPE_PCIEADDR
 // const LINK_TYPE_HVIADDR
@@ -100,7 +100,7 @@ var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
 var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
 var ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
 var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
-// var ENABLE_LINK_TYPE_HVICABLE            = 1;
+var ENABLE_LINK_TYPE_HVICABLE            = 1;
 // var ENABLE_LINK_TYPE_IOLS                = 1;
 // var ENABLE_LINK_TYPE_PCIEADDR            = 1;
 // var ENABLE_LINK_TYPE_HVIADDR             = 1;
@@ -122,12 +122,39 @@ function select_racks_16x6() {
     TOTAL_PCIECARDS = 1;
 }
 
-function enable_limited_system() {
+function enable_limited_system_2R_2C() {
     TOTAL_RACKS = 2;
     TOTAL_CHASSIS = 2;
     TOTAL_SLOTS = 18;
     TOTAL_PCIECARDS = 3;
     RACKS_MODIFIED |= 1;
+}
+
+function enable_limited_system_3R_6C() {
+    TOTAL_RACKS = 3;
+    TOTAL_CHASSIS = 6;
+    TOTAL_SLOTS = 18;
+    TOTAL_PCIECARDS = 3;
+    RACKS_MODIFIED |= 1;
+}
+
+function enable_hardware_only() {
+    ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+
+    ENABLE_LINK_TYPE_SOFTWARE            = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
+
 }
 
 function enable_software_only() {
@@ -231,7 +258,7 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_SOFTWARE_QCS_INT && ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    == 0) return;
     if (value == LINK_TYPE_SSYNC_PORT_IN    && ENABLE_LINK_TYPE_SSYNC_PORT_IN       == 0) return;
     if (value == LINK_TYPE_SSYNC_PORT_OUT   && ENABLE_LINK_TYPE_SSYNC_PORT_OUT      == 0) return;
-    // if (value == LINK_TYPE_HVICABLE      && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
+    if (value == LINK_TYPE_HVICABLE         && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
     // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
     // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
     // if (value == LINK_TYPE_HVIADDR       && ENABLE_LINK_TYPE_HVIADDR             == 0) return;
@@ -452,43 +479,6 @@ function make_pcie_cables16x6(pc_id, chassis_id) {
 
 }
 
-function make_hvi_cables(chassis_id) { // TODO
-    // hook up slot 10 modules per map
-    // verify slot 10 modules
-    // topology:
-    // - chassis: tse-tcp://localhost/PXI0::3::BACKPLANE
-    // downstream:
-    //     - 1: tse-tcp://localhost/PXI0::4::BACKPLANE
-    //     - 2: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE
-    //     - 3: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE
-
-    // - chassis: tse-tcp://localhost/PXI0::4::BACKPLANE
-    // downstream:
-    //     - 1: tse-tcp:://localhost/PXI0::1::BACKPLANE
-    //     - 2: tse-tcp:://localhost/PXI0::2::BACKPLANE
-    //     - 3: tse-tcp:://localhost/PXI0::5::BACKPLANE
-    //     - 4: tse-tcp:://localhost/PXI0::6::BACKPLANE
-
-    // - chassis: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE
-    // downstream:
-    //   - 1: tse-tcp:://10.10.10.102:8674/PXI0::4::BACKPLANE
-
-    // - chassis: tse-tcp://10.10.10.102:8674/PXI0::4::BACKPLANE
-    // downstream:
-    //     - 1: tse-tcp:://10.10.10.102/PXI0::1::BACKPLANE
-    //     - 2: tse-tcp:://10.10.10.102/PXI0::2::BACKPLANE
-    //     - 3: tse-tcp:://10.10.10.102/PXI0::5::BACKPLANE
-    //     - 4: tse-tcp:://10.10.10.102/PXI0::6::BACKPLANE
-
-    // - chassis: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE
-    // downstream:
-    //   - 1: tse-tcp:://10.10.10.103:8674/PXI0::4::BACKPLANE
-
-    // - chassis: tse-tcp://10.10.10.103:8674/PXI0::4::BACKPLANE
-    // downstream:
-    //     - 1: tse-tcp:://10.10.10.103/PXI0::1::BACKPLANE
-    //     - 2: tse-tcp:://10.10.10.103/PXI0::2::BACKPLANE
-}
 
 function make_root() {
     var names = [];
@@ -726,7 +716,7 @@ function make_pcie_cables() {
     }
 }
 
-var system_sync_modules = [];
+// var system_sync_modules = [];
 function make_system_sync_ports() {
     // cycle thru all modules and add ports to hvi specific modules
     let ex = "_Module[0-9]+$"
@@ -741,7 +731,7 @@ function make_system_sync_ports() {
             for (let j=1; j<=count; j++) {
                 var ssync_port_id = node.id + "_SSyncPort" + j;
                 var ssync_port_name = "SSyncPort" + j;
-                system_sync_modules.push(ssync_port_id); // use later for cables
+                // system_sync_modules.push(ssync_port_id); // use later for cables
                 add_data_node(ssync_port_id, [ssync_port_name], NODE_TYPE_SSYNC_PORT);
                 if (j == 1)
                 add_data_link(ssync_port_id, node.id, LINK_TYPE_SSYNC_PORT_IN);
@@ -750,6 +740,165 @@ function make_system_sync_ports() {
             }
         }
     }
+    // console.log(system_sync_modules)
+}
+// All_Rack1_Chassis1_Slot2_Module2_SSyncPort1
+// All_Rack1_Chassis1_Slot4_Module4_SSyncPort1
+// All_Rack1_Chassis1_Slot6_Module6_SSyncPort1
+// All_Rack1_Chassis1_Slot8_Module8_SSyncPort1
+// All_Rack1_Chassis1_Slot10_Module10_SSyncPort1
+// All_Rack1_Chassis1_Slot10_Module10_SSyncPort2
+// All_Rack1_Chassis1_Slot11_Module11_SSyncPort1
+// All_Rack1_Chassis1_Slot13_Module13_SSyncPort1
+// All_Rack1_Chassis2_Slot2_Module2_SSyncPort1
+// All_Rack1_Chassis2_Slot4_Module4_SSyncPort1
+// All_Rack1_Chassis2_Slot6_Module6_SSyncPort1
+// All_Rack1_Chassis2_Slot8_Module8_SSyncPort1 
+// All_Rack1_Chassis2_Slot10_Module10_SSyncPort1
+// All_Rack1_Chassis2_Slot10_Module10_SSyncPort2
+// All_Rack1_Chassis2_Slot10_Module10_SSyncPort3
+// All_Rack1_Chassis2_Slot10_Module10_SSyncPort4
+// All_Rack1_Chassis2_Slot10_Module10_SSyncPort5
+// All_Rack1_Chassis2_Slot12_Module12_SSyncPort1
+// All_Rack1_Chassis2_Slot14_Module14_SSyncPort1
+// All_Rack2_Chassis1_Slot2_Module2_SSyncPort1
+// All_Rack2_Chassis1_Slot4_Module4_SSyncPort1
+// All_Rack2_Chassis1_Slot6_Module6_SSyncPort1
+// All_Rack2_Chassis1_Slot8_Module8_SSyncPort1
+// All_Rack2_Chassis1_Slot10_Module10_SSyncPort1
+// All_Rack2_Chassis1_Slot10_Module10_SSyncPort2
+// All_Rack2_Chassis1_Slot11_Module11_SSyncPort1
+// All_Rack2_Chassis1_Slot13_Module13_SSyncPort1
+// All_Rack2_Chassis2_Slot2_Module2_SSyncPort1
+// All_Rack2_Chassis2_Slot4_Module4_SSyncPort1
+// All_Rack2_Chassis2_Slot6_Module6_SSyncPort1
+// All_Rack2_Chassis2_Slot8_Module8_SSyncPort1
+// All_Rack2_Chassis2_Slot10_Module10_SSyncPort1
+// All_Rack2_Chassis2_Slot10_Module10_SSyncPort2
+// All_Rack2_Chassis2_Slot10_Module10_SSyncPort3
+// All_Rack2_Chassis2_Slot10_Module10_SSyncPort4
+// All_Rack2_Chassis2_Slot10_Module10_SSyncPort5
+// All_Rack2_Chassis2_Slot12_Module12_SSyncPort1 
+// All_Rack2_Chassis2_Slot14_Module14_SSyncPort1
+
+function make_hvi_cables() {
+    // derived from system_definition0.yml
+
+    // - chassis: tse-tcp://localhost/PXI0::3::BACKPLANE  # assume M9033A 5 port
+    // downstream:
+    //     - 1: tse-tcp://localhost/PXI0::4::BACKPLANE
+    //     - 2: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE # to 
+    //     - 3: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE
+    add_data_link(
+        "All_Rack1_Chassis2_Slot10_Module10_SSyncPort2", 
+        "All_Rack1_Chassis3_Slot10_Module10_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack1_Chassis2_Slot10_Module10_SSyncPort3", 
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack1_Chassis2_Slot10_Module10_SSyncPort4", 
+        "All_Rack3_Chassis2_Slot10_Module10_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // - chassis: tse-tcp://localhost/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    // downstream:
+    //     - 1: tse-tcp:://localhost/PXI0::1::BACKPLANE
+    //     - 2: tse-tcp:://localhost/PXI0::2::BACKPLANE
+    //     - 3: tse-tcp:://localhost/PXI0::5::BACKPLANE
+    //     - 4: tse-tcp:://localhost/PXI0::6::BACKPLANE
+    add_data_link(
+        "All_Rack1_Chassis3_Slot10_Module10_SSyncPort2", 
+        "All_Rack1_Chassis3_Slot6_Module6_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack1_Chassis3_Slot10_Module10_SSyncPort3", 
+        "All_Rack1_Chassis3_Slot8_Module6_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack1_Chassis3_Slot10_Module10_SSyncPort4", 
+        "All_Rack1_Chassis3_Slot12_Module6_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack1_Chassis3_Slot10_Module10_SSyncPort5", 
+        "All_Rack1_Chassis3_Slot14_Module6_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // - chassis: tse-tcp://10.10.10.102:8674/PXI0::3::BACKPLANE # assume M9032A 2 port
+    // downstream:
+    //   - 1: tse-tcp:://10.10.10.102:8674/PXI0::4::BACKPLANE
+    add_data_link(
+        "All_Rack2_Chassis1_Slot10_Module10_SSyncPort2", 
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // - chassis: tse-tcp://10.10.10.102:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    // downstream:
+    //     - 1: tse-tcp:://10.10.10.102/PXI0::1::BACKPLANE
+    //     - 2: tse-tcp:://10.10.10.102/PXI0::2::BACKPLANE
+    //     - 3: tse-tcp:://10.10.10.102/PXI0::5::BACKPLANE
+    //     - 4: tse-tcp:://10.10.10.102/PXI0::6::BACKPLANE
+    add_data_link(
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort2", 
+        "All_Rack2_Chassis2_Slot2_Module2_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort3", 
+        "All_Rack2_Chassis2_Slot4_Module4_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort4", 
+        "All_Rack2_Chassis2_Slot12_Module12_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack2_Chassis2_Slot10_Module10_SSyncPort5", 
+        "All_Rack2_Chassis2_Slot14_Module14_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // - chassis: tse-tcp://10.10.10.103:8674/PXI0::3::BACKPLANE # assume M9032A 2 port
+    // downstream:
+    //   - 1: tse-tcp:://10.10.10.103:8674/PXI0::4::BACKPLANE
+    add_data_link(
+        "All_Rack3_Chassis2_Slot10_Module10_SSyncPort2", 
+        "All_Rack3_Chassis3_Slot10_Module10_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // - chassis: tse-tcp://10.10.10.103:8674/PXI0::4::BACKPLANE  # assume M9033A 5 port
+    // downstream:
+    //     - 1: tse-tcp:://10.10.10.103/PXI0::1::BACKPLANE
+    //     - 2: tse-tcp:://10.10.10.103/PXI0::2::BACKPLANE
+    add_data_link(
+        "All_Rack3_Chassis3_Slot10_Module10_SSyncPort2", 
+        "All_Rack3_Chassis3_Slot2_Module2_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+    add_data_link(
+        "All_Rack3_Chassis3_Slot10_Module10_SSyncPort3", 
+        "All_Rack3_Chassis3_Slot4_Module2_SSyncPort1", 
+        LINK_TYPE_HVICABLE
+    );
+
+    // add_data_link(
+    //     "TBD", 
+    //     "TBD", 
+    //     LINK_TYPE_HVICABLE
+    // );
+
+
 }
 
 function make_iols_and_connection_expert() {
@@ -1121,8 +1270,10 @@ function make_data() {
     // select_racks_16x6();
 
     // uses RACKS_MODIFIED
-    enable_limited_system();
-    // enable_software_only();
+    // enable_limited_system_2R_2C();   
+    enable_limited_system_3R_6C();
+    enable_hardware_only();
+     // enable_software_only();
     // enable_kdi_only();
     // enable_qcs_only();
 
@@ -1136,7 +1287,7 @@ function make_data() {
     make_modules();
     make_pcie_cables();
     make_system_sync_ports();
-    // make_hvi_cables();
+    make_hvi_cables();
 
     // BUSSES
     // make_pc_addrs();
