@@ -2,16 +2,26 @@ var data = {};
 
 const RACKS_TYPE_1000   = "1000"
 const RACKS_TYPE_16x6   = "16x6"
+
 var RACKS_TYPE          = RACKS_TYPE_1000;
 var TOTAL_RACKS         = 10;
 var TOTAL_CHASSIS       = 6;
 var TOTAL_SLOTS         = 18;
-var TOTAL_PCIECARDS     = 3;
-var RACKS_MODIFIED      = 0;
+var TOTAL_PXIECARDS     = 3;
+var TOTAL_PXIEBUSES     = 1;
+
+
+var RACKS_MODIFIED          = 0;
+var RACKS_MODIFIED_CUSTOM   = 1;
+var RACKS_MODIFIED_HW_ONLY  = 2;
+var RACKS_MODIFIED_SW_ONLY  = 4;
+var RACKS_MODIFIED_IOLS     = 8;
+var RACKS_MODIFIED_KDI      = 16;
+var RACKS_MODIFIED_QCS      = 32;
+
 
 var TOTAL_OTHER_KDI_CLIENTS = 5;
-var TOTAL_OTHER_KDI_CLIENTS_SVC = 2;
-//var TOTAL_OTHER_KDI_CLIENTS_SVC = 10; // better for random
+var TOTAL_OTHER_KDI_CLIENTS_SVC = 2; // 10 is better for random
 var TOTAL_OTHER_KDI_RANDOMIZE = 0;
 
 const NODE_TYPE_ROOT                = 0;  // root, or set of racks
@@ -21,7 +31,7 @@ const NODE_TYPE_SLOT                = 3;  // physical slot within a chassis (1 i
 const NODE_TYPE_MODULE              = 4;  // physical module inserted in slot, may take more than 1 slot
 const NODE_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software client
 const NODE_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
-const NODE_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
+const NODE_TYPE_PXIECARD            = 7;  // each client PC can have up to 3 PXIE (M9048A) cards
 // NOTE: skipping nodes for network cards, might need for DII
 const NODE_TYPE_NETWORKCARD         = 8; // each client PC will have at least 1 network card
 const NODE_TYPE_IOLS                = 9;  // instance of IOLS libraries per client PC
@@ -33,6 +43,7 @@ const NODE_TYPE_KDI_CLIENT_SVC      = 14;
 const NODE_TYPE_QCS_HOST            = 15;
 const NODE_TYPE_QCS_CLIENT          = 16;
 const NODE_TYPE_SSYNC_PORT          = 17;
+const NODE_TYPE_PXIEBUS             = 18;
 
 // NOTE: no need for this
 const LINK_TYPE_ROOT                = 0;  // root, or set of racks
@@ -42,10 +53,10 @@ const LINK_TYPE_SLOT                = 3;  // physical slot within a chassis (1 i
 const LINK_TYPE_MODULE              = 4;  // physical module inserted in slot, may take more than 1 slot
 const LINK_TYPE_WINDOWSPC_CLIENT    = 5;  // PC to run IOLS and TSE software client
 const LINK_TYPE_WINDOWSPC_HOST      = 6;  // PC to run TSE software host
-const LINK_TYPE_PCIECARD            = 7;  // each client PC can have up to 3 PCIE (M9048A) cards
-const LINK_TYPE_PCIEBACKPLANE       = 108;  // PCIE bus within the chassis
-const LINK_TYPE_PCIECABLE           = 109;  // cable from PCIE_CONNECTOR to system controller MODULE
-const LINK_TYPE_NETWORKCABLE        = 110; // TODO: is this how to show network?
+const LINK_TYPE_PXIECARD            = 7;  // each client PC can have up to 3 PXIE (M9048A) cards
+const LINK_TYPE_PXIEBACKPLANE       = 8;  // PXIE bus within the chassis
+const LINK_TYPE_PXIECABLE           = 9;  // cable from PXIE_CONNECTOR to system controller MODULE
+const LINK_TYPE_NETWORKCABLE        = 10; // TODO: is this how to show network?
 const LINK_TYPE_SOFTWARE            = 11;  // instance of IOLS libraries per client PC
 const LINK_TYPE_SOFTWARE_IOLS       = 12;
 const LINK_TYPE_SOFTWARE_KDIROOT    = 13;
@@ -55,63 +66,150 @@ const LINK_TYPE_SOFTWARE_QCS_INT    = 16;
 const LINK_TYPE_SSYNC_PORT_IN       = 17;
 const LINK_TYPE_SSYNC_PORT_OUT      = 18;
 const LINK_TYPE_HVICABLE            = 19; // cable between M9032A/ M9033A modules (HVI bus)
-// const LINK_TYPE_IOLS
-// const const LINK_TYPE_PCIEADDR
-// const LINK_TYPE_HVIADDR
-// const LINK_TYPE_NETWORKADDR
+const LINK_TYPE_PXIEBUS             = 20;
 
-var ENABLE_NODE_TYPE_ROOT                = 1;
-var ENABLE_NODE_TYPE_RACK                = 1;
-var ENABLE_NODE_TYPE_CHASSIS             = 1;
-var ENABLE_NODE_TYPE_SLOT                = 1;
-var ENABLE_NODE_TYPE_MODULE              = 1;
-var ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
-var ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-var ENABLE_NODE_TYPE_PCIECARD            = 1;
+var ENABLE_NODE_TYPE_ROOT                = 0;
+var ENABLE_NODE_TYPE_RACK                = 0;
+var ENABLE_NODE_TYPE_CHASSIS             = 0;
+var ENABLE_NODE_TYPE_SLOT                = 0;
+var ENABLE_NODE_TYPE_MODULE              = 0;
+var ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+var ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+var ENABLE_NODE_TYPE_PXIECARD            = 0;
 // NOTE: skipping nodes for network cards, might need for DII
-// var ENABLE_NODE_TYPE_NETWORKCARD       = 1;
-var ENABLE_NODE_TYPE_IOLS                = 1;
-var ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-var ENABLE_NODE_TYPE_KDI_ROOT            = 1;
-var ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
-var ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-var ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-var ENABLE_NODE_TYPE_QCS_HOST            = 1;
-var ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
-var ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
+var ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+var ENABLE_NODE_TYPE_IOLS                = 0;
+var ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+var ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+var ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+var ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+var ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+var ENABLE_NODE_TYPE_QCS_HOST            = 0;
+var ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+var ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+var ENABLE_NODE_TYPE_PXIEBUS             = 0;        
 
 // NOTE: no need for this
-// var ENABLE_LINK_TYPE_ROOT                = 1;
-var ENABLE_LINK_TYPE_RACK                = 1;
-var ENABLE_LINK_TYPE_CHASSIS             = 1;
-var ENABLE_LINK_TYPE_SLOT                = 1;
-var ENABLE_LINK_TYPE_MODULE              = 1;
-var ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 1;
-var ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 1;
-var ENABLE_LINK_TYPE_PCIECARD            = 1;
-var ENABLE_LINK_TYPE_PCIEBACKPLANE       = 1;
-var ENABLE_LINK_TYPE_PCIECABLE           = 1;
-var ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
-var ENABLE_LINK_TYPE_SOFTWARE            = 1;
-var ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 1;
-var ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
-var ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
-var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
-var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
-var ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
-var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
-var ENABLE_LINK_TYPE_HVICABLE            = 1;
-// var ENABLE_LINK_TYPE_IOLS                = 1;
-// var ENABLE_LINK_TYPE_PCIEADDR            = 1;
-// var ENABLE_LINK_TYPE_HVIADDR             = 1;
-// var ENABLE_LINK_TYPE_NETWORKADDR         = 1;
+var ENABLE_LINK_TYPE_ROOT                = 0;
+var ENABLE_LINK_TYPE_RACK                = 0;
+var ENABLE_LINK_TYPE_CHASSIS             = 0;
+var ENABLE_LINK_TYPE_SLOT                = 0;
+var ENABLE_LINK_TYPE_MODULE              = 0;
+var ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+var ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+var ENABLE_LINK_TYPE_PXIECARD            = 0;
+var ENABLE_LINK_TYPE_PXIEBACKPLANE       = 0;
+var ENABLE_LINK_TYPE_PXIECABLE           = 0;
+var ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
+var ENABLE_LINK_TYPE_SOFTWARE            = 0;
+var ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
+var ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
+var ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
+var ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
+var ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
+var ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 0;
+var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
+var ENABLE_LINK_TYPE_HVICABLE            = 0;
+var ENABLE_LINK_TYPE_PXIEBUS             = 0;
+
+function enable_all_nodes() {
+    ENABLE_NODE_TYPE_ROOT                = 1;
+    ENABLE_NODE_TYPE_RACK                = 1;
+    ENABLE_NODE_TYPE_CHASSIS             = 1;
+    ENABLE_NODE_TYPE_SLOT                = 1;
+    ENABLE_NODE_TYPE_MODULE              = 1;
+    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+    ENABLE_NODE_TYPE_PXIECARD            = 1;
+    ENABLE_NODE_TYPE_NETWORKCARD         = 1;
+    ENABLE_NODE_TYPE_IOLS                = 1;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
+    ENABLE_NODE_TYPE_QCS_HOST            = 1;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
+    ENABLE_NODE_TYPE_PXIEBUS             = 1;      
+}
+
+function disable_all_nodes() {
+    ENABLE_NODE_TYPE_ROOT                = 0;
+    ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    ENABLE_NODE_TYPE_MODULE              = 0;
+    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
+    ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;      
+}
+
+function enable_all_links() {
+    ENABLE_LINK_TYPE_ROOT                = 1;
+    ENABLE_LINK_TYPE_RACK                = 1;
+    ENABLE_LINK_TYPE_CHASSIS             = 1;
+    ENABLE_LINK_TYPE_SLOT                = 1;
+    ENABLE_LINK_TYPE_MODULE              = 1;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 1;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 1;
+    ENABLE_LINK_TYPE_PXIECARD            = 1;
+    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 1;
+    ENABLE_LINK_TYPE_PXIECABLE           = 1;
+    ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
+    ENABLE_LINK_TYPE_SOFTWARE            = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
+    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
+    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
+    ENABLE_LINK_TYPE_HVICABLE            = 1;
+    ENABLE_LINK_TYPE_PXIEBUS             = 1;
+}
+
+function disable_all_links() {
+    ENABLE_LINK_TYPE_ROOT                = 0;
+    ENABLE_LINK_TYPE_RACK                = 0;
+    ENABLE_LINK_TYPE_CHASSIS             = 0;
+    ENABLE_LINK_TYPE_SLOT                = 0;
+    ENABLE_LINK_TYPE_MODULE              = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_LINK_TYPE_PXIECARD            = 0;
+    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 0;
+    ENABLE_LINK_TYPE_PXIECABLE           = 0;
+    ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
+    ENABLE_LINK_TYPE_SOFTWARE            = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
+    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 0;
+    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
+    ENABLE_LINK_TYPE_HVICABLE            = 0;
+    ENABLE_LINK_TYPE_PXIEBUS             = 0;
+}
 
 function select_racks_1000() {
     RACKS_TYPE = RACKS_TYPE_1000;
     TOTAL_RACKS = 10;
     TOTAL_CHASSIS = 6;
     TOTAL_SLOTS = 18;
-    TOTAL_PCIECARDS = 3;
+    TOTAL_PXIECARDS = 3;
 }
 
 function select_racks_16x6() {
@@ -119,23 +217,23 @@ function select_racks_16x6() {
     TOTAL_RACKS = 1;
     TOTAL_CHASSIS = 6;
     TOTAL_SLOTS = 18;
-    TOTAL_PCIECARDS = 1;
+    TOTAL_PXIECARDS = 1;
 }
 
 function enable_limited_system_2R_2C() {
     TOTAL_RACKS = 2;
     TOTAL_CHASSIS = 2;
     TOTAL_SLOTS = 18;
-    TOTAL_PCIECARDS = 3;
-    RACKS_MODIFIED |= 1;
+    TOTAL_PXIECARDS = 3;
+    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
 }
 
 function enable_limited_system_3R_6C() {
     TOTAL_RACKS = 3;
     TOTAL_CHASSIS = 6;
     TOTAL_SLOTS = 18;
-    TOTAL_PCIECARDS = 3;
-    RACKS_MODIFIED |= 1;
+    TOTAL_PXIECARDS = 3;
+    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
 }
 
 function enable_hardware_only() {
@@ -155,6 +253,7 @@ function enable_hardware_only() {
     ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
     ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
 
+    RACKS_MODIFIED |= RACKS_MODIFIED_HW_ONLY;
 }
 
 function enable_software_only() {
@@ -165,7 +264,7 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_MODULE              = 0;
     ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
     ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-    ENABLE_NODE_TYPE_PCIECARD            = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
     // NOTE: skipping nodes for network cards, might need for DII
     ENABLE_NODE_TYPE_NETWORKCARD        = 1;
     ENABLE_NODE_TYPE_IOLS                = 1;
@@ -177,7 +276,22 @@ function enable_software_only() {
     ENABLE_NODE_TYPE_QCS_HOST            = 1;
     ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
     ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
-    RACKS_MODIFIED |= 2;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;
+
+    RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
+}
+
+function enable_iols_only() {
+    ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;
+
+    RACKS_MODIFIED |= RACKS_MODIFIED_IOLS;
 }
 
 function enable_kdi_only() {
@@ -189,8 +303,9 @@ function enable_kdi_only() {
     ENABLE_NODE_TYPE_QCS_HOST            = 0;
     ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
     ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;
 
-    RACKS_MODIFIED |= 4;
+    RACKS_MODIFIED |= RACKS_MODIFIED_KDI;
 }
 
 function enable_qcs_only() {
@@ -207,7 +322,15 @@ function enable_qcs_only() {
     ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
 
-    RACKS_MODIFIED |= 8;
+    RACKS_MODIFIED |= RACKS_MODIFIED_QCS;
+}
+
+function trunc_name(full) {
+    var result = full;
+    if (result.length > 16) {
+        result = full.slice(0,16) + "...";
+    }
+    return result;
 }
 
 function add_data_node(id, names, group) {
@@ -219,7 +342,7 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_MODULE               && ENABLE_NODE_TYPE_MODULE              == 0) return;
     if (group == NODE_TYPE_WINDOWSPC_CLIENT     && ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    == 0) return;
     if (group == NODE_TYPE_WINDOWSPC_HOST       && ENABLE_NODE_TYPE_WINDOWSPC_HOST      == 0) return;
-    if (group == NODE_TYPE_PCIECARD             && ENABLE_NODE_TYPE_PCIECARD            == 0) return;
+    if (group == NODE_TYPE_PXIECARD             && ENABLE_NODE_TYPE_PXIECARD            == 0) return;
     if (group == NODE_TYPE_NETWORKCARD          && ENABLE_NODE_TYPE_NETWORKCARD         == 0) return;
     if (group == NODE_TYPE_IOLS                 && ENABLE_NODE_TYPE_IOLS                == 0) return;
     if (group == NODE_TYPE_CONNECTION_EXPERT    && ENABLE_NODE_TYPE_CONNECTION_EXPERT   == 0) return;
@@ -230,7 +353,7 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_QCS_HOST             && ENABLE_NODE_TYPE_QCS_HOST            == 0) return;
     if (group == NODE_TYPE_QCS_CLIENT           && ENABLE_NODE_TYPE_QCS_CLIENT          == 0) return;
     if (group == NODE_TYPE_SSYNC_PORT           && ENABLE_NODE_TYPE_SSYNC_PORT          == 0) return;
-    
+    if (group == NODE_TYPE_PXIEBUS              && ENABLE_NODE_TYPE_PXIEBUS             == 0) return;   
     // DEBUG
     //names.push(id);
 
@@ -246,9 +369,9 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_MODULE           && ENABLE_LINK_TYPE_MODULE              == 0) return;
     if (value == LINK_TYPE_WINDOWSPC_CLIENT && ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    == 0) return;
     if (value == LINK_TYPE_WINDOWSPC_HOST   && ENABLE_LINK_TYPE_WINDOWSPC_HOST      == 0) return;
-    if (value == LINK_TYPE_PCIECARD         && ENABLE_LINK_TYPE_PCIECARD            == 0) return;
-    if (value == LINK_TYPE_PCIEBACKPLANE    && ENABLE_LINK_TYPE_PCIEBACKPLANE       == 0) return;
-    if (value == LINK_TYPE_PCIECABLE        && ENABLE_LINK_TYPE_PCIECABLE           == 0) return;
+    if (value == LINK_TYPE_PXIECARD         && ENABLE_LINK_TYPE_PXIECARD            == 0) return;
+    if (value == LINK_TYPE_PXIEBACKPLANE    && ENABLE_LINK_TYPE_PXIEBACKPLANE       == 0) return;
+    if (value == LINK_TYPE_PXIECABLE        && ENABLE_LINK_TYPE_PXIECABLE           == 0) return;
     if (value == LINK_TYPE_NETWORKCABLE     && ENABLE_LINK_TYPE_NETWORKCABLE        == 0) return;
     if (value == LINK_TYPE_SOFTWARE         && ENABLE_LINK_TYPE_SOFTWARE            == 0) return;
     if (value == LINK_TYPE_SOFTWARE_IOLS    && ENABLE_LINK_TYPE_SOFTWARE_IOLS       == 0) return;
@@ -259,14 +382,10 @@ function add_data_link(source, target, value) {
     if (value == LINK_TYPE_SSYNC_PORT_IN    && ENABLE_LINK_TYPE_SSYNC_PORT_IN       == 0) return;
     if (value == LINK_TYPE_SSYNC_PORT_OUT   && ENABLE_LINK_TYPE_SSYNC_PORT_OUT      == 0) return;
     if (value == LINK_TYPE_HVICABLE         && ENABLE_LINK_TYPE_HVICABLE            == 0) return;
-    // if (value == LINK_TYPE_IOLS          && ENABLE_LINK_TYPE_IOLS                == 0) return;
-    // if (value == LINK_TYPE_PCIEADDR      && ENABLE_LINK_TYPE_PCIEADDR            == 0) return;
-    // if (value == LINK_TYPE_HVIADDR       && ENABLE_LINK_TYPE_HVIADDR             == 0) return;
-    // if (value == LINK_TYPE_NETWORKADDR   && ENABLE_LINK_TYPE_NETWORKADDR         == 0) return;
+    if (value == LINK_TYPE_PXIEBUS          && ENABLE_LINK_TYPE_PXIEBUS             == 0) return;
 
     data.links.push({"source": source, "target": target, "value": value});
 }
-
 
 function get_chassis_typeA(chassis_i) {
     var name = "M9046A";
@@ -407,76 +526,75 @@ function make_chassis_internal_links(chassis_id) {
         }
         else if (node.id.startsWith(chassis_id) && node.id.includes("_Module")) {
             module_id = node.id;
-            add_data_link(system_controller_id, module_id, LINK_TYPE_PCIEBACKPLANE);
+            add_data_link(system_controller_id, module_id, LINK_TYPE_PXIEBACKPLANE);
         }
     }
 }
 
-function make_pcie_cables1000(pc_id) {
+function make_pxie_cables1000(pc_id) {
     let parts = pc_id.split("_PC");
     let rack_id = parts[0];
-    var pciecard_id;
+    var pxiecard_id;
     var module_id;
     var chassis_count = 0;
  
-    // pciecard1 -> all_rackX_chassis1_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 1;
+    // pxiecard1 -> all_rackX_chassis1_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 1;
     module_id = rack_id + "_Chassis1_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-    // pciecard1 -> all_rackX_chassis2_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 1;
+    // pxiecard1 -> all_rackX_chassis2_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 1;
     module_id = rack_id + "_Chassis2_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-    // pciecard2 -> all_rackX_chassis3_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 2;
+    // pxiecard2 -> all_rackX_chassis3_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 2;
     module_id = rack_id + "_Chassis3_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-    // pciecard2 -> all_rackX_chassis4_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 2;
+    // pxiecard2 -> all_rackX_chassis4_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 2;
     module_id = rack_id + "_Chassis4_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-    // pciecard3 -> all_rackX_chassis5_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 3;
+    // pxiecard3 -> all_rackX_chassis5_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 3;
     module_id = rack_id + "_Chassis5_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-    // pciecard3 -> all_rackX_chassis6_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 3;
+    // pxiecard3 -> all_rackX_chassis6_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 3;
     module_id = rack_id + "_Chassis6_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
 }
 
-function make_pcie_cables16x6(pc_id, chassis_id) {
+function make_pxie_cables16x6(pc_id, chassis_id) {
     let parts = pc_id.split("_PC");
-     var pciecard_id;
+     var pxiecard_id;
     var module_id;
     var chassis_count = 0;
  
-    // pciecard1 -> all_rackX_chassis1_slot1_module1 (system controller for chassis)
-    pciecard_id = pc_id + "_PCIECard" + 1;
+    // pxiecard1 -> all_rackX_chassis1_slot1_module1 (system controller for chassis)
+    pxiecard_id = pc_id + "_PXIECard" + 1;
     module_id = chassis_id + "_Slot1_Module1";
     if (chassis_count < TOTAL_CHASSIS) {
-        add_data_link(pciecard_id, module_id, LINK_TYPE_PCIECABLE);
+        add_data_link(pxiecard_id, module_id, LINK_TYPE_PXIECABLE);
         chassis_count++;
     }
-
 }
 
 
@@ -497,15 +615,25 @@ function make_root() {
         names.push("1 pc per chassis");
         names.push("no pc host");
     }
-    if (RACKS_MODIFIED & 0x01) {
-        names.push("DEBUG - modified");
+    if (RACKS_MODIFIED & RACKS_MODIFIED_CUSTOM) {
+        names.push("DEBUG - custom");
     }
-    if (RACKS_MODIFIED & 0x02) {
+    if (RACKS_MODIFIED & RACKS_MODIFIED_HW_ONLY) {
+        names.push("HARDWARE ONLY");
+    }
+    if (RACKS_MODIFIED & RACKS_MODIFIED_SW_ONLY) {
         names.push("SOFTWARE ONLY");
     }
-    if (RACKS_MODIFIED & 0x04) {
+    if (RACKS_MODIFIED & RACKS_MODIFIED_IOLS) {
+        names.push("IOLS ONLY");
+    }
+    if (RACKS_MODIFIED & RACKS_MODIFIED_KDI) {
         names.push("KDI ONLY");
     }
+    if (RACKS_MODIFIED & RACKS_MODIFIED_QCS) {
+        names.push("QCS ONLY");
+    }
+
     add_data_node("All", names, NODE_TYPE_ROOT);
 }
 
@@ -540,26 +668,48 @@ function make_client_pcs() {
             add_data_link(rack_id, pc_id, LINK_TYPE_WINDOWSPC_CLIENT);
         }
 
-        // WINDOWS PC CLIENT PCIECARD
-        // add pc client pciecard nodes
+        // WINDOWS PC CLIENT PXIECARD
+        // add pc client pxiecard nodes
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC1";
-            for (let j=1; j<=TOTAL_PCIECARDS; j++) {
-                let pciecard_id = pc_id + "_PCIECard" + j;
-                let pciecard_name = "PCIECard " + j
-                add_data_node(pciecard_id, [pciecard_name], NODE_TYPE_PCIECARD);
+            for (let j=1; j<=TOTAL_PXIECARDS; j++) {
+                let pxiecard_id = pc_id + "_PXIECard" + j;
+                let pxiecard_name = "PXIECard " + j
+                add_data_node(pxiecard_id, [pxiecard_name], NODE_TYPE_PXIECARD);
             }
         }
-        // add pciecard links for each pcard
+        // add pxiecard links for each pcard
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC1";
-            for (let j=1; j<=TOTAL_PCIECARDS; j++) {
-                let pciecard_id = pc_id + "_PCIECard" + j;
-                add_data_link(pc_id, pciecard_id, LINK_TYPE_PCIECARD);
+            for (let j=1; j<=TOTAL_PXIECARDS; j++) {
+                let pxiecard_id = pc_id + "_PXIECard" + j;
+                add_data_link(pc_id, pxiecard_id, LINK_TYPE_PXIECARD);
             }
         }
+
+        // WINDOWS PC CLIENT PXIEBUS
+        // add pc client pxiecard nodes
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            for (let j=1; j<=TOTAL_PXIEBUSES; j++) {
+                let pxiebus_id = pc_id + "_PXIEBus" + j;
+                let pxiebus_name = "PXIEBus " + j
+                add_data_node(pxiebus_id, [pxiebus_name], NODE_TYPE_PXIEBUS);
+            }
+        }
+        // add pxiecard links for each pcard
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC1";
+            for (let j=1; j<=TOTAL_PXIEBUSES; j++) {
+                let pxiebus_id = pc_id + "_PXIEBus" + j;
+                add_data_link(pc_id, pxiebus_id, LINK_TYPE_PXIEBUS);
+            }
+        }
+
     }
     if (RACKS_TYPE == RACKS_TYPE_16x6) {
         // add pc client nodes (1 pc per chassis, single rack)
@@ -582,29 +732,56 @@ function make_client_pcs() {
             }
         }
 
-        // WINDOWS PC CLIENT PCIECARD
-        // add pc client pciecard nodes
+        // WINDOWS PC CLIENT PXIECARD
+        // add pc client pxiecard nodes
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
-                for (let k=1; k<=TOTAL_PCIECARDS; k++) {
-                    let pciecard_id = pc_id + "_PCIECard" + k;
-                    let pciecard_name = "PCIECard " + k
-                    add_data_node(pciecard_id, [pciecard_name], NODE_TYPE_PCIECARD);
+                for (let k=1; k<=TOTAL_PXIECARDS; k++) {
+                    let pxiecard_id = pc_id + "_PXIECard" + k;
+                    let pxiecard_name = "PXIECard " + k
+                    add_data_node(pxiecard_id, [pxiecard_name], NODE_TYPE_PXIECARD);
                 }
             }
         }
-        // add pciecard links for each pcard
+        // add pxiecard links for each pcard
         for (let i=1; i<=TOTAL_RACKS; i++) {
             let rack_id = "All_Rack" + i;
             let pc_id = rack_id + "_PC" + 1;
             for (let j=1; j<=TOTAL_CHASSIS; j++) {
                 let pc_id = rack_id + "_PC" + j;
-                for (let k=1; k<=TOTAL_PCIECARDS; k++) {
-                    let pciecard_id = pc_id + "_PCIECard" + k;
-                    add_data_link(pc_id, pciecard_id, LINK_TYPE_PCIECARD);
+                for (let k=1; k<=TOTAL_PXIECARDS; k++) {
+                    let pxiecard_id = pc_id + "_PXIECard" + k;
+                    add_data_link(pc_id, pxiecard_id, LINK_TYPE_PXIECARD);
+                }
+            }
+        }
+
+        // WINDOWS PC CLIENT PXIEBUS
+        // add pc client pxiecard nodes
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC" + 1;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                for (let k=1; k<=TOTAL_PXIEBUSES; k++) {
+                    let pxiebus_id = pc_id + "_PXIEBus" + k;
+                    let pxiebus_name = "PXIEBus " + k
+                    add_data_node(pxiebus_id, [pxiebus_name], NODE_TYPE_PXIEBUS);
+                }
+            }
+        }
+        // add pxiecard links for each pcard
+        for (let i=1; i<=TOTAL_RACKS; i++) {
+            let rack_id = "All_Rack" + i;
+            let pc_id = rack_id + "_PC" + 1;
+            for (let j=1; j<=TOTAL_CHASSIS; j++) {
+                let pc_id = rack_id + "_PC" + j;
+                for (let k=1; k<=TOTAL_PXIEBUSES; k++) {
+                    let pxiebus_id = pc_id + "_PXIEBus" + k;
+                    add_data_link(pc_id, pxiebus_id, LINK_TYPE_PXIEBUS);
                 }
             }
         }
@@ -694,13 +871,13 @@ function make_modules() {
     }
 }
 
-function make_pcie_cables() {
-    if (ENABLE_LINK_TYPE_PCIECABLE) {
+function make_pxie_cables() {
+    if (ENABLE_LINK_TYPE_PXIECABLE) {
         if (RACKS_TYPE == RACKS_TYPE_1000) {
             for (let i=1; i<=TOTAL_RACKS; i++) {
                 let rack_id = "All_Rack" + i;
                 let pc_id = rack_id + "_PC1";
-                make_pcie_cables1000(pc_id)
+                make_pxie_cables1000(pc_id)
             }    
         }
         if (RACKS_TYPE == RACKS_TYPE_16x6) {
@@ -709,7 +886,7 @@ function make_pcie_cables() {
                 for (let j=1; j<=TOTAL_CHASSIS; j++) {
                     let chassis_id = rack_id + "_Chassis" + j;
                     let pc_id = rack_id + "_PC" + j;
-                    make_pcie_cables16x6(pc_id, chassis_id)
+                    make_pxie_cables16x6(pc_id, chassis_id)
                 }
             }    
         }
@@ -742,44 +919,6 @@ function make_system_sync_ports() {
     }
     // console.log(system_sync_modules)
 }
-// All_Rack1_Chassis1_Slot2_Module2_SSyncPort1
-// All_Rack1_Chassis1_Slot4_Module4_SSyncPort1
-// All_Rack1_Chassis1_Slot6_Module6_SSyncPort1
-// All_Rack1_Chassis1_Slot8_Module8_SSyncPort1
-// All_Rack1_Chassis1_Slot10_Module10_SSyncPort1
-// All_Rack1_Chassis1_Slot10_Module10_SSyncPort2
-// All_Rack1_Chassis1_Slot11_Module11_SSyncPort1
-// All_Rack1_Chassis1_Slot13_Module13_SSyncPort1
-// All_Rack1_Chassis2_Slot2_Module2_SSyncPort1
-// All_Rack1_Chassis2_Slot4_Module4_SSyncPort1
-// All_Rack1_Chassis2_Slot6_Module6_SSyncPort1
-// All_Rack1_Chassis2_Slot8_Module8_SSyncPort1 
-// All_Rack1_Chassis2_Slot10_Module10_SSyncPort1
-// All_Rack1_Chassis2_Slot10_Module10_SSyncPort2
-// All_Rack1_Chassis2_Slot10_Module10_SSyncPort3
-// All_Rack1_Chassis2_Slot10_Module10_SSyncPort4
-// All_Rack1_Chassis2_Slot10_Module10_SSyncPort5
-// All_Rack1_Chassis2_Slot12_Module12_SSyncPort1
-// All_Rack1_Chassis2_Slot14_Module14_SSyncPort1
-// All_Rack2_Chassis1_Slot2_Module2_SSyncPort1
-// All_Rack2_Chassis1_Slot4_Module4_SSyncPort1
-// All_Rack2_Chassis1_Slot6_Module6_SSyncPort1
-// All_Rack2_Chassis1_Slot8_Module8_SSyncPort1
-// All_Rack2_Chassis1_Slot10_Module10_SSyncPort1
-// All_Rack2_Chassis1_Slot10_Module10_SSyncPort2
-// All_Rack2_Chassis1_Slot11_Module11_SSyncPort1
-// All_Rack2_Chassis1_Slot13_Module13_SSyncPort1
-// All_Rack2_Chassis2_Slot2_Module2_SSyncPort1
-// All_Rack2_Chassis2_Slot4_Module4_SSyncPort1
-// All_Rack2_Chassis2_Slot6_Module6_SSyncPort1
-// All_Rack2_Chassis2_Slot8_Module8_SSyncPort1
-// All_Rack2_Chassis2_Slot10_Module10_SSyncPort1
-// All_Rack2_Chassis2_Slot10_Module10_SSyncPort2
-// All_Rack2_Chassis2_Slot10_Module10_SSyncPort3
-// All_Rack2_Chassis2_Slot10_Module10_SSyncPort4
-// All_Rack2_Chassis2_Slot10_Module10_SSyncPort5
-// All_Rack2_Chassis2_Slot12_Module12_SSyncPort1 
-// All_Rack2_Chassis2_Slot14_Module14_SSyncPort1
 
 function make_hvi_cables() {
     // derived from system_definition0.yml
@@ -891,14 +1030,33 @@ function make_hvi_cables() {
         "All_Rack3_Chassis3_Slot4_Module2_SSyncPort1", 
         LINK_TYPE_HVICABLE
     );
+}
 
-    // add_data_link(
-    //     "TBD", 
-    //     "TBD", 
-    //     LINK_TYPE_HVICABLE
-    // );
-
-
+function make_pxie_busses() {
+    let ex = "_Module" + "[0-9]+$"
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            // determine PC and PXIEBus id from node.id
+            var module_id = node.id;
+            var parts = module_id.split("_Chassis");
+            var pc_id = parts[0] + "_PC";
+            if (RACKS_TYPE == RACKS_TYPE_1000) {
+                pc_id += "1";
+            }
+            if (RACKS_TYPE == RACKS_TYPE_16x6) {
+                pc_id += parts[1][0]; // should be chassis number
+            }
+            var pxie_bus_id = pc_id + "_PXIEBus1";
+            // DEBUG
+            // console.log(pxie_bus_id + " -> " + module_id)
+            add_data_link(
+                pxie_bus_id, 
+                module_id, 
+                LINK_TYPE_PXIEBUS
+            );
+        }
+    }
 }
 
 function make_iols_and_connection_expert() {
@@ -978,13 +1136,6 @@ function make_iols_and_connection_expert() {
             }
         }
     } 
-}
-function trunc_name(full) {
-    var result = full;
-    if (result.length > 16) {
-        result = full.slice(0,16) + "...";
-    }
-    return result;
 }
 
 function make_kdi_root() {
@@ -1154,9 +1305,9 @@ function make_qcs_host() {
         let hclconfig_id = consul_id + "_HCLConfigSvc" + 0;
         let hclconfig_name = "HCL Config Svc 0";
         add_data_node(hclconfig_id, [hclconfig_name], NODE_TYPE_QCS_HOST);
-        console.log(hclconfig_id + " ---> " + hcl_id);
+        // console.log(hclconfig_id + " ---> " + hcl_id);
         add_data_link(hclconfig_id, hcl_id, LINK_TYPE_SOFTWARE_QCS_INT);
-        console.log(cli_id + " ---> " + hclconfig_id);
+        // console.log(cli_id + " ---> " + hclconfig_id);
         add_data_link(cli_id, hclconfig_id, LINK_TYPE_SOFTWARE_QCS_INT);
     }
 }
@@ -1235,6 +1386,8 @@ function count_node_stat(tag) {
     for (let i=0; i<data.nodes.length; i++) {
         var node = data.nodes[i];
         if (node.id.match(ex)) {
+            // DEBUG
+            //console.log(node.id);
             count++;
         }
     }
@@ -1253,30 +1406,30 @@ function count_link_stat(tag) {
     return count;
 }
 
+function reset_data() {
+    data["nodes"] = [];
+    data["links"] = [];
+}
+
+function show_data() {
+    console.log(JSON.stringify(data, null, 2));
+}
+
 function show_stats() {
     console.log("total nodes: " + data.nodes.length);
     console.log("total links: " + data.links.length);
     console.log("total nodes - Racks:   " + count_node_stat("_Rack"));
+    console.log("total nodes - PCs:     " + count_node_stat("_PC"));
+    // console.log("total nodes - PXIECards: " + count_node_stat("_PXIECard"));
+    // console.log("total nodes - PXIEBuses: " + count_node_stat("_PXIEBus"));
     console.log("total nodes - Chassis: " + count_node_stat("_Chassis"));
     console.log("total nodes - Modules: " + count_node_stat("_Module"));
 }
 
 function make_data() {
 
-    data["nodes"] = [];
-    data["links"] = [];
+    reset_data();
  
-    select_racks_1000();
-    // select_racks_16x6();
-
-    // uses RACKS_MODIFIED
-    // enable_limited_system_2R_2C();   
-    enable_limited_system_3R_6C();
-    enable_hardware_only();
-     // enable_software_only();
-    // enable_kdi_only();
-    // enable_qcs_only();
-
     // HARDWARE
     make_root();
     make_racks();
@@ -1285,14 +1438,12 @@ function make_data() {
     make_chassis();
     make_slots();
     make_modules();
-    make_pcie_cables();
+    make_pxie_cables();
     make_system_sync_ports();
     make_hvi_cables();
 
     // BUSSES
-    // make_pc_addrs();
-    // make_pcie_addrs();
-    // make_hvi_addrs();
+    make_pxie_busses();
 
     // SOFTWARE
     make_iols_and_connection_expert();
@@ -1301,12 +1452,38 @@ function make_data() {
     make_kdi_other();
     make_qcs_host();
     make_qcs_clients();
- 
-    //console.log(JSON.stringify(data, null, 2));
-    show_stats();
-    validate_links();
-    //console.log(JSON.stringify(data, null, 2));
-    show_stats();
 }
 
+
+// select_racks_1000();
+select_racks_16x6();
+
+enable_all_nodes();
+enable_all_links();
+
+// enable_limited_system_2R_2C();   
+// enable_limited_system_3R_6C();
+// enable_hardware_only();
+// enable_software_only();
+// enable_iols_only();
+// enable_kdi_only();
+// enable_qcs_only();
+
 make_data();
+
+// show_data();
+show_stats();
+validate_links();
+// show_data();
+show_stats();
+
+// ui options
+// 1000
+// 16x6
+// hw
+// sw
+// iols
+// kdi
+// qcs
+// Rn
+// Cn

@@ -30,10 +30,13 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] spilt LINK_TYPE_SOFTWARE for better control?
 - [x] expand for QCS 
 - [x] add HVICONNECTORS (SSYnc ports)
+- [x] add HVICABLE
+- [x] add PCIE bus
+- [x] change PCIE to PXIE
 - [ ] update comments on types
 - [ ] lock down node/link colors instead of auto
-- [x] add HVICABLE
-- [ ] add PCIE bus
+- [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
+- [ ] clean up enable functions
 
 - [ ] clean up data vs racks.json
 - [ ] experiment with colors of nodes/links

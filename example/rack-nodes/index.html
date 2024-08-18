@@ -12,10 +12,12 @@
       background-color: rgba(0,0,0,0.5);
       user-select: none;
     }
+    
   </style>
 </head>
 
 <body>
+
   <div id="3d-graph"></div>
   <!-- hack to generate data, logs to console, or override -->
 	<!-- idea is to copy paste from console to data.js -->
@@ -56,4 +58,16 @@
     ;
 
   </script>
+  <div id="racksmenu">
+    <button id="racks1000">1000</button>
+    <button id="racks16x6">16x6</button>
+    <button id="hw_only">HW</button>
+    <button id="sw_only">SW</button>
+    <button id="iols_only">IOLS</button>
+    <button id="kdi_only">KDI</button>
+    <button id="qcs_only">QCS</button>
+    <button id="racks_count">Racks +/-</button>
+    <button id="chassis_count">Chassis +/-</button>
+  </div>
+
 </body>
