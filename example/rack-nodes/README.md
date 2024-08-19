@@ -45,6 +45,7 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] Buttons chassis--
 - [x] Buttons prune slots
 - [x] Buttons prune ssync ports
+- [-] lock down node/link colors instead of auto
 - [ ] Buttons nodes dropdown checkboxes
 - [ ] Buttons links dropdown checkboxes
 - [ ] Buttons names dropdown checkboxes
@@ -52,7 +53,6 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [ ] Buttons lock all
 - [ ] Buttons unlock all
 - [ ] update comments on types
-- [ ] lock down node/link colors instead of auto
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
 - [ ] move node/link/enables to data
 
