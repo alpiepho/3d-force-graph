@@ -1621,43 +1621,107 @@ function prune_ssync() {
     make_data();
 }
 
-var node_colors20 = [
-    "Blue",
-    "Brown",
-    "Coral",
-    "DarkOrange",
-    "FireBrick",
-    "ForestGreen",
-    "Gold",
-    "Green",
-    "Lavender",
-    "Maroon",
-    "MediumBlue",
-    "Navy",
-    "Orange",
-    "OrangeRed",
-    "Pink",
-    "Purple",
-    "SeaGreen",
-    "Teal",
-    "Violet",
-    "YellowGreen",
+// NOTE: defining specfic colors works with a couple issues
+//       the color we picked anre not as vibrant, and
+//       some colors are not recognized.  Reverting to auto for now.
+// from https://www.pinterest.co.uk/pin/46795283603992997/
+var node_colors = [
+    "white",
+    // "pear",
+    "lime",
+    // "yellowgreen",
+    // "beige",
+    // "khaki",
+    // "olive",
+    // "umber",
+    // "ivory",
+    // "lemon",
+    "yellow",
+    // "gold",
+    // "cream",
+    // "amber",
+    "goldenrod",
+    // "ocher",
+    // "bisque",
+    // "tan",
+    // "bronze",
+    // "sepia",
+    // "brown",
+    // "champagne",
+    // "apricot",
+    "orange",
+    // "copper",
+    // "salmon",
+    // "redorange",
+    // "rust",
+    // "sienna",
+    // "seashell",
+    // "peach",
+    "coral",
+    // "indianread",
+    "pink",
+    "red",
+    // "carmine",
+    // "marroon",
+    // "mistyrose",
+    // "oldrose",
+    // "rosybrown",
+    // "rosewood",
+    // "palelink",
+    // "cerise",
+    "ruby",
+    // "crimson",
+    // "rosepink",
+    "magenta",
+    // "redviolet",
+    // "plum",
+    // "violet",
+    "fuchsia",
+    "purple",
+    // "eggplant",
+    // "lavender",
+    // "amethyst",
+    "blueviolet",
+    // "indigo",
+    // "babyblue",
+    "skyblue",
+    "blue",
+    // "ultramarine",
+    // "paleblue",
+    "azure",
+    // "cerulean",
+    // "steelblue",
+    "aqua",
+    // "turquoise",
+    // "seagreen",
+    "aquamarine",
+    // "emerald",
+    // "jade",
+    "palegreen",
+    // "applegreen",
+    "green",
+    // "forestgreen",
+    // "celadon",
+    // "sage",
+    // "slate",
+    // "mauve",
+    // "taupe",
+    // "silver",
+    // "grey",
 ];
 
 
 function node_color(group) {
     var result;
-    var index = group % node_colors20.length;
+    var index = group % node_colors.length;
     result = node_colors[index];
-    console.log(node_colors[17])
     return result;
 }
 
 function link_color(value) {
     var result;
-    var index = value % node_colors20.length;
+    var index = value % node_colors.length;
     result = node_colors[index];
-    console.log(node_colors[17])
     return result;
 }
 
