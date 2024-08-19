@@ -33,10 +33,29 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] add HVICABLE
 - [x] add PCIE bus
 - [x] change PCIE to PXIE
+- [x] clean up enable functions
+- [x] Buttons 1000
+- [x] Buttons 16x6
+- [x] Buttons hw
+- [x] Buttons sw
+- [x] Buttons iols
+- [x] Buttons kdi
+- [x] Buttons qcs
+- [x] Buttons rack--
+- [x] Buttons chassis--
+- [ ] Buttons prune slots
+- [ ] Buttons prune ssync ports
+- [ ] Buttons nodes dropdown checkboxes
+- [ ] Buttons links dropdown checkboxes
+- [ ] Buttons names dropdown checkboxes
+- [ ] Buttons save
+- [ ] Buttons lock all
+- [ ] Buttons unlock all
 - [ ] update comments on types
 - [ ] lock down node/link colors instead of auto
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
-- [ ] clean up enable functions
+
+
 
 - [ ] clean up data vs racks.json
 - [ ] experiment with colors of nodes/links

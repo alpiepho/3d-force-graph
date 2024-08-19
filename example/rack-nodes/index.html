@@ -13,10 +13,31 @@
       user-select: none;
     }
     
+    #racksmenu {
+      z-index: 10;
+    }
+
+    .menuspace {
+      display: inline;
+    }
   </style>
 </head>
 
 <body>
+  <div id="racksmenu">
+    <button id="racks1000">1000</button>
+    <button id="racks16x6">16x6</button>
+    <div class="menuspace">|</div>
+    <button id="hw_only">HW</button>
+    <button id="sw_only">SW</button>
+    <div class="menuspace">|</div>
+    <button id="iols_only">IOLS</button>
+    <button id="kdi_only">KDI</button>
+    <button id="qcs_only">QCS</button>
+    <div class="menuspace">|</div>
+    <button id="racks_count">Racks--</button>
+    <button id="chassis_count">Chassis--</button>
+  </div>
 
   <div id="3d-graph"></div>
   <!-- hack to generate data, logs to console, or override -->
@@ -57,17 +78,63 @@
       .nodeThreeObjectExtend(true)
     ;
 
+    const buttonRacks1000 = document.getElementById( 'racks1000' );
+    buttonRacks1000.addEventListener( 'click', function () {
+        make_data_1000();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacks16x6 = document.getElementById( 'racks16x6' );
+    buttonRacks16x6.addEventListener( 'click', function () {
+        make_data_16x6();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksHwOnly = document.getElementById( 'hw_only' );
+    buttonRacksHwOnly.addEventListener( 'click', function () {
+        make_data_hw_only();
+        Graph.graphData(data);
+      } 
+    );
+
+    const buttonRacksSwOnly = document.getElementById( 'sw_only' );
+    buttonRacksSwOnly.addEventListener( 'click', function () {
+        make_data_sw_only();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksIolsOnly = document.getElementById( 'iols_only' );
+    buttonRacksIolsOnly.addEventListener( 'click', function () {
+        make_data_iols_only();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksKdiOnly = document.getElementById( 'kdi_only' );
+    buttonRacksKdiOnly.addEventListener( 'click', function () {
+        make_data_kdi_only();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksQcsOnly = document.getElementById( 'qcs_only' );
+    buttonRacksQcsOnly.addEventListener( 'click', function () {
+        make_data_qcs_only();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksRacksCountOnly = document.getElementById( 'racks_count' );
+    buttonRacksRacksCountOnly.addEventListener( 'click', function () {
+        make_data_racks_count();
+        Graph.graphData(data);
+      } 
+    );
+    const buttonRacksChassisCountOnly = document.getElementById( 'chassis_count' );
+    buttonRacksChassisCountOnly.addEventListener( 'click', function () {
+        make_data_chassis_count();
+        Graph.graphData(data);
+      } 
+    );
+
+
   </script>
-  <div id="racksmenu">
-    <button id="racks1000">1000</button>
-    <button id="racks16x6">16x6</button>
-    <button id="hw_only">HW</button>
-    <button id="sw_only">SW</button>
-    <button id="iols_only">IOLS</button>
-    <button id="kdi_only">KDI</button>
-    <button id="qcs_only">QCS</button>
-    <button id="racks_count">Racks +/-</button>
-    <button id="chassis_count">Chassis +/-</button>
-  </div>
 
 </body>

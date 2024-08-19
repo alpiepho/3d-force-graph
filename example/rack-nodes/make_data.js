@@ -11,13 +11,13 @@ var TOTAL_PXIECARDS     = 3;
 var TOTAL_PXIEBUSES     = 1;
 
 
-var RACKS_MODIFIED          = 0;
-var RACKS_MODIFIED_CUSTOM   = 1;
-var RACKS_MODIFIED_HW_ONLY  = 2;
-var RACKS_MODIFIED_SW_ONLY  = 4;
-var RACKS_MODIFIED_IOLS     = 8;
-var RACKS_MODIFIED_KDI      = 16;
-var RACKS_MODIFIED_QCS      = 32;
+var RACKS_MODIFIED              = 0;
+var RACKS_MODIFIED_CUSTOM       = 1;
+var RACKS_MODIFIED_HW_ONLY      = 2;
+var RACKS_MODIFIED_SW_ONLY      = 4;
+var RACKS_MODIFIED_IOLS_ONLY    = 8;
+var RACKS_MODIFIED_KDI_ONLY     = 16;
+var RACKS_MODIFIED_QCS_ONLY     = 32;
 
 
 var TOTAL_OTHER_KDI_CLIENTS = 5;
@@ -111,219 +111,6 @@ var ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 0;
 var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
 var ENABLE_LINK_TYPE_HVICABLE            = 0;
 var ENABLE_LINK_TYPE_PXIEBUS             = 0;
-
-function enable_all_nodes() {
-    ENABLE_NODE_TYPE_ROOT                = 1;
-    ENABLE_NODE_TYPE_RACK                = 1;
-    ENABLE_NODE_TYPE_CHASSIS             = 1;
-    ENABLE_NODE_TYPE_SLOT                = 1;
-    ENABLE_NODE_TYPE_MODULE              = 1;
-    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
-    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-    ENABLE_NODE_TYPE_PXIECARD            = 1;
-    ENABLE_NODE_TYPE_NETWORKCARD         = 1;
-    ENABLE_NODE_TYPE_IOLS                = 1;
-    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-    ENABLE_NODE_TYPE_KDI_ROOT            = 1;
-    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
-    ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-    ENABLE_NODE_TYPE_QCS_HOST            = 1;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
-    ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
-    ENABLE_NODE_TYPE_PXIEBUS             = 1;      
-}
-
-function disable_all_nodes() {
-    ENABLE_NODE_TYPE_ROOT                = 0;
-    ENABLE_NODE_TYPE_RACK                = 0;
-    ENABLE_NODE_TYPE_CHASSIS             = 0;
-    ENABLE_NODE_TYPE_SLOT                = 0;
-    ENABLE_NODE_TYPE_MODULE              = 0;
-    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
-    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
-    ENABLE_NODE_TYPE_PXIECARD            = 0;
-    ENABLE_NODE_TYPE_NETWORKCARD         = 0;
-    ENABLE_NODE_TYPE_IOLS                = 0;
-    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
-    ENABLE_NODE_TYPE_QCS_HOST            = 0;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
-    ENABLE_NODE_TYPE_PXIEBUS             = 0;      
-}
-
-function enable_all_links() {
-    ENABLE_LINK_TYPE_ROOT                = 1;
-    ENABLE_LINK_TYPE_RACK                = 1;
-    ENABLE_LINK_TYPE_CHASSIS             = 1;
-    ENABLE_LINK_TYPE_SLOT                = 1;
-    ENABLE_LINK_TYPE_MODULE              = 1;
-    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 1;
-    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 1;
-    ENABLE_LINK_TYPE_PXIECARD            = 1;
-    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 1;
-    ENABLE_LINK_TYPE_PXIECABLE           = 1;
-    ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
-    ENABLE_LINK_TYPE_SOFTWARE            = 1;
-    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 1;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
-    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
-    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
-    ENABLE_LINK_TYPE_HVICABLE            = 1;
-    ENABLE_LINK_TYPE_PXIEBUS             = 1;
-}
-
-function disable_all_links() {
-    ENABLE_LINK_TYPE_ROOT                = 0;
-    ENABLE_LINK_TYPE_RACK                = 0;
-    ENABLE_LINK_TYPE_CHASSIS             = 0;
-    ENABLE_LINK_TYPE_SLOT                = 0;
-    ENABLE_LINK_TYPE_MODULE              = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-    ENABLE_LINK_TYPE_PXIECARD            = 0;
-    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 0;
-    ENABLE_LINK_TYPE_PXIECABLE           = 0;
-    ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
-    ENABLE_LINK_TYPE_SOFTWARE            = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
-    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 0;
-    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
-    ENABLE_LINK_TYPE_HVICABLE            = 0;
-    ENABLE_LINK_TYPE_PXIEBUS             = 0;
-}
-
-function select_racks_1000() {
-    RACKS_TYPE = RACKS_TYPE_1000;
-    TOTAL_RACKS = 10;
-    TOTAL_CHASSIS = 6;
-    TOTAL_SLOTS = 18;
-    TOTAL_PXIECARDS = 3;
-}
-
-function select_racks_16x6() {
-    RACKS_TYPE = RACKS_TYPE_16x6;
-    TOTAL_RACKS = 1;
-    TOTAL_CHASSIS = 6;
-    TOTAL_SLOTS = 18;
-    TOTAL_PXIECARDS = 1;
-}
-
-function enable_limited_system_2R_2C() {
-    TOTAL_RACKS = 2;
-    TOTAL_CHASSIS = 2;
-    TOTAL_SLOTS = 18;
-    TOTAL_PXIECARDS = 3;
-    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
-}
-
-function enable_limited_system_3R_6C() {
-    TOTAL_RACKS = 3;
-    TOTAL_CHASSIS = 6;
-    TOTAL_SLOTS = 18;
-    TOTAL_PXIECARDS = 3;
-    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
-}
-
-function enable_hardware_only() {
-    ENABLE_NODE_TYPE_IOLS                = 0;
-    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
-    ENABLE_NODE_TYPE_QCS_HOST            = 0;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-
-    ENABLE_LINK_TYPE_SOFTWARE            = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
-    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
-
-    RACKS_MODIFIED |= RACKS_MODIFIED_HW_ONLY;
-}
-
-function enable_software_only() {
-    ENABLE_NODE_TYPE_ROOT                = 1;
-    ENABLE_NODE_TYPE_RACK                = 1;
-    ENABLE_NODE_TYPE_CHASSIS             = 0;
-    ENABLE_NODE_TYPE_SLOT                = 0;
-    ENABLE_NODE_TYPE_MODULE              = 0;
-    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
-    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-    ENABLE_NODE_TYPE_PXIECARD            = 0;
-    // NOTE: skipping nodes for network cards, might need for DII
-    ENABLE_NODE_TYPE_NETWORKCARD        = 1;
-    ENABLE_NODE_TYPE_IOLS                = 1;
-    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-    ENABLE_NODE_TYPE_KDI_ROOT            = 1;
-    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
-    ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-    ENABLE_NODE_TYPE_QCS_HOST            = 1;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
-    ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
-    ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-    RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
-}
-
-function enable_iols_only() {
-    ENABLE_NODE_TYPE_RACK                = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-
-    ENABLE_NODE_TYPE_QCS_HOST            = 0;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
-    ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-    RACKS_MODIFIED |= RACKS_MODIFIED_IOLS;
-}
-
-function enable_kdi_only() {
-    enable_software_only();
-    ENABLE_NODE_TYPE_RACK                = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-
-    ENABLE_NODE_TYPE_QCS_HOST            = 0;
-    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
-    ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-    RACKS_MODIFIED |= RACKS_MODIFIED_KDI;
-}
-
-function enable_qcs_only() {
-    enable_software_only();
-    ENABLE_NODE_TYPE_RACK                = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-    ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
-
-    ENABLE_NODE_TYPE_IOLS                = 0;
-    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
-    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
-    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
-
-    RACKS_MODIFIED |= RACKS_MODIFIED_QCS;
-}
 
 function trunc_name(full) {
     var result = full;
@@ -624,13 +411,13 @@ function make_root() {
     if (RACKS_MODIFIED & RACKS_MODIFIED_SW_ONLY) {
         names.push("SOFTWARE ONLY");
     }
-    if (RACKS_MODIFIED & RACKS_MODIFIED_IOLS) {
+    if (RACKS_MODIFIED & RACKS_MODIFIED_IOLS_ONLY) {
         names.push("IOLS ONLY");
     }
-    if (RACKS_MODIFIED & RACKS_MODIFIED_KDI) {
+    if (RACKS_MODIFIED & RACKS_MODIFIED_KDI_ONLY) {
         names.push("KDI ONLY");
     }
-    if (RACKS_MODIFIED & RACKS_MODIFIED_QCS) {
+    if (RACKS_MODIFIED & RACKS_MODIFIED_QCS_ONLY) {
         names.push("QCS ONLY");
     }
 
@@ -1413,6 +1200,8 @@ function reset_data() {
 
 function show_data() {
     console.log(JSON.stringify(data, null, 2));
+    // DEBUG
+    //console.log(JSON.stringify(data).length);
 }
 
 function show_stats() {
@@ -1452,38 +1241,387 @@ function make_data() {
     make_kdi_other();
     make_qcs_host();
     make_qcs_clients();
+
+
+    // show_data();         // TODO: add enable flag
+    // show_stats();        // TODO: add enable flag
+    validate_links();
+    show_data();            // TODO: add enable flag
+    show_stats();           // TODO: add enable flag
 }
 
 
-// select_racks_1000();
-select_racks_16x6();
 
-enable_all_nodes();
-enable_all_links();
 
-// enable_limited_system_2R_2C();   
-// enable_limited_system_3R_6C();
-// enable_hardware_only();
-// enable_software_only();
-// enable_iols_only();
-// enable_kdi_only();
-// enable_qcs_only();
 
-make_data();
 
-// show_data();
-show_stats();
-validate_links();
-// show_data();
-show_stats();
 
-// ui options
-// 1000
-// 16x6
-// hw
-// sw
-// iols
-// kdi
-// qcs
-// Rn
-// Cn
+
+function enable_all_nodes() {
+    ENABLE_NODE_TYPE_ROOT                = 1;
+    ENABLE_NODE_TYPE_RACK                = 1;
+    ENABLE_NODE_TYPE_CHASSIS             = 1;
+    ENABLE_NODE_TYPE_SLOT                = 1;
+    ENABLE_NODE_TYPE_MODULE              = 1;
+    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+    ENABLE_NODE_TYPE_PXIECARD            = 1;
+    ENABLE_NODE_TYPE_NETWORKCARD         = 1;
+    ENABLE_NODE_TYPE_IOLS                = 1;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
+    ENABLE_NODE_TYPE_QCS_HOST            = 1;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
+    ENABLE_NODE_TYPE_PXIEBUS             = 1;      
+}
+
+function disable_all_nodes() {
+    ENABLE_NODE_TYPE_ROOT                = 0;
+    ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    ENABLE_NODE_TYPE_MODULE              = 0;
+    ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
+    ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;  
+}
+
+function enable_all_links() {
+    ENABLE_LINK_TYPE_ROOT                = 1;
+    ENABLE_LINK_TYPE_RACK                = 1;
+    ENABLE_LINK_TYPE_CHASSIS             = 1;
+    ENABLE_LINK_TYPE_SLOT                = 1;
+    ENABLE_LINK_TYPE_MODULE              = 1;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 1;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 1;
+    ENABLE_LINK_TYPE_PXIECARD            = 1;
+    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 1;
+    ENABLE_LINK_TYPE_PXIECABLE           = 1;
+    ENABLE_LINK_TYPE_NETWORKCABLE        = 1;
+    ENABLE_LINK_TYPE_SOFTWARE            = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 1;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 1;
+    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 1;
+    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 1;
+    ENABLE_LINK_TYPE_HVICABLE            = 1;
+    ENABLE_LINK_TYPE_PXIEBUS             = 1;
+}
+
+function disable_all_links() {
+    ENABLE_LINK_TYPE_ROOT                = 0;
+    ENABLE_LINK_TYPE_RACK                = 0;
+    ENABLE_LINK_TYPE_CHASSIS             = 0;
+    ENABLE_LINK_TYPE_SLOT                = 0;
+    ENABLE_LINK_TYPE_MODULE              = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+    ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_LINK_TYPE_PXIECARD            = 0;
+    ENABLE_LINK_TYPE_PXIEBACKPLANE       = 0;
+    ENABLE_LINK_TYPE_PXIECABLE           = 0;
+    ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
+    ENABLE_LINK_TYPE_SOFTWARE            = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_IOLS       = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIROOT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_KDIPEER    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_EXT    = 0;
+    ENABLE_LINK_TYPE_SOFTWARE_QCS_INT    = 0;
+    ENABLE_LINK_TYPE_SSYNC_PORT_IN       = 0;
+    ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
+    ENABLE_LINK_TYPE_HVICABLE            = 0;
+    ENABLE_LINK_TYPE_PXIEBUS             = 0;
+}
+
+function select_racks_1000() {
+    RACKS_TYPE = RACKS_TYPE_1000;
+    TOTAL_RACKS = 10;
+    TOTAL_CHASSIS = 6;
+    TOTAL_SLOTS = 18;
+    TOTAL_PXIECARDS = 3;
+}
+
+function select_racks_16x6() {
+    RACKS_TYPE = RACKS_TYPE_16x6;
+    TOTAL_RACKS = 1;
+    TOTAL_CHASSIS = 6;
+    TOTAL_SLOTS = 18;
+    TOTAL_PXIECARDS = 1;
+}
+
+// function enable_limited_system_2R_2C() {
+//     TOTAL_RACKS = 2;
+//     TOTAL_CHASSIS = 2;
+//     TOTAL_SLOTS = 18;
+//     TOTAL_PXIECARDS = 3;
+//     RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
+// }
+
+// function enable_limited_system_3R_6C() {
+//     TOTAL_RACKS = 3;
+//     TOTAL_CHASSIS = 6;
+//     TOTAL_SLOTS = 18;
+//     TOTAL_PXIECARDS = 3;
+//     RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
+// }
+
+
+
+// function enable_software_only() {
+//     ENABLE_NODE_TYPE_ROOT                = 1;
+//     ENABLE_NODE_TYPE_RACK                = 1;
+//     ENABLE_NODE_TYPE_CHASSIS             = 0;
+//     ENABLE_NODE_TYPE_SLOT                = 0;
+//     ENABLE_NODE_TYPE_MODULE              = 0;
+//     ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
+//     ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
+//     ENABLE_NODE_TYPE_PXIECARD            = 0;
+//     // NOTE: skipping nodes for network cards, might need for DII
+//     ENABLE_NODE_TYPE_NETWORKCARD        = 1;
+//     ENABLE_NODE_TYPE_IOLS                = 1;
+//     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
+//     ENABLE_NODE_TYPE_KDI_ROOT            = 1;
+//     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
+//     ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
+//     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
+//     ENABLE_NODE_TYPE_QCS_HOST            = 1;
+//     ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
+//     ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
+//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
+
+//     RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
+// }
+
+// function enable_iols_only() {
+//     ENABLE_NODE_TYPE_RACK                = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+
+//     ENABLE_NODE_TYPE_QCS_HOST            = 0;
+//     ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+//     ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
+
+//     RACKS_MODIFIED |= RACKS_MODIFIED_IOLS;
+// }
+
+// function enable_kdi_only() {
+//     enable_software_only();
+//     ENABLE_NODE_TYPE_RACK                = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+
+//     ENABLE_NODE_TYPE_QCS_HOST            = 0;
+//     ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+//     ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
+
+//     RACKS_MODIFIED |= RACKS_MODIFIED_KDI;
+// }
+
+// function enable_qcs_only() {
+//     enable_software_only();
+//     ENABLE_NODE_TYPE_RACK                = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
+//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
+//     ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
+
+//     ENABLE_NODE_TYPE_IOLS                = 0;
+//     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+//     ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+//     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+//     ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+//     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+
+//     RACKS_MODIFIED |= RACKS_MODIFIED_QCS;
+// }
+
+
+
+function make_data_1000() {
+    console.log('racks1000')
+    select_racks_1000();
+    enable_all_nodes();
+    enable_all_links();
+    make_data();
+}
+
+function make_data_16x6() {
+    console.log('racks16x6')
+    select_racks_16x6();
+    enable_all_nodes();
+    enable_all_links();
+    make_data();
+}
+
+function make_data_hw_only() {
+    enable_all_nodes();
+    // ENABLE_NODE_TYPE_ROOT                = 0;
+    // ENABLE_NODE_TYPE_RACK                = 0;
+    // ENABLE_NODE_TYPE_CHASSIS             = 0;
+    // ENABLE_NODE_TYPE_SLOT                = 0;
+    // ENABLE_NODE_TYPE_MODULE              = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    // ENABLE_NODE_TYPE_PXIECARD            = 0;
+    // ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    // ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;      
+    RACKS_MODIFIED |= RACKS_MODIFIED_HW_ONLY;
+    make_data();
+}
+
+function make_data_sw_only() {
+    enable_all_nodes();
+    // ENABLE_NODE_TYPE_ROOT                = 0;
+    // ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    ENABLE_NODE_TYPE_MODULE              = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
+    ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    // ENABLE_NODE_TYPE_IOLS                = 0;
+    // ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    // ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    // ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    // ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    // ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    // ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    // ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    // ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    // ENABLE_NODE_TYPE_PXIEBUS             = 0;
+    RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
+    make_data();
+}
+
+function make_data_iols_only() {
+    enable_all_nodes();
+    // ENABLE_NODE_TYPE_ROOT                = 0;
+    // ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    // ENABLE_NODE_TYPE_MODULE              = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    // ENABLE_NODE_TYPE_PXIECARD            = 0;
+    // ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    // ENABLE_NODE_TYPE_IOLS                = 0;
+    // ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    // ENABLE_NODE_TYPE_PXIEBUS             = 0;      
+    RACKS_MODIFIED |= RACKS_MODIFIED_IOLS_ONLY;
+    make_data();
+}
+
+function make_data_kdi_only() {
+    enable_all_nodes();
+    enable_all_nodes();
+    // ENABLE_NODE_TYPE_ROOT                = 0;
+    // ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    ENABLE_NODE_TYPE_MODULE              = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
+    // ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    // ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    // ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    // ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    // ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    // ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    ENABLE_NODE_TYPE_PXIEBUS             = 0;       
+    RACKS_MODIFIED |= RACKS_MODIFIED_KDI_ONLY;
+    make_data();
+}
+
+function make_data_qcs_only() {
+    enable_all_nodes();
+    // ENABLE_NODE_TYPE_ROOT                = 0;
+    // ENABLE_NODE_TYPE_RACK                = 0;
+    ENABLE_NODE_TYPE_CHASSIS             = 0;
+    ENABLE_NODE_TYPE_SLOT                = 0;
+    // ENABLE_NODE_TYPE_MODULE              = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 0;
+    // ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 0;
+    ENABLE_NODE_TYPE_PXIECARD            = 0;
+    // ENABLE_NODE_TYPE_NETWORKCARD         = 0;
+    ENABLE_NODE_TYPE_IOLS                = 0;
+    ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT            = 0;
+    ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
+    ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
+    // ENABLE_NODE_TYPE_QCS_HOST            = 0;
+    // ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
+    // ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
+    // ENABLE_NODE_TYPE_PXIEBUS             = 0;   
+    RACKS_MODIFIED |= RACKS_MODIFIED_QCS_ONLY;
+    make_data();
+}
+
+function make_data_racks_count() {
+    // enable_all_nodes();
+    TOTAL_RACKS -= 1;
+    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
+    if (TOTAL_RACKS <= 0) {
+        if (RACKS_TYPE == RACKS_TYPE_1000) {
+            TOTAL_RACKS = 10;
+        }
+        if (RACKS_TYPE == RACKS_TYPE_16x6) {
+            TOTAL_RACKS = 1;
+        }
+        RACKS_MODIFIED &= ~RACKS_MODIFIED_CUSTOM;
+    }
+    make_data();
+}
+
+function make_data_chassis_count() {
+    // enable_all_nodes();
+    TOTAL_CHASSIS -= 1;
+    RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
+    if (TOTAL_CHASSIS <= 0) {
+        TOTAL_CHASSIS = 6;
+        RACKS_MODIFIED &= ~RACKS_MODIFIED_CUSTOM;
+    }
+    make_data();
+}
+
+// Default
+make_data_1000();
