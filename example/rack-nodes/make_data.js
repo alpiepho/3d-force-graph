@@ -18,6 +18,8 @@ var RACKS_MODIFIED_SW_ONLY      = 4;
 var RACKS_MODIFIED_IOLS_ONLY    = 8;
 var RACKS_MODIFIED_KDI_ONLY     = 16;
 var RACKS_MODIFIED_QCS_ONLY     = 32;
+var RACKS_MODIFIED_PRUNED_SLOTS = 64;
+var RACKS_MODIFIED_PRUNED_SSYNC = 128;
 
 
 var TOTAL_OTHER_KDI_CLIENTS = 5;
@@ -120,6 +122,7 @@ function trunc_name(full) {
     return result;
 }
 
+var prune_nodes = [];
 function add_data_node(id, names, group) {
     // filter here
     if (group == NODE_TYPE_ROOT                 && ENABLE_NODE_TYPE_ROOT                == 0) return;
@@ -141,6 +144,13 @@ function add_data_node(id, names, group) {
     if (group == NODE_TYPE_QCS_CLIENT           && ENABLE_NODE_TYPE_QCS_CLIENT          == 0) return;
     if (group == NODE_TYPE_SSYNC_PORT           && ENABLE_NODE_TYPE_SSYNC_PORT          == 0) return;
     if (group == NODE_TYPE_PXIEBUS              && ENABLE_NODE_TYPE_PXIEBUS             == 0) return;   
+
+    for (let i=0; i<prune_nodes.length; i++) {
+        if (id == prune_nodes[i]) {
+            return;
+        }
+    }
+
     // DEBUG
     //names.push(id);
 
@@ -420,6 +430,13 @@ function make_root() {
     if (RACKS_MODIFIED & RACKS_MODIFIED_QCS_ONLY) {
         names.push("QCS ONLY");
     }
+    if (RACKS_MODIFIED & RACKS_MODIFIED_PRUNED_SLOTS) {
+        names.push("PRUNED SLOTS");
+    }
+    if (RACKS_MODIFIED & RACKS_MODIFIED_PRUNED_SSYNC) {
+        names.push("PRUNED SSYNC");
+    }
+    RACKS_MODIFIED_PRUNED_SLOTS
 
     add_data_node("All", names, NODE_TYPE_ROOT);
 }
@@ -1250,13 +1267,6 @@ function make_data() {
     show_stats();           // TODO: add enable flag
 }
 
-
-
-
-
-
-
-
 function enable_all_nodes() {
     ENABLE_NODE_TYPE_ROOT                = 1;
     ENABLE_NODE_TYPE_RACK                = 1;
@@ -1276,7 +1286,8 @@ function enable_all_nodes() {
     ENABLE_NODE_TYPE_QCS_HOST            = 1;
     ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
     ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
-    ENABLE_NODE_TYPE_PXIEBUS             = 1;      
+    ENABLE_NODE_TYPE_PXIEBUS             = 1;  
+    prune_nodes = [];    
 }
 
 function disable_all_nodes() {
@@ -1365,100 +1376,15 @@ function select_racks_16x6() {
     TOTAL_PXIECARDS = 1;
 }
 
-// function enable_limited_system_2R_2C() {
-//     TOTAL_RACKS = 2;
-//     TOTAL_CHASSIS = 2;
-//     TOTAL_SLOTS = 18;
-//     TOTAL_PXIECARDS = 3;
-//     RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
-// }
-
-// function enable_limited_system_3R_6C() {
-//     TOTAL_RACKS = 3;
-//     TOTAL_CHASSIS = 6;
-//     TOTAL_SLOTS = 18;
-//     TOTAL_PXIECARDS = 3;
-//     RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
-// }
-
-
-
-// function enable_software_only() {
-//     ENABLE_NODE_TYPE_ROOT                = 1;
-//     ENABLE_NODE_TYPE_RACK                = 1;
-//     ENABLE_NODE_TYPE_CHASSIS             = 0;
-//     ENABLE_NODE_TYPE_SLOT                = 0;
-//     ENABLE_NODE_TYPE_MODULE              = 0;
-//     ENABLE_NODE_TYPE_WINDOWSPC_CLIENT    = 1;
-//     ENABLE_NODE_TYPE_WINDOWSPC_HOST      = 1;
-//     ENABLE_NODE_TYPE_PXIECARD            = 0;
-//     // NOTE: skipping nodes for network cards, might need for DII
-//     ENABLE_NODE_TYPE_NETWORKCARD        = 1;
-//     ENABLE_NODE_TYPE_IOLS                = 1;
-//     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 1;
-//     ENABLE_NODE_TYPE_KDI_ROOT            = 1;
-//     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 1;
-//     ENABLE_NODE_TYPE_KDI_CLIENT          = 1;
-//     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 1;
-//     ENABLE_NODE_TYPE_QCS_HOST            = 1;
-//     ENABLE_NODE_TYPE_QCS_CLIENT          = 1;
-//     ENABLE_NODE_TYPE_SSYNC_PORT          = 1;
-//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-//     RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
-// }
-
-// function enable_iols_only() {
-//     ENABLE_NODE_TYPE_RACK                = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-
-//     ENABLE_NODE_TYPE_QCS_HOST            = 0;
-//     ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-//     ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
-//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-//     RACKS_MODIFIED |= RACKS_MODIFIED_IOLS;
-// }
-
-// function enable_kdi_only() {
-//     enable_software_only();
-//     ENABLE_NODE_TYPE_RACK                = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-
-//     ENABLE_NODE_TYPE_QCS_HOST            = 0;
-//     ENABLE_NODE_TYPE_QCS_CLIENT          = 0;
-//     ENABLE_NODE_TYPE_SSYNC_PORT          = 0;
-//     ENABLE_NODE_TYPE_PXIEBUS             = 0;
-
-//     RACKS_MODIFIED |= RACKS_MODIFIED_KDI;
-// }
-
-// function enable_qcs_only() {
-//     enable_software_only();
-//     ENABLE_NODE_TYPE_RACK                = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_CLIENT    = 0;
-//     ENABLE_LINK_TYPE_WINDOWSPC_HOST      = 0;
-//     ENABLE_LINK_TYPE_NETWORKCABLE        = 0;
-
-//     ENABLE_NODE_TYPE_IOLS                = 0;
-//     ENABLE_NODE_TYPE_CONNECTION_EXPERT   = 0;
-//     ENABLE_NODE_TYPE_KDI_ROOT            = 0;
-//     ENABLE_NODE_TYPE_KDI_ROOT_SVC        = 0;
-//     ENABLE_NODE_TYPE_KDI_CLIENT          = 0;
-//     ENABLE_NODE_TYPE_KDI_CLIENT_SVC      = 0;
-
-//     RACKS_MODIFIED |= RACKS_MODIFIED_QCS;
-// }
-
-
-
 function make_data_1000() {
     console.log('racks1000')
     select_racks_1000();
     enable_all_nodes();
     enable_all_links();
+
+TOTAL_RACKS = 1;
+TOTAL_CHASSIS = 1;
+
     make_data();
 }
 
@@ -1622,6 +1548,83 @@ function make_data_chassis_count() {
     }
     make_data();
 }
+
+function prune_slots() {
+    // get all slots
+    var all_slots = [];
+    let ex = "_Slot" + "[0-9]+$"
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            all_slots.push(node.id);
+        }
+    }
+    // get all modules
+    var all_modules = [];
+    ex = "_Module" + "[0-9]+$"
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            all_modules.push(node.id);
+        }
+    }
+    // add any slots without a module to pruned_nodes
+    for (let i=0; i<all_slots.length; i++) {
+        var slot_id = all_slots[i];
+        var found = 0;
+        for (let j=0; j<all_modules.length && !found; j++) {
+            var module_id = all_modules[j];
+            if (module_id.includes(slot_id)) {
+                found = 1;
+            }
+        }
+        if (found == 0) {
+            prune_nodes.push(slot_id);
+        }   
+    }
+    RACKS_MODIFIED |= RACKS_MODIFIED_PRUNED_SLOTS;
+    make_data();
+}
+
+function prune_ssync() {
+    // get all ssync ports
+    var all_ssync_ports = [];
+    let ex = "_SSyncPort" + "[0-9]+$"
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (node.id.match(ex)) {
+            all_ssync_ports.push(node.id);
+        }
+    }
+    // get all ssync port links
+    var all_ssync_links = [];
+    ex = "_Module" + "[0-9]+$"
+    for (let i=0; i<data.links.length; i++) {
+        var link = data.links[i];
+        if (link.value == LINK_TYPE_SSYNC_PORT_IN 
+            || link.value == LINK_TYPE_SSYNC_PORT_OUT) {
+            var str = node.source + "__" + node.target;
+            all_ssync_links.push(str);
+        }
+    }
+    // add any ssync ports without a link to pruned_nodes
+    for (let i=0; i<all_ssync_ports.length; i++) {
+        var ssync_port_id = all_ssync_ports[i];
+        var found = 0;
+        for (let j=0; j<all_ssync_links.length && !found; j++) {
+            var str = all_ssync_links[j];
+            if (str.includes(ssync_port_id)) {
+                found = 1;
+            }
+        }
+        if (found == 0) {
+            prune_nodes.push(ssync_port_id);
+        }   
+    }   
+    RACKS_MODIFIED |= RACKS_MODIFIED_PRUNED_SSYNC;
+    make_data();
+}
+
 
 // Default
 make_data_1000();
