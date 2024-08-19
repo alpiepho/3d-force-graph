@@ -45,7 +45,7 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] Buttons chassis--
 - [x] Buttons prune slots
 - [x] Buttons prune ssync ports
-- [-] lock down node/link colors instead of auto
+- [x] lock down node/link colors instead of auto
 - [ ] Buttons nodes dropdown checkboxes
 - [ ] Buttons links dropdown checkboxes
 - [ ] Buttons names dropdown checkboxes

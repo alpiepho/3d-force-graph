@@ -145,16 +145,16 @@
       // .cooldownTime(0)
       .linkDirectionalArrowLength(3.5)
       .linkDirectionalArrowRelPos(1)
-      .nodeAutoColorBy('group')
-      // .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
-      .linkAutoColorBy('value')
-      // .linkColor(node => link_color(node.value))
+      // .nodeAutoColorBy('group')
+      .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
+      // .linkAutoColorBy('value')
+      .linkColor(node => link_color(node.value))
       .linkWidth(2)
       .nodeThreeObject(node => {
         const nodeEl = document.createElement('div');
         nodeEl.textContent = node.id;
-        nodeEl.style.color = node.color;
-        // nodeEl.style.color = node_color(node.group);
+        // nodeEl.style.color = node.color;
+        nodeEl.style.color = node_color(node.group);
         nodeEl.className = 'node-label';
         var text = "";
         if (node.names) {
