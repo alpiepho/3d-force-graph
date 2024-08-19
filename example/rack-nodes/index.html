@@ -166,6 +166,11 @@
         nodeEl.innerText = text;
         return new CSS2DObject(nodeEl);
       })
+      .onNodeDragEnd(node => {
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+      })
       .nodeThreeObjectExtend(true)
       ;
 
