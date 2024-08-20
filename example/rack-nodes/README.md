@@ -138,6 +138,7 @@ Some possible inputs:
 - https://github.com/d3/d3-force
 - kdi background:
 - https://www.keysight.com/hk/en/lib/software-detail/computer-software/keysight-distributed-infrastructure--kdi--downloads.html
+- https://observablehq.com/@ben-tanen/a-tutorial-to-using-d3-force-from-someone-who-just-learned-ho
 
 
 

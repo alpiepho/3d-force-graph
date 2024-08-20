@@ -155,6 +155,11 @@ function add_data_node(id, names, group) {
     //names.push(id);
 
     data.nodes.push({"id": id, "names": names, "group": group});
+    // data.nodes.push({
+    //     "id": id, "names": names, "group": group, 
+    //     "x": 10, "y": 10, "z": 10,
+    //     "fx": 10, "fy": 10, "fz": 10
+    // });
 }
 
 function add_data_link(source, target, value) {

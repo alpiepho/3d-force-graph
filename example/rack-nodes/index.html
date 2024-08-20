@@ -158,7 +158,10 @@
       (document.getElementById('3d-graph'))
       // .jsonUrl('../datasets/racks.json')
       .graphData(data)
-      // .cooldownTime(0)
+      // .numDimensions(2) // flatten to a plane
+      // .nodePositionUpdate((obj, coord, node) => {
+      //   console.log(node);
+      // })
       .linkDirectionalArrowLength(3.5)
       .linkDirectionalArrowRelPos(1)
       // .nodeAutoColorBy('group')
@@ -204,8 +207,15 @@
             "fixedNodes",
             JSON.stringify(fixedNodes));
       })
+      .onEngineStop(() => {
+        // NOTE: this seems to dump all the nodes and links
+        // maybe we can use this with localStorage to store all
+        // BUT still dont know how to set position...ugg
+        console.log(Graph.graphData())
+      })
       .nodeThreeObjectExtend(true)
       ;
+
 
     const buttonRacks1000 = document.getElementById('racks1000');
     buttonRacks1000.addEventListener('click', function () {
