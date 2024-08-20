@@ -56,8 +56,6 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
 - [ ] move node/link/enables to data
 
-#fe2f16
-
 - [ ] clean up data vs racks.json
 - [ ] experiment with colors of nodes/links
 - [ ] experiment with colors on links/nodes for errors
@@ -138,6 +136,8 @@ Some possible inputs:
 - https://github.com/vasturiano/d3-force-3d
 - somewhere based on:
 - https://github.com/d3/d3-force
+- kdi background:
+- https://www.keysight.com/hk/en/lib/software-detail/computer-software/keysight-distributed-infrastructure--kdi--downloads.html
 
 
 
