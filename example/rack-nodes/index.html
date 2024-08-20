@@ -136,6 +136,22 @@
   <script type="module">
     import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 
+    // apply fixed positions found in localStorage
+    const fixedNodes = JSON.parse(localStorage.getItem("fixedNodes"));
+    if (fixedNodes && fixedNodes.length > 0)
+        for (const f of fixedNodes) {
+        const id = f.id,
+            fx = f.fx,
+            fy = f.fy,
+            fz = f.fz;
+        // TODO how to use these in Graph
+        // if (i && nodes[i] && fx && fy && fz) {
+        //     nodes[i].fx = fx;
+        //     nodes[i].fy = fy;
+        //     nodes[i].fz = fz;
+        // }
+    }
+
     const Graph = ForceGraph3D({
       extraRenderers: [new CSS2DRenderer()]
     })
@@ -170,6 +186,23 @@
           node.fx = node.x;
           node.fy = node.y;
           node.fz = node.z;
+
+          // get fixedNodes
+          var fixedNodes = JSON.parse(localStorage.getItem("fixedNodes"));
+          if (!fixedNodes) {
+            fixedNodes = [];
+          }
+          // add to fixedNodes
+          fixedNodes.push({ 
+              "id": node.id,
+              "fx": node.fx, 
+              "fy": node.fy, 
+              "fz": node.fz 
+            });
+          // save fixedNodes
+          localStorage.setItem(
+            "fixedNodes",
+            JSON.stringify(fixedNodes));
       })
       .nodeThreeObjectExtend(true)
       ;

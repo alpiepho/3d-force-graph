@@ -1538,7 +1538,7 @@ function make_data_chassis_count() {
     // enable_all_nodes();
     TOTAL_CHASSIS -= 1;
     RACKS_MODIFIED |= RACKS_MODIFIED_CUSTOM;
-    if (TOTAL_CHASSIS <= 0) {
+    if (TOTAL_CHASSIS < 0) {
         TOTAL_CHASSIS = 6;
         RACKS_MODIFIED &= ~RACKS_MODIFIED_CUSTOM;
     }
