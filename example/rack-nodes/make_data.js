@@ -1382,7 +1382,7 @@ function select_racks_16x6() {
 }
 
 function make_data_1000() {
-    console.log('racks1000')
+    console.log('make_data_1000')
     select_racks_1000();
     enable_all_nodes();
     enable_all_links();
@@ -1390,10 +1390,10 @@ function make_data_1000() {
 }
 
 function make_data_16x6() {
-    console.log('racks16x6')
+    console.log('make_data_16x6')
     select_racks_16x6();
     enable_all_nodes();
-    enable_all_links();
+    enable_all_links();   
     make_data();
 }
 

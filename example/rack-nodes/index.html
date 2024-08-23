@@ -110,6 +110,8 @@
     <div class="menuspace">|</div>
     <button id="lock_all">lock all</button>
     <button id="unlock_all">unlock all</button>
+    <button id="save">save</button>
+    <button id="restore">restore</button>
  
  
     <!-- <div class="menuspace">|</div>
@@ -139,23 +141,6 @@
   <script type="importmap">{ "imports": { "three": "https://unpkg.com/three/build/three.module.js" }}</script>
   <script type="module">
     import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
-
-    // TODO - do this with button
-    // restore from localStorage if available
-    // const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
-    // const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
-    // if (savedNodes && savedLinks) {
-    //   if (savedNodes.length > 0 && savedLinks.length > 0) {
-    //     // DEBUG
-    //     console.log(savedNodes.length)
-    //     console.log(savedLinks.length)
-    //     console.log(data.nodes.length)
-    //     console.log(data.links.length)
-
-    //     data.nodes = savedNodes;
-    //     data.links = savedLinks;
-    //   }
-    // }
 
     const Graph = ForceGraph3D({
       extraRenderers: [new CSS2DRenderer()]
@@ -197,41 +182,6 @@
       //     node.fz = node.z;
       // })
       .onEngineStop(() => {
-        // TODO - do this with button
-        // // save to localStorage
-        // var savedNodes = [];
-        // var nodes = Graph.graphData().nodes;
-        // for (let i=0; i<nodes.length; i++) {
-        //   var node = nodes[i];
-        //   savedNodes.push({
-        //     "id": node.id,
-        //     "group": node.group,
-        //     "names": node.names,
-        //     "fx": node.x,
-        //     "fy": node.y,
-        //     "fz": node.z,
-        //   })
-        // }
-        // var savedLinks = [];
-        // var links = Graph.graphData().links;
-        // for (let i=0; i<links.length; i++) {
-        //   var link = links[i];
-        //   savedLinks.push({
-        //     "source": link.source,
-        //     "target": link.target,
-        //     "value": link.value,
-        //   })
-        // }
-        // try {
-        //   localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
-        //   localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
-        //   // DEBUG
-        //   // console.log(savedNodes)
-        //   // console.log(savedLinks)
-        // }
-        // catch(error) {
-        //   console.log("savedNodes/savedLinks too big, ingnoring")
-        // }
         console.log('onEngineStop');
       })
       .nodeThreeObjectExtend(true)
@@ -325,8 +275,82 @@
         node.fx = null;
         node.fy = null;
         node.fz = null;
+      }      
+      Graph.graphData(data);
+    }
+    );
+    const buttonSave = document.getElementById('save');
+    buttonSave.addEventListener('click', function () {
+      // save to localStorage
+      var savedNodes = [];
+      var nodes = Graph.graphData().nodes;
+      for (let i=0; i<nodes.length; i++) {
+        var node = nodes[i];
+        savedNodes.push({
+          "id": node.id,
+          "group": node.group,
+          "names": node.names,
+          "fx": node.fx,
+          "fy": node.fy,
+          "fz": node.fz,
+        })
+      }
+      var savedLinks = [];
+      var links = Graph.graphData().links;
+      for (let i=0; i<links.length; i++) {
+        var link = links[i];
+        savedLinks.push({
+          "source": link.source.id,
+          "target": link.target.id,
+          "value": link.value,
+        })
+      }
+      try {
+        console.log(JSON.stringify(savedNodes))
+        console.log(JSON.stringify(savedLinks))
+        localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
+        localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+      }
+      catch(error) {
+        console.log("savedNodes/savedLinks too big, ingnoring")
+      }
+      console.log('saved')
+    }
+    );
+    const buttonRestore = document.getElementById('restore');
+    buttonRestore.addEventListener('click', function () {
+      // restore from localStorage if available
+      const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
+      const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
+      if (savedNodes && savedLinks) {
+        if (savedNodes.length > 0 && savedLinks.length > 0) {
+          //data.nodes = savedNodes;
+          data.nodes = [];
+          for (let i=0; i<savedNodes.length; i++) {
+            var node = savedNodes[i];
+            data.nodes.push({
+              "id": node.id,
+              "group": node.group,
+              "names": node.names,
+              "fx": node.fx,
+              "fy": node.fy,
+              "fz": node.fz,
+            })
+          }
+          //data.links = savedLinks;
+          data.links = [];
+          for (let i=0; i<savedLinks.length; i++) {
+            var link = savedLinks[i];
+            data.links.push({
+              "source": link.source,
+              "target": link.target,
+              "value": link.value,
+            })
+          }
+        }
       }
       Graph.graphData(data);
+      console.log('restore')
     }
     );
 

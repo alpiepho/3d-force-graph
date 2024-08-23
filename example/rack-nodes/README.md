@@ -48,11 +48,11 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] lock down node/link colors instead of auto
 - [x] Buttons lock all
 - [x] Buttons unlock all
+- [x] controls to hide empty slots?
+- [x] Buttons save
 - [ ] Buttons nodes dropdown checkboxes
 - [ ] Buttons links dropdown checkboxes
 - [ ] Buttons names dropdown checkboxes
-- [ ] Buttons save
-- [ ] update comments on types
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
 - [ ] move node/link/enables to data
 
@@ -61,7 +61,6 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [ ] experiment with colors on links/nodes for errors
 - [ ] controls to hide levels
 - [ ] controls to highlight levels
-- [ ] controls to hide empty slots?
 - [ ] controls to collapse levels?
 
 ## Sample KDI node list
