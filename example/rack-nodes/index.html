@@ -157,14 +157,17 @@
       .linkDirectionalArrowRelPos(1)
       // .nodeAutoColorBy('group')
       .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
+      //.nodeOpacity(0.2)
       // .linkAutoColorBy('value')
       .linkColor(node => link_color(node.value))
+      //.linkOpacity(1.0)
       .linkWidth(2)
       .nodeThreeObject(node => {
         const nodeEl = document.createElement('div');
         nodeEl.textContent = node.id;
         // nodeEl.style.color = node.color;
         nodeEl.style.color = node_color(node.group);
+        //nodeEl.style.opacity = 0.2;
         nodeEl.className = 'node-label';
         var text = "";
         if (node.names) {
@@ -281,13 +284,24 @@
     );
     const buttonSave = document.getElementById('save');
     buttonSave.addEventListener('click', function () {
-      // save to localStorage
-      var savedNodes = [];
       var nodes = Graph.graphData().nodes;
+      var links = Graph.graphData().links;
+      // get ids for localStorage (indexing ids should compress localStorage)
+      // NOTE: if all ids are the index values, Graph still works but no human readable ids
+      var allIds = [];
       for (let i=0; i<nodes.length; i++) {
         var node = nodes[i];
+        allIds.push(node.id);
+      }
+      var setIds = new Set(allIds);
+      var savedIds = [...setIds];
+      // get nodes for localStorage (index the ids)
+      var savedNodes = [];
+      for (let i=0; i<nodes.length; i++) {
+        var node = nodes[i];
+        var id = savedIds.indexOf(node.id);
         savedNodes.push({
-          "id": node.id,
+          "id": id,
           "group": node.group,
           "names": node.names,
           "fx": node.fx,
@@ -295,19 +309,23 @@
           "fz": node.fz,
         })
       }
+      // get links for localStorage (index the ids)
       var savedLinks = [];
-      var links = Graph.graphData().links;
       for (let i=0; i<links.length; i++) {
         var link = links[i];
+        var source_id = savedIds.indexOf(link.source.id);
+        var target_id = savedIds.indexOf(link.target.id);
         savedLinks.push({
-          "source": link.source.id,
-          "target": link.target.id,
+          "source": source_id,
+          "target": target_id,
           "value": link.value,
         })
       }
       try {
-        console.log(JSON.stringify(savedNodes))
-        console.log(JSON.stringify(savedLinks))
+        // console.log(JSON.stringify(savedIds).length)
+        // console.log(JSON.stringify(savedNodes).length)
+        // console.log(JSON.stringify(savedLinks).length)
+        localStorage.setItem("savedIds", JSON.stringify(savedIds));
         localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
         localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
       }
@@ -320,16 +338,17 @@
     const buttonRestore = document.getElementById('restore');
     buttonRestore.addEventListener('click', function () {
       // restore from localStorage if available
+      const savedIds = JSON.parse(localStorage.getItem("savedIds"));
       const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
       const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
-      if (savedNodes && savedLinks) {
-        if (savedNodes.length > 0 && savedLinks.length > 0) {
-          //data.nodes = savedNodes;
+      if (savedIds && savedNodes && savedLinks) {
+        if (savedIds.length > 0 && savedNodes.length > 0 && savedLinks.length > 0) {
           data.nodes = [];
           for (let i=0; i<savedNodes.length; i++) {
             var node = savedNodes[i];
+            var id = savedIds[parseInt(node.id)];
             data.nodes.push({
-              "id": node.id,
+              "id": id,
               "group": node.group,
               "names": node.names,
               "fx": node.fx,
@@ -341,9 +360,11 @@
           data.links = [];
           for (let i=0; i<savedLinks.length; i++) {
             var link = savedLinks[i];
+            var source_id = savedIds[parseInt(link.source)];
+            var target_id = savedIds[parseInt(link.target)];
             data.links.push({
-              "source": link.source,
-              "target": link.target,
+              "source": source_id,
+              "target": target_id,
               "value": link.value,
             })
           }

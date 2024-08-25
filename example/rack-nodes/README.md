@@ -50,18 +50,25 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] Buttons unlock all
 - [x] controls to hide empty slots?
 - [x] Buttons save
-- [ ] Buttons nodes dropdown checkboxes
-- [ ] Buttons links dropdown checkboxes
-- [ ] Buttons names dropdown checkboxes
+- [x] improve local storage (index ids)
+
+- [ ] refactor index.html javascript
+- [ ] more kdi nodes
+- [ ] hover links
+- [ ] fade 0.1 hw/sw/iols/kdi/qcs
+- [ ] fade in node data
+- [ ] save camera nd zoom
+- [ ] sim errors card/pixe-cable/net-cable/hvi-cable
+- [ ] add vision diagram
+- [ ] add compare
+- [ ] add flow
+- [ ] trace back to rack/pc/chassis
+
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
 - [ ] move node/link/enables to data
-
 - [ ] clean up data vs racks.json
-- [ ] experiment with colors of nodes/links
-- [ ] experiment with colors on links/nodes for errors
-- [ ] controls to hide levels
-- [ ] controls to highlight levels
-- [ ] controls to collapse levels?
+
+
 
 ## Sample KDI node list
 
