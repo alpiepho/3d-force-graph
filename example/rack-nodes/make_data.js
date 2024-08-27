@@ -114,6 +114,19 @@ var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
 var ENABLE_LINK_TYPE_HVICABLE            = 0;
 var ENABLE_LINK_TYPE_PXIEBUS             = 0;
 
+// var NODE_OPACITY_HW       = 1.0;
+// var NODE_OPACITY_SW       = 1.0;
+// var NODE_OPACITY_IOLS     = 1.0;
+// var NODE_OPACITY_KDI      = 1.0;
+// var NODE_OPACITY_QCS      = 1.0;
+
+// var LINK_OPACITY_HW       = 1.0;
+// var LINK_OPACITY_SW       = 1.0;
+// var LINK_OPACITY_IOLS     = 1.0;
+// var LINK_OPACITY_KDI      = 1.0;
+// var LINK_OPACITY_QCS      = 1.0;
+
+
 function trunc_name(full) {
     var result = full;
     if (result.length > 16) {
@@ -1237,6 +1250,75 @@ function show_stats() {
     console.log("total nodes - Modules: " + count_node_stat("_Module"));
 }
 
+function make_vision() {
+    console.log('make_data_1000')
+    reset_data();
+    
+    // GENERATED
+    add_data_node("generated_nodes_links", ["generated nodes/links"], NODE_TYPE_ROOT);
+    add_data_node("make_data", ["make_data"], NODE_TYPE_ROOT);
+    add_data_link("make_data", "generated_nodes_links", LINK_TYPE_ROOT);
+    // GENERATED HARDWARE
+    add_data_node("make_root", ["make_root"], NODE_TYPE_ROOT);
+    add_data_link("make_root", "make_data", LINK_TYPE_ROOT);
+    add_data_node("make_racks", ["make_racks"], NODE_TYPE_RACK);
+    add_data_link("make_racks", "make_root", LINK_TYPE_RACK);
+    add_data_node("make_client_pcs", ["make_client_pcs"], NODE_TYPE_WINDOWSPC_CLIENT);
+    add_data_link("make_client_pcs", "make_racks", LINK_TYPE_WINDOWSPC_CLIENT);
+    add_data_node("make_host_pcs", ["make_host_pcs"], NODE_TYPE_WINDOWSPC_HOST);
+    add_data_link("make_host_pcs", "make_racks", LINK_TYPE_WINDOWSPC_HOST);
+    add_data_node("make_chassis", ["make_chassis"], NODE_TYPE_CHASSIS);
+    add_data_link("make_chassis", "make_client_pcs", LINK_TYPE_CHASSIS);
+    add_data_node("make_slots", ["make_slots"], NODE_TYPE_SLOT);
+    add_data_link("make_slots", "make_chassis", LINK_TYPE_SLOT);
+    add_data_node("make_modules", ["make_modules"], NODE_TYPE_MODULE);
+    add_data_link("make_modules", "make_slots", LINK_TYPE_MODULE);
+    add_data_node("make_pxie_cables", ["make_pxie_cables"], NODE_TYPE_PXIECARD);
+    add_data_link("make_pxie_cables", "make_modules", LINK_TYPE_PXIECARD);
+    add_data_node("make_system_sync_ports", ["make_system_sync_ports"], NODE_TYPE_SSYNC_PORT);
+    add_data_link("make_system_sync_ports", "make_pxie_cables", LINK_TYPE_SSYNC_PORT_OUT);
+    add_data_node("make_hvi_cables", ["make_hvi_cables"], NODE_TYPE_SSYNC_PORT);
+    add_data_link("make_hvi_cables", "make_system_sync_ports", LINK_TYPE_HVICABLE);
+    // GENERATED BUSSES
+    add_data_node("make_pxie_busses", ["make_pxie_busses"], NODE_TYPE_PXIEBUS);
+    add_data_link("make_pxie_busses", "make_client_pcs", LINK_TYPE_PXIEBUS);
+    // GENERATED SOFTWARE
+    add_data_node("make_iols_and_connection_expert", ["make_iols_and_connection_expert"], NODE_TYPE_IOLS);
+    add_data_link("make_iols_and_connection_expert", "make_pxie_busses", LINK_TYPE_SOFTWARE_IOLS);
+    add_data_node("make_kdi_root", ["make_kdi_root"], NODE_TYPE_KDI_ROOT);
+    add_data_link("make_kdi_root", "make_client_pcs", LINK_TYPE_SOFTWARE_KDIROOT);
+    add_data_node("make_kdi_clients", ["make_kdi_clients"], NODE_TYPE_KDI_CLIENT);
+    add_data_link("make_kdi_clients", "make_kdi_root", LINK_TYPE_SOFTWARE_KDIPEER);
+    add_data_node("make_kdi_other", ["make_kdi_other"], NODE_TYPE_KDI_CLIENT);
+    add_data_link("make_kdi_other", "make_kdi_clients", LINK_TYPE_SOFTWARE_KDIPEER);
+    add_data_node("make_qcs_host", ["make_qcs_host"], NODE_TYPE_QCS_HOST);
+    add_data_link("make_qcs_host", "make_host_pcs", LINK_TYPE_SOFTWARE_QCS_EXT);
+    add_data_node("make_qcs_clients", ["make_qcs_clients"], NODE_TYPE_QCS_CLIENT);
+    add_data_link("make_qcs_clients", "make_qcs_host", LINK_TYPE_SOFTWARE_QCS_EXT);
+
+
+    // MODEL from data file
+    // NOTE: exercise to investigate how to get information for nodes
+    add_data_node("model_nodes_links", ["model nodes/links"], NODE_TYPE_ROOT);
+    add_data_node("model_data", ["model_data"], NODE_TYPE_ROOT);
+    add_data_link("model_data", "model_nodes_links", LINK_TYPE_ROOT);
+
+    // racks - from qcs system definition?
+    // pcs - from qcs system definition?
+    // chassis - from each iols enumeration, but how?
+    // slots - from model of chassis
+    // modules - from each iols enumeration, but how?
+    // pxie cables - imply from each iols enumeration?
+    // ssync ports - from iols enumeation and module types
+    // hvi cables - imply from qcs system definition?
+    // pxie bus - imply from each iols enumeration?
+    // iols - from set of iols enumerations?
+    // kdi - from kdi node list, will need to chase fabric
+    // qcs - from qcs system definition?
+
+
+}
+
 function make_data() {
 
     reset_data();
@@ -1422,6 +1504,24 @@ function make_data_hw_only() {
     make_data();
 }
 
+function is_hw_only(id) {
+    if (
+        id == NODE_TYPE_ROOT             ||
+        id == NODE_TYPE_RACK             ||
+        id == NODE_TYPE_CHASSIS          ||
+        id == NODE_TYPE_SLOT             ||
+        id == NODE_TYPE_MODULE           ||
+        id == NODE_TYPE_WINDOWSPC_CLIENT ||
+        id == NODE_TYPE_WINDOWSPC_HOST   ||
+        id == NODE_TYPE_PXIECARD         ||
+        id == NODE_TYPE_NETWORKCARD      ||
+        id == NODE_TYPE_IOLS
+    ) {
+        return true;
+    }
+    return false;
+}
+
 function make_data_sw_only() {
     enable_all_nodes();
     // ENABLE_NODE_TYPE_ROOT                = 0;
@@ -1445,6 +1545,28 @@ function make_data_sw_only() {
     // ENABLE_NODE_TYPE_PXIEBUS             = 0;
     RACKS_MODIFIED |= RACKS_MODIFIED_SW_ONLY;
     make_data();
+}
+
+function is_sw_only(id) {
+    if (
+        id == NODE_TYPE_ROOT               ||
+        id == NODE_TYPE_RACK               ||
+        id == NODE_WINDOWSPC_CLIENT        ||
+        id == NODE_WINDOWSPC_HOST          ||
+        id == NODE_TYPE_IOLS               ||
+        id == NODE_TYPE_CONNECTION_EXPERT  ||
+        id == NODE_TYPE_KDI_ROOT           ||
+        id == NODE_TYPE_KDI_ROOT_SVC       ||
+        id == NODE_TYPE_KDI_CLIENT         ||
+        id == NODE_TYPE_KDI_CLIENT_SVC     ||
+        id == NODE_TYPE_QCS_HOST           ||
+        id == NODE_TYPE_QCS_CLIENT         ||
+        id == NODE_TYPE_SSYNC_PORT         ||
+        id == NODE_TYPE_PXIEBUS
+    ) {
+        return true;
+    }
+    return false;
 }
 
 function make_data_iols_only() {
@@ -1472,8 +1594,25 @@ function make_data_iols_only() {
     make_data();
 }
 
+function is_iols_only(id) {
+    if (
+        id == NODE_TYPE_ROOT                ||
+        id == NODE_TYPE_RACK                ||
+        id == NODE_TYPE_MODULE              ||
+        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        id == NODE_TYPE_WINDOWSPC_HOST      ||
+        id == NODE_TYPE_PXIECARD            ||
+        id == NODE_TYPE_NETWORKCARD         ||
+        id == NODE_TYPE_IOLS                ||
+        id == NODE_TYPE_CONNECTION_EXPERT   ||
+        id == NODE_TYPE_PXIEBUS      
+    ) {
+        return true;
+    }
+    return false;
+}
+
 function make_data_kdi_only() {
-    enable_all_nodes();
     enable_all_nodes();
     // ENABLE_NODE_TYPE_ROOT                = 0;
     // ENABLE_NODE_TYPE_RACK                = 0;
@@ -1496,6 +1635,24 @@ function make_data_kdi_only() {
     ENABLE_NODE_TYPE_PXIEBUS             = 0;       
     RACKS_MODIFIED |= RACKS_MODIFIED_KDI_ONLY;
     make_data();
+}
+
+function is_kdi_only(id) {
+    if (
+        id == NODE_TYPE_ROOT                ||
+        id == NODE_TYPE_RACK                ||
+        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        id == NODE_TYPE_WINDOWSPC_HOST      ||
+        id == NODE_TYPE_NETWORKCARD         ||
+        id == NODE_TYPE_IOLS                ||
+        id == NODE_TYPE_KDI_ROOT            ||
+        id == NODE_TYPE_KDI_ROOT_SVC        ||
+        id == NODE_TYPE_KDI_CLIENT          ||
+        id == NODE_TYPE_KDI_CLIENT_SVC
+    ) {
+        return true;
+    }
+    return false;
 }
 
 function make_data_qcs_only() {
@@ -1521,6 +1678,24 @@ function make_data_qcs_only() {
     // ENABLE_NODE_TYPE_PXIEBUS             = 0;   
     RACKS_MODIFIED |= RACKS_MODIFIED_QCS_ONLY;
     make_data();
+}
+
+function is_qcs_only(id) {
+    if (
+        id == NODE_TYPE_ROOT                ||
+        id == NODE_TYPE_RACK                ||
+        id == NODE_TYPE_MODULE              ||
+        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        id == NODE_TYPE_WINDOWSPC_HOST      ||
+        id == NODE_TYPE_NETWORKCARD         ||
+        id == NODE_TYPE_QCS_HOST            ||
+        id == NODE_TYPE_QCS_CLIENT          ||
+        id == NODE_TYPE_SSYNC_PORT          ||
+        id == NODE_TYPE_PXIEBUS  
+    ) {
+        return true;
+    }
+    return false;
 }
 
 function make_data_racks_count() {
@@ -1729,6 +1904,90 @@ function link_color(value) {
     result = node_colors[index];
     return result;
 }
+
+// function node_opacity(id) {
+//     var result = 1.0;
+//     if (is_hw_only(id)) result = NODE_OPACITY_HW;
+//     if (is_sw_only(id)) result = NODE_OPACITY_SW;
+//     if (is_iols_only(id)) result = NODE_OPACITY_IOLS;
+//     if (is_kdi_only(id)) result = NODE_OPACITY_KDI;
+//     if (is_qcs_only(id)) result = NODE_OPACITY_QCS;
+//     return result;
+// }
+
+// function link_opacity(link) {
+//     var result = NODE_OPACITY_HW;
+
+//     switch (link.source.id) {
+
+//     }
+//     // TODO: determine if source is hw/sw/iols/kdi/qcs
+//     //       search data.nodes for source
+//     //       use that to determine hw/sw/iols/kdi/qcs
+//     //       from hw/sw/iols/kdi/qcs get current opacity
+//     return result;
+// }
+
+// function node_opacity_change_hw() {
+//     NODE_OPACITY_HW -= 0.1;
+//     if (NODE_OPACITY_HW < 0) NODE_OPACITY_HW = 1.0;
+//     return NODE_OPACITY_HW;
+// }
+
+// function node_opacity_change_sw() {
+//     NODE_OPACITY_SW -= 0.1;
+//     if (NODE_OPACITY_SW < 0) NODE_OPACITY_SW = 1.0;
+//     return NODE_OPACITY_SW;
+// }
+
+// function node_opacity_change_iols() {
+//     NODE_OPACITY_IOLS -= 0.1;
+//     if (NODE_OPACITY_IOLS < 0) NODE_OPACITY_IOLS = 1.0;
+//     return NODE_OPACITY_IOLS;
+// }
+
+// function node_opacity_change_kdi() {
+//     NODE_OPACITY_KDI -= 0.1;
+//     if (NODE_OPACITY_KDI < 0) NODE_OPACITY_KDI = 1.0;
+//     return NODE_OPACITY_KDI;
+// }
+
+// function node_opacity_change_qcs() {
+//     NODE_OPACITY_QCS -= 0.1;
+//     if (NODE_OPACITY_QCS < 0) NODE_OPACITY_QCS = 1.0;
+//     return NODE_OPACITY_QCS;
+// }
+
+// function link_opacity_change_hw() {
+//     LINK_OPACITY_HW -= 0.1;
+//     if (LINK_OPACITY_HW < 0) LINK_OPACITY_HW = 1.0;
+//     return LINK_OPACITY_HW;
+// }
+
+// function link_opacity_change_sw() {
+//     LINK_OPACITY_SW -= 0.1;
+//     if (LINK_OPACITY_SW < 0) LINK_OPACITY_SW = 1.0;
+//     return LINK_OPACITY_SW;
+// }
+
+// function link_opacity_change_iols() {
+//     LINK_OPACITY_IOLS -= 0.1;
+//     if (LINK_OPACITY_IOLS < 0) LINK_OPACITY_IOLS = 1.0;
+//     return LINK_OPACITY_IOLS;
+// }
+
+// function link_opacity_change_kdi() {
+//     LINK_OPACITY_KDI -= 0.1;
+//     if (LINK_OPACITY_KDI < 0) LINK_OPACITY_KDI = 1.0;
+//     return LINK_OPACITY_KDI;
+// }
+
+// function link_opacity_change_qcs() {
+//     LINK_OPACITY_QCS -= 0.1;
+//     if (LINK_OPACITY_QCS < 0) LINK_OPACITY_QCS = 1.0;
+//     return LINK_OPACITY_QCS;
+// }
+
 
 // Default
 // make_data_1000();

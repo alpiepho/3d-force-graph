@@ -19,50 +19,33 @@
 
     #racksmenu {
       z-index: 10;
+      background-color: black;
+      color: white;
     }
 
     .menuspace {
       display: inline;
     }
 
-
-
-
-    /* .multipleSelection {
-      display: inline-block;
-      width: 100px;
-      background-color: #BCC2C1;
+    button {
+      color: rgba(127,255,255,0.75);
+      background: transparent;
+      outline: 1px solid rgba(0,0,0255,255,255,0.75);
+      border: 0px;
+      padding: 5px 10px;
+      cursor: pointer;
     }
 
-    .selectBox {
-      position: relative;
+    button:hover {
+      background-color: rgba(128,128,128,0.5);
     }
 
-    .selectBox select {
-      width: 100%;
+    button:active {
+      color: #000000;
+      background-color: rgba(128,128,128,0.75);
     }
 
-    .overSelect {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-    }
 
-    .checkBoxes {
-      display: none;
-      border: 1px #8DF5E4 solid;
-    }
-
-    .checkBoxes label {
-      display: block;
-    }
-
-    .checkBoxes label:hover {
-      background-color: #4F615E;
-      color: white;
-    } */
   </style>
 </head>
 
@@ -70,71 +53,41 @@
   <!-- hack to generate data, logs to console, or override -->
   <!-- idea is to copy paste from console to data.js -->
   <script src="make_data.js"></script>
-  <!-- <script>
-    let showRacks = true;
-    function showCheckboxesRacks() {
-      let checkboxes = document.getElementById("checkBoxesRacks");
-      if (showRacks) {
-        checkboxes.style.display = "block";
-        showRacks = false;
-      } else {
-        checkboxes.style.display = "none";
-        showRacks = true;
-      }
-    }
-    function check_racks1000(el) {
-      el.checked = !el.checked
-      console.log(el);
-      console.log("checkRacks1000");
-    }
-    function check_racks16x6(el) {
-      el.checked = !el.checked
-      console.log("checkRacks16X6");
-    }
-  </script> -->
 
   <div id="racksmenu">
+    <div class="menuspace">&nbsp; all: </div>
+    <button id="vision">vision</button>
     <button id="racks1000">1000</button>
     <button id="racks16x6">16x6</button>
-    <div class="menuspace">|</div>
+    <div class="menuspace">&nbsp;only: </div>
     <button id="hw_only">HW</button>
     <button id="sw_only">SW</button>
     <button id="iols_only">IOLS</button>
     <button id="kdi_only">KDI</button>
     <button id="qcs_only">QCS</button>
-    <div class="menuspace">|</div>
+    <div class="menuspace">&nbsp;adjust: </div>
     <button id="racks_count">Racks--</button>
     <button id="chassis_count">Chassis--</button>
     <button id="prune_slots">prune slots</button>
     <button id="prune_ssync">prune ssync</button>
-    <div class="menuspace">|</div>
+    <div class="menuspace">&nbsp;store: </div>
     <button id="lock_all">lock all</button>
     <button id="unlock_all">unlock all</button>
     <button id="save">save</button>
     <button id="restore">restore</button>
- 
- 
-    <!-- <div class="menuspace">|</div>
-    <div class="multipleSelection">
-      <div class="selectBox" onclick="showCheckboxesRacks()">
-        <select>
-          <option>Racks</option>
-        </select>
-        <div class="overSelect"></div>
-      </div>
-
-      <div id="checkBoxesRacks" class="checkBoxes">
-        <label for="check_racks1000">
-          <input type="checkbox" id="check_racks1000" onclick="check_racks1000(this)"/>
-          1000
-        </label>
-        <label for="check_racks16X6">
-          <input type="checkbox" id="check_racks16X6"  onclick="check_racks1000(this)"/>
-          16X6
-        </label>
-      </div>
-    </div>
-  </div> -->
+    <!-- <div class="menuspace">&nbsp;fade nodes: </div>
+    <button id="hw_fade_nodes">HW</button>
+    <button id="sw_fade_nodes">SW</button>
+    <button id="iols_fade_nodes">IOLS</button>
+    <button id="kdi_fade_nodes">KDI</button>
+    <button id="qcs_fade_nodes">QCS</button>
+    <div class="menuspace">&nbsp;fade links: </div>
+    <button id="hw_fade_links">HW</button>
+    <button id="sw_fade_links">SW</button>
+    <button id="iols_fade_links">IOLS</button>
+    <button id="kdi_fade_links">KDI</button>
+    <button id="qcs_fade_links">QCS</button> -->
+  </div>
 
   <div id="3d-graph"></div>
 
@@ -157,10 +110,8 @@
       .linkDirectionalArrowRelPos(1)
       // .nodeAutoColorBy('group')
       .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
-      //.nodeOpacity(0.2)
       // .linkAutoColorBy('value')
       .linkColor(node => link_color(node.value))
-      //.linkOpacity(1.0)
       .linkWidth(2)
       .nodeThreeObject(node => {
         const nodeEl = document.createElement('div');
@@ -169,6 +120,7 @@
         nodeEl.style.color = node_color(node.group);
         //nodeEl.style.opacity = 0.2;
         nodeEl.className = 'node-label';
+        nodeEl.id = node.id;
         var text = "";
         if (node.names) {
           for (let i = 0; i < node.names.length; i++) {
@@ -191,70 +143,79 @@
       ;
 
 
+    const buttonVision = document.getElementById('vision');
+    buttonVision.addEventListener('click', function () {
+      make_vision();
+      Graph.graphData(data)
+      .linkDirectionalArrowLength(10)
+    }
+    );
     const buttonRacks1000 = document.getElementById('racks1000');
     buttonRacks1000.addEventListener('click', function () {
       make_data_1000();
-      Graph.graphData(data);
+      Graph.graphData(data)
+      .linkDirectionalArrowLength(3.5)
     }
     );
     const buttonRacks16x6 = document.getElementById('racks16x6');
     buttonRacks16x6.addEventListener('click', function () {
       make_data_16x6();
-      Graph.graphData(data);
+      Graph.graphData(data)
+      .linkDirectionalArrowLength(3.5)
     }
     );
     const buttonRacksHwOnly = document.getElementById('hw_only');
     buttonRacksHwOnly.addEventListener('click', function () {
       make_data_hw_only();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksSwOnly = document.getElementById('sw_only');
     buttonRacksSwOnly.addEventListener('click', function () {
       make_data_sw_only();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksIolsOnly = document.getElementById('iols_only');
     buttonRacksIolsOnly.addEventListener('click', function () {
       make_data_iols_only();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksKdiOnly = document.getElementById('kdi_only');
     buttonRacksKdiOnly.addEventListener('click', function () {
       make_data_kdi_only();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksQcsOnly = document.getElementById('qcs_only');
     buttonRacksQcsOnly.addEventListener('click', function () {
       make_data_qcs_only();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksRacksCountOnly = document.getElementById('racks_count');
     buttonRacksRacksCountOnly.addEventListener('click', function () {
       make_data_racks_count();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonRacksChassisCountOnly = document.getElementById('chassis_count');
     buttonRacksChassisCountOnly.addEventListener('click', function () {
       make_data_chassis_count();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonPruneSlots = document.getElementById('prune_slots');
     buttonPruneSlots.addEventListener('click', function () {
       prune_slots();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonPruneSSync = document.getElementById('prune_ssync');
     buttonPruneSSync.addEventListener('click', function () {
       prune_ssync();
-      Graph.graphData(data);
+      Graph.graphData(data)
     }
     );
     const buttonLockAll = document.getElementById('lock_all');
@@ -374,6 +335,63 @@
       console.log('restore')
     }
     );
+
+    // const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
+    // buttonHwFadeNodes.addEventListener('click', function () {
+    //   node_opacity_change_hw();
+    //   // update_node_opacity(data);
+    //   Graph.graphData(data)
+    //   .nodeOpacity(node => node_opacity(node.id));
+
+    //   // const nodeEl = document.getElementById('div');
+    //   // TODO how to change text: add class to nodeThreeObject and get that
+    //   // .nodeThreeObject(node => {
+    //   //   const nodeEl = document.createElement('div');
+    //   //   nodeEl.textContent = node.id;
+    //   //   // nodeEl.style.color = node.color;
+    //   //   nodeEl.style.color = node_color(node.group);
+    //   //   //nodeEl.style.opacity = 0.2;
+    // }
+    // );
+    // const buttonHwFadeLinks = document.getElementById('hw_fade_links');
+    // buttonHwFadeLinks.addEventListener('click', function () {
+    //   var opacity = node_opacity_change_hw();
+    //   Graph.graphData(data)
+    //   .linkOpacity(link => link_opacity_hw(link));
+    // }
+    // );
+
+    // const buttonSwFadeLinks = document.getElementById('sw_fade_links');
+    // buttonSwFadeLinks.addEventListener('click', function () {
+    //   var opacity = node_opacity_change_sw();
+    //   Graph.graphData(data)
+    //   .linkOpacity(opacity);
+    // }
+    // );
+    // const buttonIolsFadeLinks = document.getElementById('iols_fade_links');
+    // buttonIolsFadeLinks.addEventListener('click', function () {
+    //   var opacity = node_opacity_change_iols();
+    //   // TODO
+    //   Graph.graphData(data)
+    //   .linkOpacity(opacity);
+    // }
+    // );
+    // const buttonKdiFadeLinks = document.getElementById('kdi_fade_links');
+    // buttonKdiFadeLinks.addEventListener('click', function () {
+    //   var opacity = node_opacity_change_kdi();
+    //   // TODO
+    //   Graph.graphData(data)
+    //   .linkOpacity(opacity);
+    // }
+    // );
+    // const buttonQcsFadeLinks = document.getElementById('qcs_fade_links');
+    // buttonQcsFadeLinks.addEventListener('click', function () {
+    //   var opacity = node_opacity_change_qcs();
+    //   // TODO
+    //   Graph.graphData(data)
+    //   .linkOpacity(opacity);
+    // }
+    // );
 
   </script>
 

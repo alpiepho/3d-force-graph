@@ -57,9 +57,10 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [ ] hover links
 - [ ] fade 0.1 hw/sw/iols/kdi/qcs
 - [ ] fade in node data
-- [ ] save camera nd zoom
+- [ ] save camera and zoom
 - [ ] sim errors card/pixe-cable/net-cable/hvi-cable
 - [ ] add vision diagram
+- [ ] add 2D
 - [ ] add compare
 - [ ] add flow
 - [ ] trace back to rack/pc/chassis
