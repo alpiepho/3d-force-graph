@@ -960,6 +960,71 @@ function make_iols_and_connection_expert() {
     } 
 }
 
+function make_kdi_gateway() {
+
+    // iot
+    //     backend service
+    //     device manager
+    //     keycloak
+    
+    // add IoT and parts
+    var names = [];
+    names.push("IoT");
+    var iot_id = "IoT";
+    add_data_node(iot_id, names, NODE_TYPE_KDI_ROOT);
+
+    names = [];
+    names.push("Backend");
+    var iot_backend_id = iot_id + "_Backend";
+    add_data_node(iot_backend_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(iot_id, iot_backend_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Device Manager");
+    var iot_device_manager_id = iot_backend_id + "_DeviceManager";
+    add_data_node(iot_device_manager_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(iot_device_manager_id, iot_backend_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Keycloak");
+    var iot_keycloak_id = iot_backend_id + "_Keycloak";
+    add_data_node(iot_keycloak_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(iot_keycloak_id, iot_backend_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+
+    // make kdi gateway and services
+    var names = [];
+    names.push("KDI Gateway");
+    var kdi_gateway_id = "KDIGateway";
+    add_data_node(kdi_gateway_id, names, NODE_TYPE_KDI_ROOT);
+    // link to iot
+    add_data_link(kdi_gateway_id, iot_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIG");
+    var kdi_kdig_id = kdi_gateway_id + "_KDIG";
+    add_data_node(kdi_kdig_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_gateway_id, kdi_kdig_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIS");
+    var kdi_root_kdis_id = kdi_kdig_id + "_KDIS";
+    add_data_node(kdi_root_kdis_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_kdig_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Hydra");
+    var kdi_root_hydra_id = kdi_kdig_id + "_Hydra";
+    add_data_node(kdi_root_hydra_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_kdig_id, kdi_root_hydra_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Postgres");
+    var kdi_root_postgres_id = kdi_kdig_id + "_Postgres";
+    add_data_node(kdi_root_postgres_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_kdig_id, kdi_root_postgres_id, LINK_TYPE_SOFTWARE_KDIROOT);
+}
+
 function make_kdi_root() {
     var names = [];
     names.push("KDI Root");
@@ -978,12 +1043,63 @@ function make_kdi_root() {
     var kdi_root_id = "KDIRoot";
     add_data_node(kdi_root_id, names, NODE_TYPE_KDI_ROOT);
 
+    // link to kdi gateway
+    var kdi_gateway_id = "KDIGateway";
+    add_data_link(kdi_root_id, kdi_gateway_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIC");
+    var kdi_root_kdic_id = kdi_root_id + "_KDIC";
+    add_data_node(kdi_root_kdic_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_id, kdi_root_kdic_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
     names = [];
     names.push("KDIS");
-    names.push("Hydra");
-    var kdi_root_kdis_id = kdi_root_id + "_KDIS";
+    var kdi_root_kdis_id = kdi_root_kdic_id + "_KDIS";
     add_data_node(kdi_root_kdis_id, names, NODE_TYPE_KDI_ROOT_SVC);
-    add_data_link(kdi_root_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE_KDIROOT);
+    add_data_link(kdi_root_kdic_id, kdi_root_kdis_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIMU");
+    var kdi_root_kdimu_id = kdi_root_kdic_id + "_KDIMU";
+    add_data_node(kdi_root_kdimu_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_kdimu_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIU");
+    var kdi_root_kdiu_id = kdi_root_kdic_id + "_KDIU";
+    add_data_node(kdi_root_kdiu_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_kdiu_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("KDIP");
+    var kdi_root_kdip_id = kdi_root_kdic_id + "_KDIP";
+    add_data_node(kdi_root_kdip_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_kdip_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Hydra");
+    var kdi_root_hydra_id = kdi_root_kdic_id + "_Hydra";
+    add_data_node(kdi_root_hydra_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_hydra_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("OpenFpa");
+    var kdi_root_openfpa_id = kdi_root_kdic_id + "_OpenFpa";
+    add_data_node(kdi_root_openfpa_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_openfpa_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Sqlite");
+    var kdi_root_sqlite_id = kdi_root_kdic_id + "_Sqlite";
+    add_data_node(kdi_root_sqlite_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_sqlite_id, LINK_TYPE_SOFTWARE_KDIROOT);
+
+    names = [];
+    names.push("Postgres");
+    var kdi_root_postgres_id = kdi_root_kdic_id + "_Postgres";
+    add_data_node(kdi_root_postgres_id, names, NODE_TYPE_KDI_ROOT_SVC);
+    add_data_link(kdi_root_kdic_id, kdi_root_postgres_id, LINK_TYPE_SOFTWARE_KDIROOT);
 }
 
 var client_names_count = 1;
@@ -1015,6 +1131,15 @@ function make_kdi_clients() {
             let kdiclient_name = "KDI Client"
             let names = make_kdi_client_names(kdiclient_name);
             add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
+            var kdi_kdic_id = kdiclient_id + "_KDIC";
+            add_data_node(kdi_kdic_id, ["KDIC"], NODE_TYPE_KDI_ROOT_SVC);
+            add_data_link(kdiclient_id, kdi_kdic_id, LINK_TYPE_SOFTWARE_KDIROOT);
+            var kdi_kdiu_id = kdi_kdic_id + "_KDIU";
+            add_data_node(kdi_kdiu_id, ["KDIU"], NODE_TYPE_KDI_ROOT_SVC);
+            add_data_link(kdi_kdic_id, kdi_kdiu_id, LINK_TYPE_SOFTWARE_KDIROOT);
+            var kdi_kdip_id = kdi_kdic_id + "_KDIP";
+            add_data_node(kdi_kdip_id, ["KDIP"], NODE_TYPE_KDI_ROOT_SVC);
+            add_data_link(kdi_kdic_id, kdi_kdip_id, LINK_TYPE_SOFTWARE_KDIROOT);
         }
         // add kdi client service to pc client nodes (1 pc per rack)
         for (let i=1; i<=TOTAL_RACKS; i++) {
@@ -1047,6 +1172,15 @@ function make_kdi_clients() {
                 let kdiclient_name = "KDI Client"
                 let names = make_kdi_client_names(kdiclient_name);
                 add_data_node(kdiclient_id, names, NODE_TYPE_KDI_CLIENT);
+                var kdi_kdic_id = kdiclient_id + "_KDIC";
+                add_data_node(kdi_kdic_id, ["KDIC"], NODE_TYPE_KDI_ROOT_SVC);
+                add_data_link(kdiclient_id, kdi_kdic_id, LINK_TYPE_SOFTWARE_KDIROOT);
+                var kdi_kdiu_id = kdi_kdic_id + "_KDIU";
+                add_data_node(kdi_kdiu_id, ["KDIU"], NODE_TYPE_KDI_ROOT_SVC);
+                add_data_link(kdi_kdic_id, kdi_kdiu_id, LINK_TYPE_SOFTWARE_KDIROOT);
+                var kdi_kdip_id = kdi_kdic_id + "_KDIP";
+                add_data_node(kdi_kdip_id, ["KDIP"], NODE_TYPE_KDI_ROOT_SVC);
+                add_data_link(kdi_kdic_id, kdi_kdip_id, LINK_TYPE_SOFTWARE_KDIROOT);
             }
         }
         // add kdi client service to pc client nodes (1 pc per chassis, single rack)
@@ -1067,9 +1201,11 @@ function make_kdi_clients() {
                 let pc_id = rack_id + "_PC" + j;
                 let iols_id = pc_id + "_IOLS" + 1
                 let kdiclient_id = pc_id + "_KDICLIENT" + 1
+                let kdi_kdic_id = kdiclient_id + "_KDIC";
                 let kdiclient_svc_id = pc_id + "_KDICLIENT_SVC" + 1
                 add_data_link(kdi_root_id, kdiclient_id, LINK_TYPE_SOFTWARE_KDIROOT);
-                add_data_link(kdiclient_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdiclient_id, kdi_kdic_id, LINK_TYPE_SOFTWARE);
+                add_data_link(kdi_kdic_id, kdiclient_svc_id, LINK_TYPE_SOFTWARE);
                 add_data_link(kdiclient_svc_id, iols_id, LINK_TYPE_SOFTWARE_IOLS);
             }
         }
@@ -1251,7 +1387,7 @@ function show_stats() {
 }
 
 function make_vision() {
-    console.log('make_data_1000')
+    console.log('make_vision')
     reset_data();
     
     // GENERATED
@@ -1303,6 +1439,13 @@ function make_vision() {
     add_data_node("model_data", ["model_data"], NODE_TYPE_ROOT);
     add_data_link("model_data", "model_nodes_links", LINK_TYPE_ROOT);
 
+
+
+    add_data_node("model_qcs", ["model_qcs"], NODE_TYPE_QCS_HOST);
+    add_data_link("model_qcs", "model_racks", LINK_TYPE_ROOT);
+    add_data_node("model_racks", ["model_racks"], NODE_TYPE_RACK);
+    add_data_link("model_racks", "model_data", LINK_TYPE_ROOT);
+
     // racks - from qcs system definition?
     // pcs - from qcs system definition?
     // chassis - from each iols enumeration, but how?
@@ -1339,6 +1482,7 @@ function make_data() {
     make_pxie_busses();
 
     // SOFTWARE
+    make_kdi_gateway();
     make_iols_and_connection_expert();
     make_kdi_root();
     make_kdi_clients();

@@ -51,16 +51,16 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] controls to hide empty slots?
 - [x] Buttons save
 - [x] improve local storage (index ids)
+- [x] more kdi nodes
 
 - [ ] refactor index.html javascript
-- [ ] more kdi nodes
 - [ ] hover links
 - [ ] fade 0.1 hw/sw/iols/kdi/qcs
 - [ ] fade in node data
 - [ ] save camera and zoom
 - [ ] sim errors card/pixe-cable/net-cable/hvi-cable
 - [ ] add vision diagram
-- [ ] add 2D
+- [-] add 2D (nice idea, but text over nodes too busy)
 - [ ] add compare
 - [ ] add flow
 - [ ] trace back to rack/pc/chassis

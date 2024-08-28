@@ -95,303 +95,307 @@
   <script type="module">
     import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 
-    const Graph = ForceGraph3D({
-      extraRenderers: [new CSS2DRenderer()]
-    })
-      (document.getElementById('3d-graph'))
-      // .jsonUrl('../datasets/racks.json')
-      .graphData(data)
-      .cooldownTime(8000)
-      // .numDimensions(2) // flatten to a plane
-      // .nodePositionUpdate((obj, coord, node) => {
-      //   console.log(node);
-      // })
-      .linkDirectionalArrowLength(3.5)
-      .linkDirectionalArrowRelPos(1)
-      // .nodeAutoColorBy('group')
-      .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
-      // .linkAutoColorBy('value')
-      .linkColor(node => link_color(node.value))
-      .linkWidth(2)
-      .nodeThreeObject(node => {
-        const nodeEl = document.createElement('div');
-        nodeEl.textContent = node.id;
-        // nodeEl.style.color = node.color;
-        nodeEl.style.color = node_color(node.group);
-        //nodeEl.style.opacity = 0.2;
-        nodeEl.className = 'node-label';
-        nodeEl.id = node.id;
-        var text = "";
-        if (node.names) {
-          for (let i = 0; i < node.names.length; i++) {
-            if (i > 0) text += "\n";
-            text += node.names[i];
+    var Graph = null;
+    function init_Graph() {
+      Graph = ForceGraph3D({
+        extraRenderers: [new CSS2DRenderer()]
+      })
+        (document.getElementById('3d-graph'))
+        // .jsonUrl('../datasets/racks.json')
+        .graphData(data)
+        .cooldownTime(8000)
+        // .numDimensions(2) // flatten to a plane
+        // .nodePositionUpdate((obj, coord, node) => {
+        //   console.log(node);
+        // })
+        .linkDirectionalArrowLength(3.5)
+        .linkDirectionalArrowRelPos(1)
+        // .nodeAutoColorBy('group')
+        .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
+        // .linkAutoColorBy('value')
+        .linkColor(node => link_color(node.value))
+        .linkWidth(2)
+        .nodeThreeObject(node => {
+          const nodeEl = document.createElement('div');
+          nodeEl.textContent = node.id;
+          // nodeEl.style.color = node.color;
+          nodeEl.style.color = node_color(node.group);
+          //nodeEl.style.opacity = 0.2;
+          nodeEl.className = 'node-label';
+          nodeEl.id = node.id;
+          var text = "";
+          if (node.names) {
+            for (let i = 0; i < node.names.length; i++) {
+              if (i > 0) text += "\n";
+              text += node.names[i];
+            }
+          }
+          nodeEl.innerText = text;
+          return new CSS2DObject(nodeEl);
+        })
+        // .onNodeDragEnd(node => {
+        //     node.fx = node.x;
+        //     node.fy = node.y;
+        //     node.fz = node.z;
+        // })
+        .onEngineStop(() => {
+          console.log('onEngineStop');
+        })
+        .nodeThreeObjectExtend(true)
+        ;
+
+
+      const buttonVision = document.getElementById('vision');
+      buttonVision.addEventListener('click', function () {
+        make_vision();
+        Graph.graphData(data)
+        .linkDirectionalArrowLength(10)
+      }
+      );
+      const buttonRacks1000 = document.getElementById('racks1000');
+      buttonRacks1000.addEventListener('click', function () {
+        make_data_1000();
+        Graph.graphData(data)
+        .linkDirectionalArrowLength(3.5)
+      }
+      );
+      const buttonRacks16x6 = document.getElementById('racks16x6');
+      buttonRacks16x6.addEventListener('click', function () {
+        make_data_16x6();
+        Graph.graphData(data)
+        .linkDirectionalArrowLength(3.5)
+      }
+      );
+      const buttonRacksHwOnly = document.getElementById('hw_only');
+      buttonRacksHwOnly.addEventListener('click', function () {
+        make_data_hw_only();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksSwOnly = document.getElementById('sw_only');
+      buttonRacksSwOnly.addEventListener('click', function () {
+        make_data_sw_only();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksIolsOnly = document.getElementById('iols_only');
+      buttonRacksIolsOnly.addEventListener('click', function () {
+        make_data_iols_only();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksKdiOnly = document.getElementById('kdi_only');
+      buttonRacksKdiOnly.addEventListener('click', function () {
+        make_data_kdi_only();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksQcsOnly = document.getElementById('qcs_only');
+      buttonRacksQcsOnly.addEventListener('click', function () {
+        make_data_qcs_only();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksRacksCountOnly = document.getElementById('racks_count');
+      buttonRacksRacksCountOnly.addEventListener('click', function () {
+        make_data_racks_count();
+        Graph.graphData(data)
+      }
+      );
+      const buttonRacksChassisCountOnly = document.getElementById('chassis_count');
+      buttonRacksChassisCountOnly.addEventListener('click', function () {
+        make_data_chassis_count();
+        Graph.graphData(data)
+      }
+      );
+      const buttonPruneSlots = document.getElementById('prune_slots');
+      buttonPruneSlots.addEventListener('click', function () {
+        prune_slots();
+        Graph.graphData(data)
+      }
+      );
+      const buttonPruneSSync = document.getElementById('prune_ssync');
+      buttonPruneSSync.addEventListener('click', function () {
+        prune_ssync();
+        Graph.graphData(data)
+      }
+      );
+      const buttonLockAll = document.getElementById('lock_all');
+      buttonLockAll.addEventListener('click', function () {
+        console.log('lock_all')
+        for (let i=0; i<data.nodes.length; i++) {
+          let node = data.nodes[i];
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+        }
+        Graph.graphData(data);
+      }
+      );
+      const buttonUnlockAll = document.getElementById('unlock_all');
+      buttonUnlockAll.addEventListener('click', function () {
+        console.log('unlock_all')
+        for (let i=0; i<data.nodes.length; i++) {
+          let node = data.nodes[i];
+          // BUG unlock a saved set expands more
+          node.fx = null;
+          node.fy = null;
+          node.fz = null;
+        }      
+        Graph.graphData(data);
+      }
+      );
+      const buttonSave = document.getElementById('save');
+      buttonSave.addEventListener('click', function () {
+        var nodes = Graph.graphData().nodes;
+        var links = Graph.graphData().links;
+        // get ids for localStorage (indexing ids should compress localStorage)
+        // NOTE: if all ids are the index values, Graph still works but no human readable ids
+        var allIds = [];
+        for (let i=0; i<nodes.length; i++) {
+          var node = nodes[i];
+          allIds.push(node.id);
+        }
+        var setIds = new Set(allIds);
+        var savedIds = [...setIds];
+        // get nodes for localStorage (index the ids)
+        var savedNodes = [];
+        for (let i=0; i<nodes.length; i++) {
+          var node = nodes[i];
+          var id = savedIds.indexOf(node.id);
+          savedNodes.push({
+            "id": id,
+            "group": node.group,
+            "names": node.names,
+            "fx": node.fx,
+            "fy": node.fy,
+            "fz": node.fz,
+          })
+        }
+        // get links for localStorage (index the ids)
+        var savedLinks = [];
+        for (let i=0; i<links.length; i++) {
+          var link = links[i];
+          var source_id = savedIds.indexOf(link.source.id);
+          var target_id = savedIds.indexOf(link.target.id);
+          savedLinks.push({
+            "source": source_id,
+            "target": target_id,
+            "value": link.value,
+          })
+        }
+        try {
+          // console.log(JSON.stringify(savedIds).length)
+          // console.log(JSON.stringify(savedNodes).length)
+          // console.log(JSON.stringify(savedLinks).length)
+          localStorage.setItem("savedIds", JSON.stringify(savedIds));
+          localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
+          localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+        }
+        catch(error) {
+          console.log("savedNodes/savedLinks too big, ingnoring")
+        }
+        console.log('saved')
+      }
+      );
+      const buttonRestore = document.getElementById('restore');
+      buttonRestore.addEventListener('click', function () {
+        // restore from localStorage if available
+        const savedIds = JSON.parse(localStorage.getItem("savedIds"));
+        const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
+        const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
+        if (savedIds && savedNodes && savedLinks) {
+          if (savedIds.length > 0 && savedNodes.length > 0 && savedLinks.length > 0) {
+            data.nodes = [];
+            for (let i=0; i<savedNodes.length; i++) {
+              var node = savedNodes[i];
+              var id = savedIds[parseInt(node.id)];
+              data.nodes.push({
+                "id": id,
+                "group": node.group,
+                "names": node.names,
+                "fx": node.fx,
+                "fy": node.fy,
+                "fz": node.fz,
+              })
+            }
+            //data.links = savedLinks;
+            data.links = [];
+            for (let i=0; i<savedLinks.length; i++) {
+              var link = savedLinks[i];
+              var source_id = savedIds[parseInt(link.source)];
+              var target_id = savedIds[parseInt(link.target)];
+              data.links.push({
+                "source": source_id,
+                "target": target_id,
+                "value": link.value,
+              })
+            }
           }
         }
-        nodeEl.innerText = text;
-        return new CSS2DObject(nodeEl);
-      })
-      // .onNodeDragEnd(node => {
-      //     node.fx = node.x;
-      //     node.fy = node.y;
-      //     node.fz = node.z;
-      // })
-      .onEngineStop(() => {
-        console.log('onEngineStop');
-      })
-      .nodeThreeObjectExtend(true)
-      ;
+        Graph.graphData(data);
+        console.log('restore')
+      }
+      );
 
+      // const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
+      // buttonHwFadeNodes.addEventListener('click', function () {
+      //   node_opacity_change_hw();
+      //   // update_node_opacity(data);
+      //   Graph.graphData(data)
+      //   .nodeOpacity(node => node_opacity(node.id));
 
-    const buttonVision = document.getElementById('vision');
-    buttonVision.addEventListener('click', function () {
-      make_vision();
-      Graph.graphData(data)
-      .linkDirectionalArrowLength(10)
-    }
-    );
-    const buttonRacks1000 = document.getElementById('racks1000');
-    buttonRacks1000.addEventListener('click', function () {
-      make_data_1000();
-      Graph.graphData(data)
-      .linkDirectionalArrowLength(3.5)
-    }
-    );
-    const buttonRacks16x6 = document.getElementById('racks16x6');
-    buttonRacks16x6.addEventListener('click', function () {
-      make_data_16x6();
-      Graph.graphData(data)
-      .linkDirectionalArrowLength(3.5)
-    }
-    );
-    const buttonRacksHwOnly = document.getElementById('hw_only');
-    buttonRacksHwOnly.addEventListener('click', function () {
-      make_data_hw_only();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksSwOnly = document.getElementById('sw_only');
-    buttonRacksSwOnly.addEventListener('click', function () {
-      make_data_sw_only();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksIolsOnly = document.getElementById('iols_only');
-    buttonRacksIolsOnly.addEventListener('click', function () {
-      make_data_iols_only();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksKdiOnly = document.getElementById('kdi_only');
-    buttonRacksKdiOnly.addEventListener('click', function () {
-      make_data_kdi_only();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksQcsOnly = document.getElementById('qcs_only');
-    buttonRacksQcsOnly.addEventListener('click', function () {
-      make_data_qcs_only();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksRacksCountOnly = document.getElementById('racks_count');
-    buttonRacksRacksCountOnly.addEventListener('click', function () {
-      make_data_racks_count();
-      Graph.graphData(data)
-    }
-    );
-    const buttonRacksChassisCountOnly = document.getElementById('chassis_count');
-    buttonRacksChassisCountOnly.addEventListener('click', function () {
-      make_data_chassis_count();
-      Graph.graphData(data)
-    }
-    );
-    const buttonPruneSlots = document.getElementById('prune_slots');
-    buttonPruneSlots.addEventListener('click', function () {
-      prune_slots();
-      Graph.graphData(data)
-    }
-    );
-    const buttonPruneSSync = document.getElementById('prune_ssync');
-    buttonPruneSSync.addEventListener('click', function () {
-      prune_ssync();
-      Graph.graphData(data)
-    }
-    );
-    const buttonLockAll = document.getElementById('lock_all');
-    buttonLockAll.addEventListener('click', function () {
-      console.log('lock_all')
-      for (let i=0; i<data.nodes.length; i++) {
-        let node = data.nodes[i];
-        node.fx = node.x;
-        node.fy = node.y;
-        node.fz = node.z;
-      }
-      Graph.graphData(data);
-    }
-    );
-    const buttonUnlockAll = document.getElementById('unlock_all');
-    buttonUnlockAll.addEventListener('click', function () {
-      console.log('unlock_all')
-      for (let i=0; i<data.nodes.length; i++) {
-        let node = data.nodes[i];
-        // BUG unlock a saved set expands more
-        node.fx = null;
-        node.fy = null;
-        node.fz = null;
-      }      
-      Graph.graphData(data);
-    }
-    );
-    const buttonSave = document.getElementById('save');
-    buttonSave.addEventListener('click', function () {
-      var nodes = Graph.graphData().nodes;
-      var links = Graph.graphData().links;
-      // get ids for localStorage (indexing ids should compress localStorage)
-      // NOTE: if all ids are the index values, Graph still works but no human readable ids
-      var allIds = [];
-      for (let i=0; i<nodes.length; i++) {
-        var node = nodes[i];
-        allIds.push(node.id);
-      }
-      var setIds = new Set(allIds);
-      var savedIds = [...setIds];
-      // get nodes for localStorage (index the ids)
-      var savedNodes = [];
-      for (let i=0; i<nodes.length; i++) {
-        var node = nodes[i];
-        var id = savedIds.indexOf(node.id);
-        savedNodes.push({
-          "id": id,
-          "group": node.group,
-          "names": node.names,
-          "fx": node.fx,
-          "fy": node.fy,
-          "fz": node.fz,
-        })
-      }
-      // get links for localStorage (index the ids)
-      var savedLinks = [];
-      for (let i=0; i<links.length; i++) {
-        var link = links[i];
-        var source_id = savedIds.indexOf(link.source.id);
-        var target_id = savedIds.indexOf(link.target.id);
-        savedLinks.push({
-          "source": source_id,
-          "target": target_id,
-          "value": link.value,
-        })
-      }
-      try {
-        // console.log(JSON.stringify(savedIds).length)
-        // console.log(JSON.stringify(savedNodes).length)
-        // console.log(JSON.stringify(savedLinks).length)
-        localStorage.setItem("savedIds", JSON.stringify(savedIds));
-        localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
-        localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
-      }
-      catch(error) {
-        console.log("savedNodes/savedLinks too big, ingnoring")
-      }
-      console.log('saved')
-    }
-    );
-    const buttonRestore = document.getElementById('restore');
-    buttonRestore.addEventListener('click', function () {
-      // restore from localStorage if available
-      const savedIds = JSON.parse(localStorage.getItem("savedIds"));
-      const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
-      const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
-      if (savedIds && savedNodes && savedLinks) {
-        if (savedIds.length > 0 && savedNodes.length > 0 && savedLinks.length > 0) {
-          data.nodes = [];
-          for (let i=0; i<savedNodes.length; i++) {
-            var node = savedNodes[i];
-            var id = savedIds[parseInt(node.id)];
-            data.nodes.push({
-              "id": id,
-              "group": node.group,
-              "names": node.names,
-              "fx": node.fx,
-              "fy": node.fy,
-              "fz": node.fz,
-            })
-          }
-          //data.links = savedLinks;
-          data.links = [];
-          for (let i=0; i<savedLinks.length; i++) {
-            var link = savedLinks[i];
-            var source_id = savedIds[parseInt(link.source)];
-            var target_id = savedIds[parseInt(link.target)];
-            data.links.push({
-              "source": source_id,
-              "target": target_id,
-              "value": link.value,
-            })
-          }
-        }
-      }
-      Graph.graphData(data);
-      console.log('restore')
-    }
-    );
+      //   // const nodeEl = document.getElementById('div');
+      //   // TODO how to change text: add class to nodeThreeObject and get that
+      //   // .nodeThreeObject(node => {
+      //   //   const nodeEl = document.createElement('div');
+      //   //   nodeEl.textContent = node.id;
+      //   //   // nodeEl.style.color = node.color;
+      //   //   nodeEl.style.color = node_color(node.group);
+      //   //   //nodeEl.style.opacity = 0.2;
+      // }
+      // );
+      // const buttonHwFadeLinks = document.getElementById('hw_fade_links');
+      // buttonHwFadeLinks.addEventListener('click', function () {
+      //   var opacity = node_opacity_change_hw();
+      //   Graph.graphData(data)
+      //   .linkOpacity(link => link_opacity_hw(link));
+      // }
+      // );
 
-    // const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
-    // buttonHwFadeNodes.addEventListener('click', function () {
-    //   node_opacity_change_hw();
-    //   // update_node_opacity(data);
-    //   Graph.graphData(data)
-    //   .nodeOpacity(node => node_opacity(node.id));
-
-    //   // const nodeEl = document.getElementById('div');
-    //   // TODO how to change text: add class to nodeThreeObject and get that
-    //   // .nodeThreeObject(node => {
-    //   //   const nodeEl = document.createElement('div');
-    //   //   nodeEl.textContent = node.id;
-    //   //   // nodeEl.style.color = node.color;
-    //   //   nodeEl.style.color = node_color(node.group);
-    //   //   //nodeEl.style.opacity = 0.2;
-    // }
-    // );
-    // const buttonHwFadeLinks = document.getElementById('hw_fade_links');
-    // buttonHwFadeLinks.addEventListener('click', function () {
-    //   var opacity = node_opacity_change_hw();
-    //   Graph.graphData(data)
-    //   .linkOpacity(link => link_opacity_hw(link));
-    // }
-    // );
-
-    // const buttonSwFadeLinks = document.getElementById('sw_fade_links');
-    // buttonSwFadeLinks.addEventListener('click', function () {
-    //   var opacity = node_opacity_change_sw();
-    //   Graph.graphData(data)
-    //   .linkOpacity(opacity);
-    // }
-    // );
-    // const buttonIolsFadeLinks = document.getElementById('iols_fade_links');
-    // buttonIolsFadeLinks.addEventListener('click', function () {
-    //   var opacity = node_opacity_change_iols();
-    //   // TODO
-    //   Graph.graphData(data)
-    //   .linkOpacity(opacity);
-    // }
-    // );
-    // const buttonKdiFadeLinks = document.getElementById('kdi_fade_links');
-    // buttonKdiFadeLinks.addEventListener('click', function () {
-    //   var opacity = node_opacity_change_kdi();
-    //   // TODO
-    //   Graph.graphData(data)
-    //   .linkOpacity(opacity);
-    // }
-    // );
-    // const buttonQcsFadeLinks = document.getElementById('qcs_fade_links');
-    // buttonQcsFadeLinks.addEventListener('click', function () {
-    //   var opacity = node_opacity_change_qcs();
-    //   // TODO
-    //   Graph.graphData(data)
-    //   .linkOpacity(opacity);
-    // }
-    // );
+      // const buttonSwFadeLinks = document.getElementById('sw_fade_links');
+      // buttonSwFadeLinks.addEventListener('click', function () {
+      //   var opacity = node_opacity_change_sw();
+      //   Graph.graphData(data)
+      //   .linkOpacity(opacity);
+      // }
+      // );
+      // const buttonIolsFadeLinks = document.getElementById('iols_fade_links');
+      // buttonIolsFadeLinks.addEventListener('click', function () {
+      //   var opacity = node_opacity_change_iols();
+      //   // TODO
+      //   Graph.graphData(data)
+      //   .linkOpacity(opacity);
+      // }
+      // );
+      // const buttonKdiFadeLinks = document.getElementById('kdi_fade_links');
+      // buttonKdiFadeLinks.addEventListener('click', function () {
+      //   var opacity = node_opacity_change_kdi();
+      //   // TODO
+      //   Graph.graphData(data)
+      //   .linkOpacity(opacity);
+      // }
+      // );
+      // const buttonQcsFadeLinks = document.getElementById('qcs_fade_links');
+      // buttonQcsFadeLinks.addEventListener('click', function () {
+      //   var opacity = node_opacity_change_qcs();
+      //   // TODO
+      //   Graph.graphData(data)
+      //   .linkOpacity(opacity);
+      // }
+      // );
+    }
+    init_Graph();
 
   </script>
 
