@@ -78,10 +78,10 @@
     <div class="menuspace">&nbsp;fade nodes: </div>
     <button id="hw_fade_nodes">HW</button>
     <button id="sw_fade_nodes">SW</button>
-    <!-- <button id="iols_fade_nodes">IOLS</button>
+    <button id="iols_fade_nodes">IOLS</button>
     <button id="kdi_fade_nodes">KDI</button>
     <button id="qcs_fade_nodes">QCS</button>
-    <div class="menuspace">&nbsp;fade links: </div>
+    <!-- <div class="menuspace">&nbsp;fade links: </div>
     <button id="hw_fade_links">HW</button>
     <button id="sw_fade_links">SW</button>
     <button id="iols_fade_links">IOLS</button>
@@ -351,29 +351,41 @@
       }
       );
 
-      const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
-      buttonHwFadeNodes.addEventListener('click', function () {
-        node_opacity_change_hw();
+      function fade_node_handler(change_function, is_function) {
+        var opacity = change_function();
         // update nodes
         Graph.graphData(data)
         .nodeColor(node => node_color_with_opacity(node));
         // update html on nodes
         for (let i=0; i<data.nodes.length; i++) {
           var node = data.nodes[i];
-          if (is_hw_only(node.group)) {
+          if (is_function(node.group)) {
             const nodeEl = document.getElementById(node.id);
-            nodeEl.style.opacity = NODE_OPACITY_HW;
+            nodeEl.style.opacity = opacity;
           }
         }
       }
-      );
-      // const buttonHwFadeLinks = document.getElementById('hw_fade_links');
-      // buttonHwFadeLinks.addEventListener('click', function () {
-      //   var opacity = node_opacity_change_hw();
-      //   Graph.graphData(data)
-      //   .linkOpacity(link => link_opacity_hw(link));
-      // }
-      // );
+
+      const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
+      buttonHwFadeNodes.addEventListener('click', function () {
+        fade_node_handler(node_opacity_change_hw, is_hw_only);
+      });
+      const buttonSwFadeNodes = document.getElementById('sw_fade_nodes');
+      buttonSwFadeNodes.addEventListener('click', function () {
+        fade_node_handler(node_opacity_change_sw, is_sw_only);
+      });
+      const buttonIolsFadeNodes = document.getElementById('iols_fade_nodes');
+      buttonIolsFadeNodes.addEventListener('click', function () {
+        fade_node_handler(node_opacity_change_iols, is_iols_only);
+      });
+      const buttonKdiFadeNodes = document.getElementById('kdi_fade_nodes');
+      buttonKdiFadeNodes.addEventListener('click', function () {
+        fade_node_handler(node_opacity_change_kdi, is_kdi_only);
+      });
+      const buttonQcsFadeNodes = document.getElementById('qcs_fade_nodes');
+      buttonQcsFadeNodes.addEventListener('click', function () {
+        fade_node_handler(node_opacity_change_qcs, is_qcs_only);
+      });
 
       // const buttonSwFadeLinks = document.getElementById('sw_fade_links');
       // buttonSwFadeLinks.addEventListener('click', function () {

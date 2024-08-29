@@ -1708,22 +1708,22 @@ function make_data_sw_only() {
     make_data();
 }
 
-function is_sw_only(id) {
+function is_sw_only(group) {
     if (
-        id == NODE_TYPE_ROOT               ||
-        id == NODE_TYPE_RACK               ||
-        id == NODE_WINDOWSPC_CLIENT        ||
-        id == NODE_WINDOWSPC_HOST          ||
-        id == NODE_TYPE_IOLS               ||
-        id == NODE_TYPE_CONNECTION_EXPERT  ||
-        id == NODE_TYPE_KDI_ROOT           ||
-        id == NODE_TYPE_KDI_ROOT_SVC       ||
-        id == NODE_TYPE_KDI_CLIENT         ||
-        id == NODE_TYPE_KDI_CLIENT_SVC     ||
-        id == NODE_TYPE_QCS_HOST           ||
-        id == NODE_TYPE_QCS_CLIENT         ||
-        id == NODE_TYPE_SSYNC_PORT         ||
-        id == NODE_TYPE_PXIEBUS
+        group == NODE_TYPE_ROOT               ||
+        group == NODE_TYPE_RACK               ||
+        group == NODE_TYPE_WINDOWSPC_CLIENT   ||
+        group == NODE_TYPE_WINDOWSPC_HOST     ||
+        group == NODE_TYPE_IOLS               ||
+        group == NODE_TYPE_CONNECTION_EXPERT  ||
+        group == NODE_TYPE_KDI_ROOT           ||
+        group == NODE_TYPE_KDI_ROOT_SVC       ||
+        group == NODE_TYPE_KDI_CLIENT         ||
+        group == NODE_TYPE_KDI_CLIENT_SVC     ||
+        group == NODE_TYPE_QCS_HOST           ||
+        group == NODE_TYPE_QCS_CLIENT         ||
+        group == NODE_TYPE_SSYNC_PORT         ||
+        group == NODE_TYPE_PXIEBUS
     ) {
         return true;
     }
@@ -1755,18 +1755,18 @@ function make_data_iols_only() {
     make_data();
 }
 
-function is_iols_only(id) {
+function is_iols_only(group) {
     if (
-        id == NODE_TYPE_ROOT                ||
-        id == NODE_TYPE_RACK                ||
-        id == NODE_TYPE_MODULE              ||
-        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
-        id == NODE_TYPE_WINDOWSPC_HOST      ||
-        id == NODE_TYPE_PXIECARD            ||
-        id == NODE_TYPE_NETWORKCARD         ||
-        id == NODE_TYPE_IOLS                ||
-        id == NODE_TYPE_CONNECTION_EXPERT   ||
-        id == NODE_TYPE_PXIEBUS      
+        group == NODE_TYPE_ROOT                ||
+        group == NODE_TYPE_RACK                ||
+        group == NODE_TYPE_MODULE              ||
+        group == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        group == NODE_TYPE_WINDOWSPC_HOST      ||
+        group == NODE_TYPE_PXIECARD            ||
+        group == NODE_TYPE_NETWORKCARD         ||
+        group == NODE_TYPE_IOLS                ||
+        group == NODE_TYPE_CONNECTION_EXPERT   ||
+        group == NODE_TYPE_PXIEBUS      
     ) {
         return true;
     }
@@ -1798,18 +1798,18 @@ function make_data_kdi_only() {
     make_data();
 }
 
-function is_kdi_only(id) {
+function is_kdi_only(group) {
     if (
-        id == NODE_TYPE_ROOT                ||
-        id == NODE_TYPE_RACK                ||
-        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
-        id == NODE_TYPE_WINDOWSPC_HOST      ||
-        id == NODE_TYPE_NETWORKCARD         ||
-        id == NODE_TYPE_IOLS                ||
-        id == NODE_TYPE_KDI_ROOT            ||
-        id == NODE_TYPE_KDI_ROOT_SVC        ||
-        id == NODE_TYPE_KDI_CLIENT          ||
-        id == NODE_TYPE_KDI_CLIENT_SVC
+        group == NODE_TYPE_ROOT                ||
+        group == NODE_TYPE_RACK                ||
+        group == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        group == NODE_TYPE_WINDOWSPC_HOST      ||
+        group == NODE_TYPE_NETWORKCARD         ||
+        group == NODE_TYPE_IOLS                ||
+        group == NODE_TYPE_KDI_ROOT            ||
+        group == NODE_TYPE_KDI_ROOT_SVC        ||
+        group == NODE_TYPE_KDI_CLIENT          ||
+        group == NODE_TYPE_KDI_CLIENT_SVC
     ) {
         return true;
     }
@@ -1841,18 +1841,18 @@ function make_data_qcs_only() {
     make_data();
 }
 
-function is_qcs_only(id) {
+function is_qcs_only(group) {
     if (
-        id == NODE_TYPE_ROOT                ||
-        id == NODE_TYPE_RACK                ||
-        id == NODE_TYPE_MODULE              ||
-        id == NODE_TYPE_WINDOWSPC_CLIENT    ||
-        id == NODE_TYPE_WINDOWSPC_HOST      ||
-        id == NODE_TYPE_NETWORKCARD         ||
-        id == NODE_TYPE_QCS_HOST            ||
-        id == NODE_TYPE_QCS_CLIENT          ||
-        id == NODE_TYPE_SSYNC_PORT          ||
-        id == NODE_TYPE_PXIEBUS  
+        group == NODE_TYPE_ROOT                ||
+        group == NODE_TYPE_RACK                ||
+        group == NODE_TYPE_MODULE              ||
+        group == NODE_TYPE_WINDOWSPC_CLIENT    ||
+        group == NODE_TYPE_WINDOWSPC_HOST      ||
+        group == NODE_TYPE_NETWORKCARD         ||
+        group == NODE_TYPE_QCS_HOST            ||
+        group == NODE_TYPE_QCS_CLIENT          ||
+        group == NODE_TYPE_SSYNC_PORT          ||
+        group == NODE_TYPE_PXIEBUS  
     ) {
         return true;
     }
@@ -2007,16 +2007,6 @@ function link_color(value) {
     return result;
 }
 
-// function node_opacity(id) {
-//     var result = 1.0;
-//     if (is_hw_only(id)) result = NODE_OPACITY_HW;
-//     if (is_sw_only(id)) result = NODE_OPACITY_SW;
-//     if (is_iols_only(id)) result = NODE_OPACITY_IOLS;
-//     if (is_kdi_only(id)) result = NODE_OPACITY_KDI;
-//     if (is_qcs_only(id)) result = NODE_OPACITY_QCS;
-//     console.log("node_opacity " + node_opacity);
-//     return result;
-// }
 
 // function link_opacity(link) {
 //     var result = NODE_OPACITY_HW;
@@ -2031,50 +2021,48 @@ function link_color(value) {
 //     return result;
 // }
 
-function node_opacity_change_hw() {
-    var opacity = NODE_OPACITY_HW;
+function node_opacity_change(current_opacity, is_function) {
+    var opacity = current_opacity;
     var alpha = "FF";
-
     // determine next opacity and alpha
     if (opacity == 1.0) { opacity = 0.5; alpha = "80"; }
     else if (opacity == 0.5)  { opacity = 0.25; alpha = "40"; }
     else if (opacity == 0.25)  { opacity = 0.125; alpha = "20"; }
     else if (opacity == 0.125)  { opacity = 0.0; alpha = "10"; }
     else if (opacity == 0.0)  { opacity = 1.0; alpha = "FF"; }
-    // set saved opacity
-    NODE_OPACITY_HW = opacity;
     // save opacity in node
     for (let i=0; i<data.nodes.length; i++) {
         var node = data.nodes[i];
-        if (is_hw_only(node.group)) {
+        if (is_function(node.group)) {
             node.opacity = node_color_init(node.group) + alpha;
         }
     }
+    return opacity;
+}
+function node_opacity_change_hw() {
+    NODE_OPACITY_HW = node_opacity_change(NODE_OPACITY_HW, is_hw_only);
+    return NODE_OPACITY_HW;
 }
 
-// function node_opacity_change_sw() {
-//     NODE_OPACITY_SW -= 0.1;
-//     if (NODE_OPACITY_SW < 0) NODE_OPACITY_SW = 1.0;
-//     return NODE_OPACITY_SW;
-// }
+function node_opacity_change_sw() {
+    NODE_OPACITY_SW = node_opacity_change(NODE_OPACITY_SW, is_sw_only);
+    return NODE_OPACITY_SW;
+}
 
-// function node_opacity_change_iols() {
-//     NODE_OPACITY_IOLS -= 0.1;
-//     if (NODE_OPACITY_IOLS < 0) NODE_OPACITY_IOLS = 1.0;
-//     return NODE_OPACITY_IOLS;
-// }
+function node_opacity_change_iols() {
+    NODE_OPACITY_IOLS = node_opacity_change(NODE_OPACITY_IOLS, is_sw_only);
+    return NODE_OPACITY_IOLS;
+}
 
-// function node_opacity_change_kdi() {
-//     NODE_OPACITY_KDI -= 0.1;
-//     if (NODE_OPACITY_KDI < 0) NODE_OPACITY_KDI = 1.0;
-//     return NODE_OPACITY_KDI;
-// }
+function node_opacity_change_kdi() {
+    NODE_OPACITY_KDI = node_opacity_change(NODE_OPACITY_KDI, is_sw_only);
+    return NODE_OPACITY_KDI;
+}
 
-// function node_opacity_change_qcs() {
-//     NODE_OPACITY_QCS -= 0.1;
-//     if (NODE_OPACITY_QCS < 0) NODE_OPACITY_QCS = 1.0;
-//     return NODE_OPACITY_QCS;
-// }
+function node_opacity_change_qcs() {
+    NODE_OPACITY_QCS = node_opacity_change(NODE_OPACITY_QCS, is_sw_only);
+    return NODE_OPACITY_QCS;
+}
 
 // function link_opacity_change_hw() {
 //     LINK_OPACITY_HW -= 0.1;
