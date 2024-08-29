@@ -13,7 +13,7 @@
       font-size: 12px;
       padding: 1px 4px;
       border-radius: 4px;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.5); /* 0.5 is opacity of label background */
       user-select: none;
     }
 
@@ -75,10 +75,10 @@
     <button id="unlock_all">unlock all</button>
     <button id="save">save</button>
     <button id="restore">restore</button>
-    <!-- <div class="menuspace">&nbsp;fade nodes: </div>
+    <div class="menuspace">&nbsp;fade nodes: </div>
     <button id="hw_fade_nodes">HW</button>
     <button id="sw_fade_nodes">SW</button>
-    <button id="iols_fade_nodes">IOLS</button>
+    <!-- <button id="iols_fade_nodes">IOLS</button>
     <button id="kdi_fade_nodes">KDI</button>
     <button id="qcs_fade_nodes">QCS</button>
     <div class="menuspace">&nbsp;fade links: </div>
@@ -94,6 +94,27 @@
   <script type="importmap">{ "imports": { "three": "https://unpkg.com/three/build/three.module.js" }}</script>
   <script type="module">
     import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
+
+    var allLocked = false;
+    function doLockAll() {
+      allLocked = true;
+        for (let i=0; i<data.nodes.length; i++) {
+          let node = data.nodes[i];
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+        }
+    }
+    function doUnlockAll() {
+      allLocked = false;
+        for (let i=0; i<data.nodes.length; i++) {
+          let node = data.nodes[i];
+          // BUG unlock a saved set expands more
+          node.fx = null;
+          node.fy = null;
+          node.fz = null;
+        }      
+    }
 
     var Graph = null;
     function init_Graph() {
@@ -111,7 +132,7 @@
         .linkDirectionalArrowLength(3.5)
         .linkDirectionalArrowRelPos(1)
         // .nodeAutoColorBy('group')
-        .nodeColor(node => node_color(node.group)) // WARNING: only node, not text color
+        .nodeColor(node => node_color_init(node.group)) // WARNING: only node, not text color
         // .linkAutoColorBy('value')
         .linkColor(node => link_color(node.value))
         .linkWidth(2)
@@ -119,7 +140,7 @@
           const nodeEl = document.createElement('div');
           nodeEl.textContent = node.id;
           // nodeEl.style.color = node.color;
-          nodeEl.style.color = node_color(node.group);
+          nodeEl.style.color = node_color_init(node.group);
           //nodeEl.style.opacity = 0.2;
           nodeEl.className = 'node-label';
           nodeEl.id = node.id;
@@ -149,6 +170,7 @@
       buttonVision.addEventListener('click', function () {
         make_vision();
         Graph.graphData(data)
+        .nodeColor(node => node_color_init(node.group))
         .linkDirectionalArrowLength(10)
       }
       );
@@ -156,6 +178,7 @@
       buttonRacks1000.addEventListener('click', function () {
         make_data_1000();
         Graph.graphData(data)
+        .nodeColor(node => node_color_init(node.group))
         .linkDirectionalArrowLength(3.5)
       }
       );
@@ -163,6 +186,7 @@
       buttonRacks16x6.addEventListener('click', function () {
         make_data_16x6();
         Graph.graphData(data)
+        .nodeColor(node => node_color_init(node.group))
         .linkDirectionalArrowLength(3.5)
       }
       );
@@ -223,25 +247,14 @@
       const buttonLockAll = document.getElementById('lock_all');
       buttonLockAll.addEventListener('click', function () {
         console.log('lock_all')
-        for (let i=0; i<data.nodes.length; i++) {
-          let node = data.nodes[i];
-          node.fx = node.x;
-          node.fy = node.y;
-          node.fz = node.z;
-        }
+        doLockAll();
         Graph.graphData(data);
       }
       );
       const buttonUnlockAll = document.getElementById('unlock_all');
       buttonUnlockAll.addEventListener('click', function () {
         console.log('unlock_all')
-        for (let i=0; i<data.nodes.length; i++) {
-          let node = data.nodes[i];
-          // BUG unlock a saved set expands more
-          node.fx = null;
-          node.fy = null;
-          node.fz = null;
-        }      
+        doUnlockAll();
         Graph.graphData(data);
       }
       );
@@ -338,23 +351,22 @@
       }
       );
 
-      // const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
-      // buttonHwFadeNodes.addEventListener('click', function () {
-      //   node_opacity_change_hw();
-      //   // update_node_opacity(data);
-      //   Graph.graphData(data)
-      //   .nodeOpacity(node => node_opacity(node.id));
-
-      //   // const nodeEl = document.getElementById('div');
-      //   // TODO how to change text: add class to nodeThreeObject and get that
-      //   // .nodeThreeObject(node => {
-      //   //   const nodeEl = document.createElement('div');
-      //   //   nodeEl.textContent = node.id;
-      //   //   // nodeEl.style.color = node.color;
-      //   //   nodeEl.style.color = node_color(node.group);
-      //   //   //nodeEl.style.opacity = 0.2;
-      // }
-      // );
+      const buttonHwFadeNodes = document.getElementById('hw_fade_nodes');
+      buttonHwFadeNodes.addEventListener('click', function () {
+        node_opacity_change_hw();
+        // update nodes
+        Graph.graphData(data)
+        .nodeColor(node => node_color_with_opacity(node));
+        // update html on nodes
+        for (let i=0; i<data.nodes.length; i++) {
+          var node = data.nodes[i];
+          if (is_hw_only(node.group)) {
+            const nodeEl = document.getElementById(node.id);
+            nodeEl.style.opacity = NODE_OPACITY_HW;
+          }
+        }
+      }
+      );
       // const buttonHwFadeLinks = document.getElementById('hw_fade_links');
       // buttonHwFadeLinks.addEventListener('click', function () {
       //   var opacity = node_opacity_change_hw();

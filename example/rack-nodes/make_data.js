@@ -114,17 +114,17 @@ var ENABLE_LINK_TYPE_SSYNC_PORT_OUT      = 0;
 var ENABLE_LINK_TYPE_HVICABLE            = 0;
 var ENABLE_LINK_TYPE_PXIEBUS             = 0;
 
-// var NODE_OPACITY_HW       = 1.0;
-// var NODE_OPACITY_SW       = 1.0;
-// var NODE_OPACITY_IOLS     = 1.0;
-// var NODE_OPACITY_KDI      = 1.0;
-// var NODE_OPACITY_QCS      = 1.0;
+var NODE_OPACITY_HW       = 1.0;
+var NODE_OPACITY_SW       = 1.0;
+var NODE_OPACITY_IOLS     = 1.0;
+var NODE_OPACITY_KDI      = 1.0;
+var NODE_OPACITY_QCS      = 1.0;
 
-// var LINK_OPACITY_HW       = 1.0;
-// var LINK_OPACITY_SW       = 1.0;
-// var LINK_OPACITY_IOLS     = 1.0;
-// var LINK_OPACITY_KDI      = 1.0;
-// var LINK_OPACITY_QCS      = 1.0;
+var LINK_OPACITY_HW       = 1.0;
+var LINK_OPACITY_SW       = 1.0;
+var LINK_OPACITY_IOLS     = 1.0;
+var LINK_OPACITY_KDI      = 1.0;
+var LINK_OPACITY_QCS      = 1.0;
 
 
 function trunc_name(full) {
@@ -1389,6 +1389,7 @@ function show_stats() {
 function make_vision() {
     console.log('make_vision')
     reset_data();
+    reset_opacity();
     
     // GENERATED
     add_data_node("generated_nodes_links", ["generated nodes/links"], NODE_TYPE_ROOT);
@@ -1607,8 +1608,23 @@ function select_racks_16x6() {
     TOTAL_PXIECARDS = 1;
 }
 
+function reset_opacity() {
+    NODE_OPACITY_HW       = 1.0;
+    NODE_OPACITY_SW       = 1.0;
+    NODE_OPACITY_IOLS     = 1.0;
+    NODE_OPACITY_KDI      = 1.0;
+    NODE_OPACITY_QCS      = 1.0;
+
+    LINK_OPACITY_HW       = 1.0;
+    LINK_OPACITY_SW       = 1.0;
+    LINK_OPACITY_IOLS     = 1.0;
+    LINK_OPACITY_KDI      = 1.0;
+    LINK_OPACITY_QCS      = 1.0;
+}
+
 function make_data_1000() {
     console.log('make_data_1000')
+    reset_opacity();
     select_racks_1000();
     enable_all_nodes();
     enable_all_links();
@@ -1617,6 +1633,7 @@ function make_data_1000() {
 
 function make_data_16x6() {
     console.log('make_data_16x6')
+    reset_opacity();
     select_racks_16x6();
     enable_all_nodes();
     enable_all_links();   
@@ -1648,18 +1665,18 @@ function make_data_hw_only() {
     make_data();
 }
 
-function is_hw_only(id) {
+function is_hw_only(group) {
     if (
-        id == NODE_TYPE_ROOT             ||
-        id == NODE_TYPE_RACK             ||
-        id == NODE_TYPE_CHASSIS          ||
-        id == NODE_TYPE_SLOT             ||
-        id == NODE_TYPE_MODULE           ||
-        id == NODE_TYPE_WINDOWSPC_CLIENT ||
-        id == NODE_TYPE_WINDOWSPC_HOST   ||
-        id == NODE_TYPE_PXIECARD         ||
-        id == NODE_TYPE_NETWORKCARD      ||
-        id == NODE_TYPE_IOLS
+        group == NODE_TYPE_ROOT             ||
+        group == NODE_TYPE_RACK             ||
+        group == NODE_TYPE_CHASSIS          ||
+        group == NODE_TYPE_SLOT             ||
+        group == NODE_TYPE_MODULE           ||
+        group == NODE_TYPE_WINDOWSPC_CLIENT ||
+        group == NODE_TYPE_WINDOWSPC_HOST   ||
+        group == NODE_TYPE_PXIECARD         ||
+        group == NODE_TYPE_NETWORKCARD      ||
+        group == NODE_TYPE_IOLS
     ) {
         return true;
     }
@@ -1949,97 +1966,38 @@ function prune_ssync() {
 //       the color we picked anre not as vibrant, and
 //       some colors are not recognized.  Reverting to auto for now.
 // from https://www.pinterest.co.uk/pin/46795283603992997/
-var node_colors = [
-    "white",
-    // "pear",
-    "lime",
-    // "yellowgreen",
-    // "beige",
-    // "khaki",
-    // "olive",
-    // "umber",
-    // "ivory",
-    // "lemon",
-    "yellow",
-    // "gold",
-    // "cream",
-    // "amber",
-    "goldenrod",
-    // "ocher",
-    // "bisque",
-    // "tan",
-    // "bronze",
-    // "sepia",
-    // "brown",
-    // "champagne",
-    // "apricot",
-    "orange",
-    // "copper",
-    // "salmon",
-    // "redorange",
-    // "rust",
-    // "sienna",
-    // "seashell",
-    // "peach",
-    "coral",
-    // "indianread",
-    "pink",
-    "red",
-    // "carmine",
-    // "marroon",
-    // "mistyrose",
-    // "oldrose",
-    // "rosybrown",
-    // "rosewood",
-    // "palelink",
-    // "cerise",
-    "ruby",
-    // "crimson",
-    // "rosepink",
-    "magenta",
-    // "redviolet",
-    // "plum",
-    // "violet",
-    "fuchsia",
-    "purple",
-    // "eggplant",
-    // "lavender",
-    // "amethyst",
-    "blueviolet",
-    // "indigo",
-    // "babyblue",
-    "skyblue",
-    "blue",
-    // "ultramarine",
-    // "paleblue",
-    "azure",
-    // "cerulean",
-    // "steelblue",
-    "aqua",
-    // "turquoise",
-    // "seagreen",
-    "aquamarine",
-    // "emerald",
-    // "jade",
-    "palegreen",
-    // "applegreen",
-    "green",
-    // "forestgreen",
-    // "celadon",
-    // "sage",
-    // "slate",
-    // "mauve",
-    // "taupe",
-    // "silver",
-    // "grey",
+const node_colors = [
+    "#FFFFFF", // white
+    "#00FF00", // lime
+    "#FFFF00", // yellow
+    "#DAA520", // goldenrod
+    "#FFA500", // orange
+    "#FF7F50", // coral
+    "#FFC0CB", // pink
+    "#FF0000", // red
+    "#E0115F", // ruby
+    "#FF00FF", // magenta
+    "#FF00FF", // fuchsia
+    "#800080", // purple
+    "#8A2BE2", // blueviolet
+    "#87CEEB", // skyblue
+    "#0000FF", // blue
+    "#F0FFFF", // azure
+    "#00FFFF", // aqua
+    "#7FFFD4", // aquamarine
+    "#98FB98", // palegreen
+    "#008000", // green
 ];
 
-
-function node_color(group) {
+function node_color_init(group) {
     var result;
     var index = group % node_colors.length;
     result = node_colors[index];
     return result;
+}
+
+function node_color_with_opacity(node) {
+    return node.opacity;
 }
 
 function link_color(value) {
@@ -2056,6 +2014,7 @@ function link_color(value) {
 //     if (is_iols_only(id)) result = NODE_OPACITY_IOLS;
 //     if (is_kdi_only(id)) result = NODE_OPACITY_KDI;
 //     if (is_qcs_only(id)) result = NODE_OPACITY_QCS;
+//     console.log("node_opacity " + node_opacity);
 //     return result;
 // }
 
@@ -2072,11 +2031,26 @@ function link_color(value) {
 //     return result;
 // }
 
-// function node_opacity_change_hw() {
-//     NODE_OPACITY_HW -= 0.1;
-//     if (NODE_OPACITY_HW < 0) NODE_OPACITY_HW = 1.0;
-//     return NODE_OPACITY_HW;
-// }
+function node_opacity_change_hw() {
+    var opacity = NODE_OPACITY_HW;
+    var alpha = "FF";
+
+    // determine next opacity and alpha
+    if (opacity == 1.0) { opacity = 0.5; alpha = "80"; }
+    else if (opacity == 0.5)  { opacity = 0.25; alpha = "40"; }
+    else if (opacity == 0.25)  { opacity = 0.125; alpha = "20"; }
+    else if (opacity == 0.125)  { opacity = 0.0; alpha = "10"; }
+    else if (opacity == 0.0)  { opacity = 1.0; alpha = "FF"; }
+    // set saved opacity
+    NODE_OPACITY_HW = opacity;
+    // save opacity in node
+    for (let i=0; i<data.nodes.length; i++) {
+        var node = data.nodes[i];
+        if (is_hw_only(node.group)) {
+            node.opacity = node_color_init(node.group) + alpha;
+        }
+    }
+}
 
 // function node_opacity_change_sw() {
 //     NODE_OPACITY_SW -= 0.1;
