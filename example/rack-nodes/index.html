@@ -300,6 +300,7 @@
             "value": link.value,
           })
         }
+        var savedPosition = Graph.cameraPosition();
         try {
           // console.log(JSON.stringify(savedIds).length)
           // console.log(JSON.stringify(savedNodes).length)
@@ -307,6 +308,7 @@
           localStorage.setItem("savedIds", JSON.stringify(savedIds));
           localStorage.setItem("savedNodes", JSON.stringify(savedNodes));
           localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+          localStorage.setItem("savedPosition", JSON.stringify(savedPosition));
         }
         catch(error) {
           console.log("savedNodes/savedLinks too big, ingnoring")
@@ -320,6 +322,7 @@
         const savedIds = JSON.parse(localStorage.getItem("savedIds"));
         const savedNodes = JSON.parse(localStorage.getItem("savedNodes"));
         const savedLinks = JSON.parse(localStorage.getItem("savedLinks"));
+        const savedPosition = JSON.parse(localStorage.getItem("savedPosition"));
         if (savedIds && savedNodes && savedLinks) {
           if (savedIds.length > 0 && savedNodes.length > 0 && savedLinks.length > 0) {
             data.nodes = [];
@@ -349,7 +352,8 @@
             }
           }
         }
-        Graph.graphData(data);
+        Graph.graphData(data)
+        .cameraPosition(savedPosition);
         console.log('restore')
       }
       );

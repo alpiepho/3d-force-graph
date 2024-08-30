@@ -55,9 +55,9 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] fade 0.1 hw/sw/iols/kdi/qcs
 - [x] fade in node data
 - [-] add 2D (nice idea, but text over nodes too busy)
+- [x] save camera and zoom
 
 - [ ] hover links to show value? source/dest
-- [ ] save camera and zoom
 
 - [ ] click node/link to show side panel info and actions??
 - [ ] trace back to rack/pc/chassis
