@@ -58,6 +58,8 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] save camera and zoom
 
 - [ ] control for text size?
+- [ ] control for link size?
+- [ ] auto rotate to certain objects?
 - [ ] hover links to show value? source/dest
 - [ ] have some realted nodes closer (gravity?)
 - [ ] click node/link to show side panel info and actions??

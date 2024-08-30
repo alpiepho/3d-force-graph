@@ -13,7 +13,7 @@
       font-size: 12px;
       padding: 1px 4px;
       border-radius: 4px;
-      background-color: rgba(0, 0, 0, 0.0); /* 0.5 is opacity of label background */
+      background-color: rgba(0, 0, 0, 0.5); /* 0.5 is opacity of label background */
       user-select: none;
     }
 
@@ -119,6 +119,7 @@
     var Graph = null;
     function init_Graph() {
       Graph = ForceGraph3D({
+        controlType: "trackball", // "orbit"
         extraRenderers: [new CSS2DRenderer()]
       })
         (document.getElementById('3d-graph'))
