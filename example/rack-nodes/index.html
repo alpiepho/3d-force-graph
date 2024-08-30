@@ -13,7 +13,7 @@
       font-size: 12px;
       padding: 1px 4px;
       border-radius: 4px;
-      background-color: rgba(0, 0, 0, 0.5); /* 0.5 is opacity of label background */
+      background-color: rgba(0, 0, 0, 0.0); /* 0.5 is opacity of label background */
       user-select: none;
     }
 
@@ -132,7 +132,8 @@
         .linkDirectionalArrowLength(3.5)
         .linkDirectionalArrowRelPos(1)
         // .nodeAutoColorBy('group')
-        .nodeColor(node => node_color_init(node.group)) // WARNING: only node, not text color
+        // .nodeColor(node => node_color_init(node.group)) // WARNING: only node, not text color
+        .nodeColor(node => node_color_blank(node.group))   // easier to see without node
         // .linkAutoColorBy('value')
         .linkColor(node => link_color_init(node.value))
         .linkWidth(2)
@@ -170,7 +171,8 @@
       buttonVision.addEventListener('click', function () {
         make_vision();
         Graph.graphData(data)
-        .nodeColor(node => node_color_init(node.group))
+        // .nodeColor(node => node_color_init(node.group))
+        .nodeColor(node => node_color_blank(node.group))
         .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(10)
       }
@@ -179,7 +181,7 @@
       buttonRacks1000.addEventListener('click', function () {
         make_data_1000();
         Graph.graphData(data)
-        .nodeColor(node => node_color_init(node.group))
+        .nodeColor(node => node_color_blank(node.group))
         .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(3.5)
       }
@@ -188,7 +190,7 @@
       buttonRacks16x6.addEventListener('click', function () {
         make_data_16x6();
         Graph.graphData(data)
-        .nodeColor(node => node_color_init(node.group))
+        .nodeColor(node => node_color_blank(node.group))
         .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(3.5)
       }
@@ -362,8 +364,9 @@
         var opacity = change_function();
         // update nodes
         Graph.graphData(data)
-        .nodeColor(node => node_color_with_opacity(node));
-        // update html on nodes
+        // .nodeColor(node => node_color_with_opacity(node))
+        .nodeColor(node => node_color_blank(node.group));
+      // update html on nodes
         for (let i=0; i<data.nodes.length; i++) {
           var node = data.nodes[i];
           if (is_function(node.group)) {

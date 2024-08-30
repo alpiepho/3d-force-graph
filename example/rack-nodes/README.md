@@ -57,8 +57,9 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [-] add 2D (nice idea, but text over nodes too busy)
 - [x] save camera and zoom
 
+- [ ] control for text size?
 - [ ] hover links to show value? source/dest
-
+- [ ] have some realted nodes closer (gravity?)
 - [ ] click node/link to show side panel info and actions??
 - [ ] trace back to rack/pc/chassis
 - [ ] sim errors card/pixe-cable/net-cable/hvi-cable

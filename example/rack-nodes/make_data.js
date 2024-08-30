@@ -1996,6 +1996,10 @@ function node_color_init(group) {
     return result;
 }
 
+function node_color_blank(group) {
+    return "#FF000000";
+}
+
 function node_color_with_opacity(node) {
     return node.opacity;
 }
