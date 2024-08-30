@@ -81,12 +81,12 @@
     <button id="iols_fade_nodes">IOLS</button>
     <button id="kdi_fade_nodes">KDI</button>
     <button id="qcs_fade_nodes">QCS</button>
-    <!-- <div class="menuspace">&nbsp;fade links: </div>
+    <div class="menuspace">&nbsp;fade links: </div>
     <button id="hw_fade_links">HW</button>
     <button id="sw_fade_links">SW</button>
     <button id="iols_fade_links">IOLS</button>
     <button id="kdi_fade_links">KDI</button>
-    <button id="qcs_fade_links">QCS</button> -->
+    <button id="qcs_fade_links">QCS</button>
   </div>
 
   <div id="3d-graph"></div>
@@ -134,7 +134,7 @@
         // .nodeAutoColorBy('group')
         .nodeColor(node => node_color_init(node.group)) // WARNING: only node, not text color
         // .linkAutoColorBy('value')
-        .linkColor(node => link_color(node.value))
+        .linkColor(node => link_color_init(node.value))
         .linkWidth(2)
         .nodeThreeObject(node => {
           const nodeEl = document.createElement('div');
@@ -171,6 +171,7 @@
         make_vision();
         Graph.graphData(data)
         .nodeColor(node => node_color_init(node.group))
+        .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(10)
       }
       );
@@ -179,6 +180,7 @@
         make_data_1000();
         Graph.graphData(data)
         .nodeColor(node => node_color_init(node.group))
+        .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(3.5)
       }
       );
@@ -187,6 +189,7 @@
         make_data_16x6();
         Graph.graphData(data)
         .nodeColor(node => node_color_init(node.group))
+        .linkColor(node => link_color_init(node.value))
         .linkDirectionalArrowLength(3.5)
       }
       );
@@ -387,37 +390,38 @@
         fade_node_handler(node_opacity_change_qcs, is_qcs_only);
       });
 
-      // const buttonSwFadeLinks = document.getElementById('sw_fade_links');
-      // buttonSwFadeLinks.addEventListener('click', function () {
-      //   var opacity = node_opacity_change_sw();
-      //   Graph.graphData(data)
-      //   .linkOpacity(opacity);
-      // }
-      // );
-      // const buttonIolsFadeLinks = document.getElementById('iols_fade_links');
-      // buttonIolsFadeLinks.addEventListener('click', function () {
-      //   var opacity = node_opacity_change_iols();
-      //   // TODO
-      //   Graph.graphData(data)
-      //   .linkOpacity(opacity);
-      // }
-      // );
-      // const buttonKdiFadeLinks = document.getElementById('kdi_fade_links');
-      // buttonKdiFadeLinks.addEventListener('click', function () {
-      //   var opacity = node_opacity_change_kdi();
-      //   // TODO
-      //   Graph.graphData(data)
-      //   .linkOpacity(opacity);
-      // }
-      // );
-      // const buttonQcsFadeLinks = document.getElementById('qcs_fade_links');
-      // buttonQcsFadeLinks.addEventListener('click', function () {
-      //   var opacity = node_opacity_change_qcs();
-      //   // TODO
-      //   Graph.graphData(data)
-      //   .linkOpacity(opacity);
-      // }
-      // );
+      function fade_link_handler(change_function, is_function) {
+        var opacity = change_function();
+        // update nodes
+        Graph.graphData(data)
+        .linkColor(node => node_color_with_opacity(node));
+      }
+
+      const buttonHwFadeLinks = document.getElementById('hw_fade_links');
+      buttonHwFadeLinks.addEventListener('click', function () {
+        fade_link_handler(link_opacity_change_hw, is_hw_only);
+      });
+
+      const buttonSwFadeLinks = document.getElementById('sw_fade_links');
+      buttonSwFadeLinks.addEventListener('click', function () {
+        fade_link_handler(link_opacity_change_sw, is_sw_only);
+      });
+
+      const buttonIolsFadeLinks = document.getElementById('iols_fade_links');
+      buttonIolsFadeLinks.addEventListener('click', function () {
+        fade_link_handler(link_opacity_change_iols, is_iols_only);
+      });
+
+      const buttonKdiFadeLinks = document.getElementById('kdi_fade_links');
+      buttonKdiFadeLinks.addEventListener('click', function () {
+        fade_link_handler(link_opacity_change_kdi, is_kdi_only);
+      });
+
+      const buttonQcsFadeLinks = document.getElementById('qcs_fade_links');
+      buttonQcsFadeLinks.addEventListener('click', function () {
+        fade_link_handler(link_opacity_change_qcs, is_qcs_only);
+      });
+
     }
     init_Graph();
 

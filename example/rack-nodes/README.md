@@ -52,18 +52,21 @@ Later, I hope to merge this with Alloy18 VIZDEMO, probably after popout is added
 - [x] Buttons save
 - [x] improve local storage (index ids)
 - [x] more kdi nodes
-
-- [ ] refactor index.html javascript
-- [ ] hover links
-- [ ] fade 0.1 hw/sw/iols/kdi/qcs
-- [ ] fade in node data
-- [ ] save camera and zoom
-- [ ] sim errors card/pixe-cable/net-cable/hvi-cable
-- [ ] add vision diagram
+- [x] fade 0.1 hw/sw/iols/kdi/qcs
+- [x] fade in node data
 - [-] add 2D (nice idea, but text over nodes too busy)
+
+- [ ] hover links to show value? source/dest
+- [ ] save camera and zoom
+
+- [ ] click node/link to show side panel info and actions??
+- [ ] trace back to rack/pc/chassis
+- [ ] sim errors card/pixe-cable/net-cable/hvi-cable
+- [ ] refactor index.html javascript
+
+- [ ] add vision diagram
 - [ ] add compare
 - [ ] add flow
-- [ ] trace back to rack/pc/chassis
 
 - [ ] enumerate modules with PXI0::CHASSIS1::SLOT10::INSTR format
 - [ ] move node/link/enables to data

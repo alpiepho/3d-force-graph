@@ -2000,26 +2000,16 @@ function node_color_with_opacity(node) {
     return node.opacity;
 }
 
-function link_color(value) {
+function link_color_init(value) {
     var result;
     var index = value % node_colors.length;
     result = node_colors[index];
     return result;
 }
 
-
-// function link_opacity(link) {
-//     var result = NODE_OPACITY_HW;
-
-//     switch (link.source.id) {
-
-//     }
-//     // TODO: determine if source is hw/sw/iols/kdi/qcs
-//     //       search data.nodes for source
-//     //       use that to determine hw/sw/iols/kdi/qcs
-//     //       from hw/sw/iols/kdi/qcs get current opacity
-//     return result;
-// }
+function link_color_with_opacity(link) {
+    return link.opacity;
+}
 
 function node_opacity_change(current_opacity, is_function) {
     var opacity = current_opacity;
@@ -2039,6 +2029,7 @@ function node_opacity_change(current_opacity, is_function) {
     }
     return opacity;
 }
+
 function node_opacity_change_hw() {
     NODE_OPACITY_HW = node_opacity_change(NODE_OPACITY_HW, is_hw_only);
     return NODE_OPACITY_HW;
@@ -2064,35 +2055,57 @@ function node_opacity_change_qcs() {
     return NODE_OPACITY_QCS;
 }
 
-// function link_opacity_change_hw() {
-//     LINK_OPACITY_HW -= 0.1;
-//     if (LINK_OPACITY_HW < 0) LINK_OPACITY_HW = 1.0;
-//     return LINK_OPACITY_HW;
-// }
+function link_opacity_change(current_opacity, is_function) {
+    // NOTE: is_function is for node of link.source
+    var opacity = current_opacity;
+    var alpha = "FF";
+    // determine next opacity and alpha
+    if (opacity == 1.0) { opacity = 0.5; alpha = "80"; }
+    else if (opacity == 0.5)  { opacity = 0.25; alpha = "40"; }
+    else if (opacity == 0.25)  { opacity = 0.125; alpha = "20"; }
+    else if (opacity == 0.125)  { opacity = 0.0; alpha = "10"; }
+    else if (opacity == 0.0)  { opacity = 1.0; alpha = "FF"; }
+    // save opacity in link
+    for (let i=0; i<data.links.length; i++) {
+        var link = data.links[i];
+        var node;
+        for (let j=0; j<data.nodes.length; j++) {
+            var node = data.nodes[j];
+            if (node.id == link.source) {
+                break;
+            }
+        }
+        if (is_function(node.group)) {
+            link.opacity = link_color_init(link.value) + alpha;
+        }
+    }
+    return opacity;
+}
 
-// function link_opacity_change_sw() {
-//     LINK_OPACITY_SW -= 0.1;
-//     if (LINK_OPACITY_SW < 0) LINK_OPACITY_SW = 1.0;
-//     return LINK_OPACITY_SW;
-// }
+function link_opacity_change_hw() {
+    LINK_OPACITY_HW = link_opacity_change(LINK_OPACITY_HW, is_hw_only);
+    return LINK_OPACITY_HW;
+}
 
-// function link_opacity_change_iols() {
-//     LINK_OPACITY_IOLS -= 0.1;
-//     if (LINK_OPACITY_IOLS < 0) LINK_OPACITY_IOLS = 1.0;
-//     return LINK_OPACITY_IOLS;
-// }
+function link_opacity_change_sw() {
+    LINK_OPACITY_SW = link_opacity_change(LINK_OPACITY_SW, is_sw_only);
+    return LINK_OPACITY_SW;
+}
 
-// function link_opacity_change_kdi() {
-//     LINK_OPACITY_KDI -= 0.1;
-//     if (LINK_OPACITY_KDI < 0) LINK_OPACITY_KDI = 1.0;
-//     return LINK_OPACITY_KDI;
-// }
+function link_opacity_change_iols() {
+    LINK_OPACITY_IOLS = link_opacity_change(LINK_OPACITY_IOLS, is_sw_only);
+    return LINK_OPACITY_IOLS;
+}
 
-// function link_opacity_change_qcs() {
-//     LINK_OPACITY_QCS -= 0.1;
-//     if (LINK_OPACITY_QCS < 0) LINK_OPACITY_QCS = 1.0;
-//     return LINK_OPACITY_QCS;
-// }
+function link_opacity_change_kdi() {
+    LINK_OPACITY_KDI = link_opacity_change(LINK_OPACITY_KDI, is_kdi_only);
+    return LINK_OPACITY_KDI;
+}
+
+function link_opacity_change_qcs() {
+    LINK_OPACITY_QCS = link_opacity_change(LINK_OPACITY_QCS, is_qcs_only);
+    return LINK_OPACITY_QCS;
+}
 
 
 // Default
